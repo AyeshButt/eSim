@@ -1,0 +1,34 @@
+trigger:
+  branches:
+    include:
+      - master
+
+pr: none
+
+pool:
+  name: eSim-AgentPool  # or your self-hosted agent name
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+  - task: UseDotNet@2
+    inputs:
+      packageType: 'sdk'
+      version: '9.0.x'
+      installationPath: $(Agent.ToolsDirectory)/dotnet
+
+  - script: dotnet restore eSim.Admin/eSim.Admin.csproj
+    displayName: 'Restore eSim Admin project'
+
+  - script: dotnet build eSim.Admin/eSim.Admin.csproj --configuration $(buildConfiguration)
+    displayName: 'Build eSim Admin project'
+
+  - script: dotnet publish eSim.Admin/eSim.Admin.csproj --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/admin
+    displayName: 'Publish eSim Admin project'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)/admin'
+      ArtifactName: 'admin-web-artifact'
+      publishLocation: 'Container'
