@@ -1,0 +1,36 @@
+trigger:
+  branches:
+    include:
+      - master
+
+pr: none
+
+pool:
+  name: eSim-AgentPool  # or your self-hosted agent name
+
+variables:
+  buildConfiguration: 'Release'
+jobs:
+ - job: Build_API
+   condition: contains(variables['Build.SourceVersionMessage'],'[api-proj]')
+   steps:
+   - task: UseDotNet@2
+     inputs:
+      packageType: 'sdk'
+      version: '9.0.x'
+      installationPath: $(Agent.ToolsDirectory)/dotnet
+
+   - script: dotnet restore eSim.Middleware/eSim.Middleware.csproj
+     displayName: 'Restore eSim API project'
+
+   - script: dotnet build eSim.Middleware/eSim.Middleware.csproj --configuration $(buildConfiguration)
+     displayName: 'Build eSim API project'
+
+   - script: dotnet publish eSim.Middleware/eSim.Middleware.csproj --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/api
+     displayName: 'Publish eSim API project'
+
+   - task: PublishBuildArtifacts@1
+     inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)/api'
+      ArtifactName: 'api-web-artifact'
+      publishLocation: 'Container'
