@@ -8,6 +8,6 @@ namespace eSim.Common.StaticClasses
 {
     public static class BusinessManager
     {
-        //common code
+        //common code from my side
     }
 }
