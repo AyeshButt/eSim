@@ -6,7 +6,7 @@ trigger:
 pr: none
 
 pool:
-  name: eSim-agent  # or your self-hosted agent name
+  name: eSim-AgentPool  # or your self-hosted agent name
 
 variables:
   buildConfiguration: 'Release'
