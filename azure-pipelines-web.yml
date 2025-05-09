@@ -7,6 +7,8 @@ pr: none
 
 pool:
   name: eSim-AgentPool  # or your self-hosted agent name
+  
+  condition: contains(variables['Build.SourceVersionMessage'],'[api proj]')
 
 variables:
   buildConfiguration: 'Release'
