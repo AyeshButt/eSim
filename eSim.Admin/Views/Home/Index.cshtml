@@ -3,6 +3,93 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Welcome To Role/Claim Based Access Control</h1>
 </div>
+
+
+<hr />
+@if (User.HasClaim("Users", "view"))
+{
+    <a asp-action="ManageUsers" asp-controller="Users" class="btn btn-secondary">Users</a>
+
+}
+@if (User.HasClaim("Pool", "view"))
+{
+    <a asp-action="Index" asp-controller="Pool" class="btn btn-danger">Pool</a>
+
+}
+@if (User.HasClaim("Subscribers", "view"))
+{
+    <a asp-action="Index" asp-controller="Subscribers" class="btn btn-primary">Subscribers</a>
+
+}
+@if (User.HasClaim("Active Bundles", "view"))
+{
+    <a asp-action="Index" asp-controller="ActiveBundle" class="btn btn-warning">Active Bundles</a>
+}
+@if (User.HasClaim("Roles", "view"))
+{
+    <a asp-action="ManageRoles" asp-controller="Roles" class="btn btn-primary">Roles</a>
+}
+
+@if (User.HasClaim("Claims", "view"))
+{
+    <a asp-action="ManageRoleClaims" asp-controller="Claims" class="btn btn-info"> Claims </a>
+
+}
+
+@if (User.HasClaim("SideMenus", "view"))
+{
+    <a asp-action="Index" asp-controller="SideMenus" class="btn btn-danger">SideMenus</a>
+
+}
+@if (User.HasClaim("Settings", "view"))
+{
+    <a asp-action="Index" asp-controller="Settings" class="btn btn-warning">Settings</a>
+
+}
+
+<a asp-action="Email" asp-controller="Account" class="btn btn-secondary">Email</a>
+
+<hr />
+
+
+@if (User.HasClaim(type: "Number Management", value: "view"))
+{
+    <button>
+        Number Management	view
+    </button>
+}
+
+
+@* @if (User.HasClaim(type: "Number Management", value: "create"))
+{
+    <button>
+        Number Management	Create
+    </button>
+}
+@if (User.HasClaim(type: "Number Management", value: "edit"))
+{
+    <button>
+        Number Management	Edit
+    </button>
+}
+
+@if (User.HasClaim(type: "Settings", value: "approve"))
+{
+    <button>
+        Settings	approve
+    </button>
+}
+@if (User.HasClaim(type: "Settings", value: "create"))
+{
+    <button>
+        Settings	Create
+    </button>
+}
+@if (User.HasClaim(type: "Settings", value: "delete"))
+{
+    <button>
+        Settings	delete
+    </button>
+} *@

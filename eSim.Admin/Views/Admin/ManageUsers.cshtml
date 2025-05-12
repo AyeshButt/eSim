@@ -1,0 +1,28 @@
+﻿@model List<eSim.Infrastructure.DTOs.UserDTO>
+
+<h4>Manager User</h4>
+
+<hr />
+
+<a asp-action="AddUser" class="btn btn-primary float-end mb-2">Add User</a>
+
+<table class="table table-bordered table-striped">
+    <tr>
+        <th>Id</th>
+        <th>Username</th>
+        <th>Action</th>
+    </tr>
+
+    @foreach(var user in Model)
+    {
+        <tr>
+            <td>@user.Id</td>
+            <td>@user.Username</td>
+            <td>
+                <a asp-action="EditUser" asp-route-id="@user.Id">edit</a>
+                
+                </td>
+        </tr>
+    }
+
+</table>

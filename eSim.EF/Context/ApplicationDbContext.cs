@@ -1,4 +1,7 @@
-﻿using System;
+﻿using eSim.EF.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +9,18 @@ using System.Threading.Tasks;
 
 namespace eSim.EF.Context
 {
-    public class ApplicationDbContext
+    public class ApplicationDbContext : IdentityDbContext
     {
+        public ApplicationDbContext(DbContextOptions options) : base(options)
+        {
+        }
+        public DbSet<ApplicationUser> ApplicationUser { get; set; }
+        public DbSet<SystemClaims> SystemClaims { get; set; }
+        public DbSet<SideMenu> SideMenu { get; set; }
+        public DbSet<OTPVerification> OTPVerification { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

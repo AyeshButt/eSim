@@ -1,0 +1,53 @@
+﻿@model List<eSim.Infrastructure.DTOs.ManageRoleClaimDTO>
+@{
+    ViewBag.Title = "Manage Role Claims";
+}
+<h4>Manage Role Claims</h4>
+
+<hr />
+@if (User.HasClaim("Settings", "create"))
+{
+    <a asp-action="AddRoleClaims" class=" float-end btn btn-primary ">Add Role Claim</a>
+
+}
+
+<div class="clearfix"></div>
+
+@foreach (var item in Model.OrderBy(u => u.ParentId).GroupBy(u => u.Title))
+{
+    <div class="card my-3">
+        <div class="card-header">
+            <strong>@item.Key</strong>
+        </div>
+        <div class="card-body">
+
+            @foreach (var type in item.OrderBy(u => u.ClaimType).GroupBy(u => u.ClaimType))
+                {
+                    <div class=" my-2 card">
+                        <div class="card-header">
+                            <strong>@type.Key</strong>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                @foreach (var last in type.OrderBy(u => u.ClaimValue))
+                                {
+                                    <div class="col-3">
+                                        @if (User.HasClaim("Claims", "edit"))
+                                        {
+                                            <a class="anchor-style" asp-action="EditRoleClaims" asp-controller="Claims" asp-route-id="@last.Id">@last.ClaimValue</a>
+                                        }
+                                        else
+                                        {
+                                            <p>@last.ClaimValue</p>
+                                        }
+                                    </div>
+
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                }
+        </div>
+    </div>
+}

@@ -1,0 +1,35 @@
+﻿@model eSim.Infrastructure.DTOs.RoleDTO
+
+@{
+    ViewBag.Title = "Add Role";
+}
+
+<h4>Add Role</h4>
+<hr />
+
+@if (TempData["ValidationError"] is not null)
+{
+
+    <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+        @TempData["ValidationError"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddRole" method="post" enctype="application/x-www-form-urlencoded">
+@*             <div asp-validation-summary="ModelOnly" class="text-danger"></div>          
+ *@
+ <div class="form-group">
+                <label asp-for="RoleName" class="control-label"></label>
+                <input asp-for="RoleName" class="form-control" placeholder="Enter your role name"/>
+                <span asp-validation-for="RoleName" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-2">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a class="btn btn-danger" asp-action="ManageRoles">Back</a>
+            </div>
+        </form>
+    </div>
+</div>

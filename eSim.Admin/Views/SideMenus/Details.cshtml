@@ -1,0 +1,54 @@
+﻿@model eSim.EF.Entities.SideMenu
+
+@{
+    ViewBag.Title = "Sub Menu Details";
+}
+@*     
+            <div class="form-group mt-2">
+            @if (User.HasClaim("SideMenus", "edit"))
+            {
+                <a asp-action="Edit" class="btn btn-primary" asp-route-id="@Model?.Id">Modify</a>
+
+            }
+                <a asp-action="Index" class="btn btn-danger">Cancel</a>
+            </div> *@
+
+<div class="card">
+    <div class="card-header">
+        <h4>Sub Menu Details</h4>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th class="text-center col-4">Title</th>
+                    <th class="text-center col-4">Controller Name</th>
+                    <th class="text-center col-4">Action Method Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="text-center col-4">@Model?.Title</td>
+
+                    <td class="text-center col-4">
+                        @(Model?.ControllerName is null ? "-" : Model.ControllerName)
+                    </td>
+
+                    <td class="text-center col-4">
+                        @(Model?.ActionName is null ? "-" : Model.ActionName)
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer">
+        <div class="float-end">
+            @if (User.HasClaim("SideMenus", "edit"))
+            {
+                <a asp-action="Edit" class="btn btn-primary" asp-route-id="@Model?.Id">Modify</a>
+
+            }
+            <a asp-action="Index" class="btn btn-danger">Cancel</a>
+        </div>
+    </div>
+</div>

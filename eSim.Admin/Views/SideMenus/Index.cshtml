@@ -1,0 +1,70 @@
+﻿@model IEnumerable<eSim.EF.Entities.SideMenu>
+
+@{
+    ViewBag.Title = "Manage SideMenus";
+
+    var list = Model.Where(u => u.ParentId == null);
+}
+
+<h4>Manage SideMenus</h4>
+<hr />
+
+@if (User.HasClaim("SideMenus", "create"))
+{
+    <a class="btn btn-primary float-end my-2" asp-action="Create">Add Side Menu</a>
+
+}
+
+<div class="clearfix"></div>
+
+@foreach (var item in Model.Where(u => u.ParentId != null).OrderBy(u => u.Title).GroupBy(u => u.ParentId))
+{
+
+    <div class="my-3">
+
+        <h4>@list.Where(u => u.Id == item.Key).Select(u => u.Title).FirstOrDefault()</h4>
+
+    </div>
+
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th class="col-4">
+                    @Html.DisplayNameFor(model => model.Title)
+                </th>
+                <th class="col-4">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var type in item.OrderBy(u => u.Title))
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => type.Title)
+                    </td>
+
+                    <td>
+                        @if (User.HasClaim("SideMenus", "edit"))
+                        {
+                            <a asp-action="Edit" class="mx-1" asp-route-id="@type.Id">Edit</a>
+
+                        }
+                        @if (User.HasClaim("SideMenus", "details"))
+                        {
+
+                            <a asp-action="Details" class="mx-1" asp-route-id="@type.Id">Details</a>
+                        }
+                        @if (User.HasClaim("SideMenus", "delete"))
+                        {
+                            <a asp-action="Delete" class="mx-1" asp-route-id="@type.Id">Delete</a>
+
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
+
