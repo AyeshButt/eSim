@@ -1,0 +1,46 @@
+﻿@model List<eSim.Infrastructure.DTOs.UserDTO>
+@{
+    ViewBag.Title = "Manage Users";
+}
+<h4>Manage Users</h4>
+
+<hr />
+@if (User.HasClaim("Users", "create"))
+{
+    <a asp-action="AddUser" class="btn btn-primary float-end mb-2">Add User</a>
+}
+
+<table class="table table-bordered table-striped">
+    <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Action</th>
+    </tr>
+
+    @foreach (var user in Model.OrderBy(u => u.Username).ThenBy(u => u.Email))
+    {
+        <tr>
+            <td>@user.Username</td>
+            <td>@user.Email</td>
+            <td>
+                @if (User.HasClaim("Users", "edit"))
+                {
+
+                    <a asp-action="EditUser" class="mx-1" asp-route-id="@user.Id">Edit</a>
+                }
+                @if (User.HasClaim("Users", "disable"))
+                {
+                    <a asp-action="DisableUser" class="mx-1" asp-route-id="@user.Id">Disable</a>
+
+                }
+                @if (User.HasClaim("Users", "delete"))
+                {
+                    <a asp-action="DeleteUser" class="mx-1" asp-route-id="@user.Id">Delete</a>
+
+                }
+
+            </td>
+        </tr>
+    }
+
+</table>

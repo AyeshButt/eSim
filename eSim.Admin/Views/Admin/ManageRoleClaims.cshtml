@@ -1,0 +1,58 @@
+﻿@model List<eSim.Infrastructure.DTOs.ManageRoleClaimDTO>
+
+<h4>Manager Role Claims</h4>
+
+<hr />
+
+<a asp-action="AddRoleClaims" class="btn btn-sm btn-outline-primary mb-2 float-end">Add Role Claim</a>
+
+<table class="table table-bordered table-striped">
+    <tr>
+        <th>Role</th>
+        <th>Action</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.ClaimType</td>
+            <td>@item.ClaimValue</td>
+            <td>
+                <a asp-action="EditRoleClaims" asp-route-id="@item.Id">edit</a>
+
+            </td>
+        </tr>
+    }
+
+</table>
+
+
+@foreach (var item in Model.GroupBy(u => u.ClaimType))
+{
+    <div class="card my-3">
+
+        <div class="card-header">
+            <strong>@item.Key</strong>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+
+                @foreach (var type in item)
+                {
+                    <div class="col-3">
+                        <a asp-action="EditRoleClaims" asp-controller="Roles" asp-route-id="@type.Id">@type.ClaimValue</a>
+                    </div>
+
+                }
+
+            </div>
+
+        </div>
+        <div class="card-footer">
+            @foreach (var type in item)
+            {
+            }
+        </div>
+    </div>
+}

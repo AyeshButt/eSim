@@ -30,7 +30,9 @@
     @Html.Partial("~/Views/Shared/_customizer.cshtml")
 
     @Html.Partial("~/Views/Shared/_vendor_scripts.cshtml")
-
+    @{
+        Html.RenderPartial("_ValidationScriptsPartial");
+    }
     @RenderSection("scripts", required: false)
 </body>
 </html>

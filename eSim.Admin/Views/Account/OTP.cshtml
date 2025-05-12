@@ -1,0 +1,45 @@
+﻿@model eSim.Infrastructure.DTOs.Account.OTPVerificationDTO
+
+@{
+    ViewData["Title"] = "OTP";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+
+<main class="form-signin">
+    <form asp-action="OTP" asp-controller="Account" method="post" enctype="application/x-www-form-urlencoded">
+        <div class="text-center">
+            <img class="mb-4" src="https://www.inovedia.com/wp-content/uploads/2020/04/logo.png" alt="" width="150">
+        </div>
+        <h4 class="h6 mb-1   text-center fw-normal">Enter your OTP</h4>
+
+        <input type="hidden" asp-for="Email" />
+        <input type="hidden" asp-for="UserId" />
+
+        <div class="text-center">
+            @if (TempData["OTPFailed"] is not null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+                    @TempData["OTPFailed"]
+                </div>
+            }
+        </div>
+
+        <div class="mb-1">
+            <input type="Text" class="form-control" asp-for="OTP" placeholder="Enter OTP">
+            <span class="text-danger" asp-validation-for="OTP"></span>
+        </div>
+
+
+        <button class="w-100 btn btn-outline-primary" type="submit">Submit</button>
+        <p class="mt-5 mb-3 text-muted text-center">Redirect to <a asp-action="Index" class="text-muted">Login</a>© 2025</p>
+    </form>
+</main>
+
+@section Scripts {
+
+    @{
+        Html.RenderPartial("_ValidationScriptsPartial");
+    }
+}
+

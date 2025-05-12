@@ -1,0 +1,73 @@
+﻿@model EmailEntity
+
+@if (TempData["Exception"] is not null)
+{
+    <div class="alert alert-danger text-center">
+        @TempData["Exception"]
+    </div>
+}
+@if (TempData["EmailSent"] is not null)
+{
+    <div class="alert alert-success text-center">
+        @TempData["EmailSent"]
+
+    </div>
+
+}
+<form id="myForm" class="contact quform" asp-action="Email" asp-controller="Account" method="post" enctype="multipart/form-data">
+    <div class="quform-elements">
+        <div class="row">
+
+            <div class="col-md-6">
+                <div class="quform-element form-group">
+                    <label asp-for="FromEmailAddress" class="form-label">From Email <span class="quform-required">*</span></label>
+                    <div class="quform-input">
+                        <input class="form-control" asp-for="FromEmailAddress" type="email" placeholder="Your email here">
+                    </div>
+                    <span asp-validation-for="FromEmailAddress" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="quform-element form-group">
+                    <label asp-for="ToEmailAddress" class="form-label">To Email <span class="quform-required">*</span> </label>
+                    <div class="quform-input">
+                        <input class="form-control" asp-for="ToEmailAddress" type="email" placeholder="Your email here">
+                    </div>
+                    <span asp-validation-for="ToEmailAddress" class="text-danger"></span>
+
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="quform-element form-group quform-select-replaced">
+                    <label asp-for="Subject" class="form-label">Your Subject  <span class="quform-required">*</span></label>
+                    <div class="quform-input">
+                        <input class="form-control" asp-for="Subject" type="text" placeholder="Your subject here">
+                    </div>
+                    <span asp-validation-for="Subject" class="text-danger"></span>
+
+                </div>
+            </div>
+
+
+
+            <div class="col-md-12">
+                <div class="quform-element form-group">
+                    <label asp-for="EmailBody" class="form-label">Message <span class="quform-required">*</span></label>
+                    <div class="quform-input">
+                        <textarea class="form-control" asp-for="EmailBody" rows="3" placeholder="Tell us a few words"></textarea>
+                    </div>
+                    <span asp-validation-for="EmailBody" class="text-danger"></span>
+
+                </div>
+            </div>
+
+            <div class="my-3 col-md-12">
+                <div class="quform-submit-inner">
+                    <button id="email-submit" class="btn btn-primary" type="submit">Send Message</button>
+                </div>
+                <div class="quform-loading-wrap text-start"><span class="quform-loading"></span></div>
+            </div>
+        </div>
+    </div>
+</form>
