@@ -18,9 +18,22 @@ namespace eSim.EF.Context
         public DbSet<SystemClaims> SystemClaims { get; set; }
         public DbSet<SideMenu> SideMenu { get; set; }
         public DbSet<OTPVerification> OTPVerification { get; set; }
+        public DbSet<Client> Client { get; set; }
+        public DbSet<ClientSettings> ClientSettings { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+
+            modelBuilder.Entity<ClientSettings>(entity =>
+            {
+                entity.HasOne(e => e.Client)
+                      .WithMany()
+                      .HasForeignKey(e => e.ClientId);
+            });
+
+
         }
     }
 }

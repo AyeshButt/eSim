@@ -8,6 +8,6 @@ namespace eSim.Infrastructure.Interfaces.Middleware
 {
     public interface IExternalApiService
     {
-        Task<string?> GetOrdersAsync();
+        string? GetOrders();
     }
 }
