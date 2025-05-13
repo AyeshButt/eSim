@@ -1,9 +1,10 @@
-﻿@model eSim.Infrastructure.DTOs.RoleDTO
+﻿@using eSim.Infrastructure.DTOs.AccessControl
+@model RoleDTO
 
 
 @{
     ViewBag.Title = "Edit Role";
-    var claims = ViewBag.Claims as List<eSim.Infrastructure.DTOs.ManageRoleClaimDTO>;
+    var claims = ViewBag.Claims as List<ManageRoleClaimDTO>;
 }
 
 <h4>Edit Role</h4>

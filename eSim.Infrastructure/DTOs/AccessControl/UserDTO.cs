@@ -1,4 +1,4 @@
-﻿namespace eSim.Infrastructure.DTOs
+﻿namespace eSim.Infrastructure.DTOs.AccessControl
 {
     public class UserDTO
     {

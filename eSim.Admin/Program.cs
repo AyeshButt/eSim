@@ -4,6 +4,7 @@ using eSim.EF.Entities;
 using eSim.Implementations.Services.Account;
 using eSim.Implementations.Services.Email;
 using eSim.Implementations.Services.SystemClaimRepo;
+using eSim.Infrastructure.DTOs.Email;
 using eSim.Infrastructure.Interfaces.Admin.Account;
 using eSim.Infrastructure.Interfaces.Admin.Email;
 using eSim.Infrastructure.Interfaces.SystemClaimRepo;
@@ -30,7 +31,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 builder.Services.AddScoped<ISystemClaimService, SystemClaimService>();
 builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
-
+builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailConfiguration"));
 
 builder.Services.
     AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -44,8 +45,6 @@ builder.Services.
 
     }).
     AddEntityFrameworkStores<ApplicationDbContext>();
-
-
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
