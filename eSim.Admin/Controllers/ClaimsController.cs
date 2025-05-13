@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using eSim.Infrastructure.DTOs;
 using eSim.EF.Entities;
 using eSim.Infrastructure.Interfaces.SystemClaimRepo;
+using eSim.Infrastructure.DTOs.AccessControl;
 
 namespace eSim.Admin.Controllers
 {

@@ -1,4 +1,5 @@
-﻿@model eSim.Infrastructure.DTOs.LoginDTO
+﻿@using eSim.Infrastructure.DTOs.Account
+@model LoginDTO
 
 
 @{
@@ -56,10 +57,6 @@
             <input class="form-control" asp-for="Password" placeholder="password">
             <span class="" asp-validation-for="Password"></span>
         </div>
-
-
-
-
 
         <div class="mb-1 float-start">
             <label>

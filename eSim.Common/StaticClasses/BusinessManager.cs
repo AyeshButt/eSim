@@ -15,6 +15,10 @@ namespace eSim.Common.StaticClasses
         public static string UserNotFound { get; } = "Email not found. Please check the entered email address and try again.";
 
         public static string EmailSubject = "Forgot Password";
+        public static string EmailTo = "ayeshbutt012@gmail.com";
+
+        public static string LoginFailed = "Enter correct email or password.";
+        public static string EmailSent = "Email sent successfully";
         public static string EmailBody = "Use this OTP to set your new password ";
         public static string EmailNotReceived = "Error occurred while sending email. Try again !!!";
         public static string OTPDetailsNotAdded = "Error occurred while adding OTP details. Try again !!!";
