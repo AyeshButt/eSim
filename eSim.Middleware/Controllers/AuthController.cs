@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using eSim.EF.Entities;
 namespace eSim.Middleware.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -41,6 +41,8 @@ namespace eSim.Middleware.Controllers
         {
             return Ok("This is a public endpoint.");
         }
+
+
 
     }
 }

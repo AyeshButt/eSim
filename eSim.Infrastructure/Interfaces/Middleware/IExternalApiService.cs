@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace eSim.Infrastructure.Interfaces.Middleware
 {
-    public interface IAuthService
+    public interface IExternalApiService
     {
-        string? Authenticate(string username, string password);
+        Task<string?> GetOrdersAsync();
     }
 }

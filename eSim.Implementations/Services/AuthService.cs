@@ -21,7 +21,7 @@ namespace eSim.Implementations.Services
             _config = config;
         }
 
-        public string Authenticate(string username, string password)
+        public string? Authenticate(string username, string password)
         {
             // Replace with DB check in real apps
             if (username != "admin" || password != "123")
@@ -31,17 +31,19 @@ namespace eSim.Implementations.Services
             {
             new Claim(ClaimTypes.Name, username)
         };
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"] ?? string.Empty));
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(
-                issuer: _config["Jwt:Issuer"],
-                audience: _config["Jwt:Audience"],
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_config["Jwt:ExpiresInMinutes"])),
-                signingCredentials: creds
-            );
+                var token = new JwtSecurityToken(
+                    issuer: _config["Jwt:Issuer"],
+                    audience: _config["Jwt:Audience"],
+                    claims: claims,
+                    expires: DateTime.Now.AddMinutes(Convert.ToDouble(_config["Jwt:ExpiresInMinutes"])),
+                    signingCredentials: creds
+                );
+
+            
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
