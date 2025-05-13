@@ -1,0 +1,66 @@
+﻿@using eSim.Infrastructure.DTOs.AccessControl
+@model RoleDTO
+
+
+@{
+    var claims = ViewBag.Claims as List<ManageRoleClaimDTO>;
+}
+
+
+<h4>Edit Role</h4>
+<hr />
+<form asp-action="EditRole" method="post" enctype="application/x-www-form-urlencoded">
+
+<div class="row">
+    <div class="col-md-4">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="RoleName" class="control-label"></label>
+                <input asp-for="RoleName" class="form-control" />
+                <span asp-validation-for="RoleName" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-2">
+               
+            </div>
+            <input asp-for="Id" type="hidden" />
+
+    </div>
+</div>
+
+
+
+
+
+
+    @for(int sideMenu = 0; sideMenu < Model.Claims.Count(); sideMenu++)
+    {
+        <div class="card">
+            <div class="card-header">
+            <span>@Model.Claims[sideMenu].First().Type</span>
+            </div>
+            <div class="card-body">
+            @for (int menu = 0; menu < Model.Claims[sideMenu].Count(); menu++)
+                {
+
+                <input asp-for="Claims[sideMenu][menu].isSelected" type="checkbox" />
+                <input asp-for="Claims[sideMenu][menu].Value" type="hidden" />
+                    <input asp-for="Claims[sideMenu][menu].Type" type="hidden" />
+                <span>@Model.Claims[sideMenu][menu].Value</span>
+                    <br />
+
+                }
+            </div>
+        </div>
+    }
+
+
+<div class="card mt-3">
+    <div class="card-footer">
+        <input type="submit" value="Update" class="btn btn-primary" />
+        <a class="btn btn-danger" asp-action="ManageRoles">Back to List</a>
+    </div>
+    
+</div>
+
+        </form>
+

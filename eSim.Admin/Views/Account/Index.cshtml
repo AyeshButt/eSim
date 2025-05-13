@@ -1,0 +1,82 @@
+﻿@using eSim.Infrastructure.DTOs.Account
+@model LoginDTO
+
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+<style>
+
+    .field-validation-error {
+        color: darkred;
+    }
+
+</style>
+
+
+
+<main class="form-signin">
+    <form asp-action="Index" asp-controller="Account" method="post" enctype="application/x-www-form-urlencoded">
+        <div class="text-center">
+            <img class="mb-4" src="https://www.inovedia.com/wp-content/uploads/2020/04/logo.png" alt="" width="150">
+        </div>
+      
+        <h4 class="h6 mb-3   text-center fw-normal">Deployed via CICD</h4>
+        @if (TempData["LoginFailed"] is not null)
+        {
+            <div class="alert alert-danger text-center">
+                @TempData["LoginFailed"]
+            </div>
+        }
+        @if (TempData["PasswordSuccessfullyReset"] is not null)
+        {
+            <div class="alert alert-success text-center">
+                @TempData["PasswordSuccessfullyReset"]
+            </div>
+        }
+        @if (TempData["LockedOut"] is not null)
+        {
+            <div class="text-center alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["LockedOut"]
+                
+            </div>
+        }
+
+        <div class="mb-1">
+            <label for="Email" class="form-label">Email address  <span class="text-danger">*</span></label>
+            <input class="form-control" asp-for="Email" placeholder="name@example.com">
+            <span class="" asp-validation-for="Email"></span>
+
+        </div>
+
+
+        <div class="mb-1">
+            <label for="Email" class="form-label">Password  <span class="text-danger">*</span></label>
+            <input class="form-control" asp-for="Password" placeholder="password">
+            <span class="" asp-validation-for="Password"></span>
+        </div>
+
+        <div class="mb-1 float-start">
+            <label>
+                <input type="checkbox" value="remember-me"> Remember me
+            </label>
+        </div>
+        <button class="w-100 btn btn-outline-primary" type="submit">Sign in</button>
+        <p class="mt-5 mb-3 text-muted text-center">© 2025</p>
+        <a asp-action="Register" class="mt-5 mb-3 text-muted text-center">Register</a>
+        <span class="float-end">
+            <a asp-action="ForgotPassword" class="mt-5 mb-3 text-muted text-center">Forgot password?</a>
+        </span>
+    </form>
+</main>
+
+
+@section Scripts {
+
+    @{
+        Html.RenderPartial("_ValidationScriptsPartial");
+    }
+}
+

@@ -1,0 +1,23 @@
+﻿@using eSim.Infrastructure.DTOs.AccessControl
+@model RoleDTO
+
+
+
+<h4>ManageRoleDTO</h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddRole" method="post" enctype="application/x-www-form-urlencoded">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>          
+            <div class="form-group">
+                <label asp-for="RoleName" class="control-label"></label>
+                <input asp-for="RoleName" class="form-control" />
+                <span asp-validation-for="RoleName" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-2">
+                <input type="submit" value="Create" class="btn btn-primary" /> <a class="btn btn-danger" asp-action="ManageRoles">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>

@@ -9,7 +9,7 @@ using eSim.Infrastructure.Interfaces.Middleware;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace eSim.Implementations.Services
+namespace eSim.Implementations.Services.Auth
 {
     public class AuthService : IAuthService
     {

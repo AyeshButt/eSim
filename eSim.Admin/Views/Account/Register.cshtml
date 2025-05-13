@@ -1,0 +1,60 @@
+﻿@model eSim.Infrastructure.DTOs.Account.RegisterDTO
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+<style>
+
+    .field-validation-error {
+        color: darkred;
+    }
+
+</style>
+
+
+<main class="form-signin">
+    <form asp-action="Register" asp-controller="Account" method="post" enctype="application/x-www-form-urlencoded">
+        <div class="text-center">
+            <img class="mb-4" src="https://www.inovedia.com/wp-content/uploads/2020/04/logo.png" alt="" width="150">
+        </div>
+      
+        <h4 class="h6 mb-3   text-center fw-normal">Start the Session</h4>
+
+
+
+        <div class="mb-1">
+            <label for="Email" class="form-label">Email address  <span class="text-danger">*</span></label>
+            <input class="form-control" asp-for="Email" placeholder="name@example.com">
+            <span class="" asp-validation-for="Email"></span>
+
+        </div>
+
+
+        <div class="mb-1">
+            <label for="Email" class="form-label">Password  <span class="text-danger">*</span></label>
+            <input class="form-control" asp-for="Password" placeholder="password">
+            <span class="" asp-validation-for="Password"></span>
+        </div>
+
+                <div class="mb-1">
+            <label for="Email" class="form-label">Confirm Password  <span class="text-danger">*</span></label>
+            <input class="form-control" asp-for="ConfirmPassword" placeholder="confirm password">
+            <span class="" asp-validation-for="ConfirmPassword"></span>
+        </div>
+
+
+        <button class="w-100 btn btn-outline-primary" type="submit">Register</button>
+        <p class="mt-5 mb-3 text-muted text-center">© 2025</p>
+    </form>
+</main>
+
+
+@section Scripts {
+
+    @{
+        Html.RenderPartial("_ValidationScriptsPartial");
+    }
+}
+

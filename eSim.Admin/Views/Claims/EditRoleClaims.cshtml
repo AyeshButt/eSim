@@ -1,0 +1,81 @@
+﻿@using eSim.Infrastructure.DTOs.AccessControl
+@model RoleClaimDTO
+
+@{
+    ViewBag.Title = "Edit Role Claim";
+}
+
+<h4>Edit Role Claim</h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditRoleClaims" method="post" enctype="application/x-www-form-urlencoded">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <input asp-for="Id" type="hidden" />
+           
+            <div class="form-group">
+                <label asp-for="ParentType" class="control-label">Parent</label>
+                <select id="dropdown1" asp-items="@ViewBag.RolesList" asp-for="ParentType" class="form-control">
+                    <option value="">---Select---</option>
+                </select>
+                <span asp-validation-for="ParentType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ClaimType" class="control-label">Title</label>
+                <select id="dropdown2" asp-items="@ViewBag.SideMenuChild" asp-for="ClaimType" class="form-control">
+                    <option value="">---Select---</option>
+                </select>
+                <span asp-validation-for="ClaimType" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ClaimValue" class="control-label">Claim Value</label>
+                <input asp-for="ClaimValue" class="form-control" placeholder="Enter your claim value"/>
+                <span asp-validation-for="ClaimValue" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-2">
+                <input type="submit" value="Update" class="btn btn-primary" /> 
+                <a class="btn btn-danger" asp-action="ManageRoleClaims">Back</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            // Trigger the AJAX call when the dropdown value changes (or on page load if needed)
+            $('#dropdown1').change(function () {
+                var selectedId = $(this).val(); // Get selected value from the first dropdown
+
+                if (selectedId) {
+                    // Make AJAX call to get options for the second dropdown
+                    $.ajax({
+                        url: '@Url.Action("GetOptions", "Claims")', // Adjust with your actual controller and action URL
+                        type: 'GET',
+                        data: { id: selectedId },
+                        success: function (data) {
+                            // Clear the dropdown before appending new options
+                            $('#dropdown2').empty();
+
+                            // Append the "---Select---" option
+                            $('#dropdown2').append('<option value="">---Select---</option>');
+
+                            // Loop through the returned data and add each option
+                            $.each(data, function (index, item) {
+                                $('#dropdown2').append('<option value="' + item + '">' + item + '</option>');
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            console.log('Error: ' + error);
+                        }
+                    });
+                }
+            });
+        });
+
+    </script>
+}

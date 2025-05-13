@@ -1,0 +1,36 @@
+﻿@using eSim.Infrastructure.DTOs.AccessControl
+@model List<ManageRoleDTO>
+@{
+    ViewBag.Title = "Manage Roles";
+}
+<h4>Manage Roles</h4>
+
+<hr />
+@if (User.HasClaim("Roles", "create"))
+{
+    <a asp-action="AddRole" class="btn btn-primary float-end mb-2">Add Role</a>
+
+}
+
+<table class="table table-bordered table-striped">
+    <tr>
+        <th>Role</th>
+        <th>Action</th>
+    </tr>
+
+    @foreach (var user in Model.OrderBy(u=>u.RoleName))
+    {
+        <tr>
+            <td>@user.RoleName</td>
+            <td>
+                @if (User.HasClaim("Roles", "edit"))
+                {
+                    <a asp-action="EditRole" asp-route-id="@user.Id">Edit</a>
+
+                }
+
+            </td>
+        </tr>
+    }
+
+</table>

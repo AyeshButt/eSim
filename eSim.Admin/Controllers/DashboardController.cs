@@ -44,5 +44,13 @@ namespace eSim.Admin.Controllers
         {
             return View();
         }
+        public IActionResult UserClaims()
+        {
+            return View();
+        }
+        public IActionResult SettingClaims()
+        {
+            return View();
+        }
     }
 }

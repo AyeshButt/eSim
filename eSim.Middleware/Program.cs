@@ -1,11 +1,11 @@
-﻿using eSim.Implementations.Services;
-using eSim.Infrastructure.Interfaces.Middleware;
+﻿using eSim.Infrastructure.Interfaces.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using eSim.Implementations.Services.Auth;
 
 
 var builder = WebApplication.CreateBuilder(args);
