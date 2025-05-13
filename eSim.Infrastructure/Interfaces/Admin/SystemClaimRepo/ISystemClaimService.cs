@@ -1,5 +1,4 @@
-﻿
-using eSim.Infrastructure.DTOs;
+﻿using eSim.Infrastructure.DTOs.AccessControl;
 
 namespace eSim.Infrastructure.Interfaces.SystemClaimRepo
 {

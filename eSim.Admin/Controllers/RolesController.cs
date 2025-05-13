@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using eSim.Infrastructure.DTOs;
 using eSim.EF.Entities;
 using eSim.Infrastructure.Interfaces.SystemClaimRepo;
 using System.Security.Claims;
+using eSim.Infrastructure.DTOs.AccessControl;
 
-namespace RCBAC.Controllers
+namespace eSim.Admin.Controllers
 {
     public class RolesController : Controller
     {
@@ -227,11 +227,6 @@ namespace RCBAC.Controllers
             }
             return View(model: input);
         }
-
-
-
-
-
 
         #endregion
 

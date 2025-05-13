@@ -1,5 +1,5 @@
 ﻿using eSim.EF.Context;
-using eSim.Infrastructure.DTOs;
+using eSim.Infrastructure.DTOs.AccessControl;
 using eSim.Infrastructure.Interfaces.SystemClaimRepo;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,8 +1,9 @@
-﻿@model eSim.Infrastructure.DTOs.RoleDTO
+﻿@using eSim.Infrastructure.DTOs.AccessControl
+@model RoleDTO
 
 
 @{
-    var claims = ViewBag.Claims as List<eSim.Infrastructure.DTOs.ManageRoleClaimDTO>;
+    var claims = ViewBag.Claims as List<ManageRoleClaimDTO>;
 }
 
 

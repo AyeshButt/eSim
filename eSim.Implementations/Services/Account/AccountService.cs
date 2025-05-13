@@ -1,6 +1,6 @@
 ﻿using eSim.EF.Context;
 using eSim.EF.Entities;
-using eSim.Infrastructure.DTOs;
+using eSim.Infrastructure.DTOs.AccessControl;
 using eSim.Infrastructure.DTOs.Account;
 using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.Interfaces.Admin.Account;
@@ -19,28 +19,39 @@ namespace eSim.Implementations.Services.Account
             _db = db;
         }
 
-        public async Task<UserDTO?> VerifyEmail(string email)
+        public async Task<Result<UserDTO>> VerifyEmail(string email)
         {
+            Result<UserDTO> result = new();
+
             var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == email);
+
             if (user is null)
             {
-                return null;
+                result.Data = null;
+            }
+            else
+            {
+                var model = new UserDTO()
+                {
+                    Id = user.Id,
+                    Email = user.Email
+                };
+
+                result.Success = true;
+                result.Data = model;
             }
 
-            return new UserDTO()
-            {
-                Id = user.Id,
-                Email = user.Email
-            };
+            return result;
         }
-        public async Task<Result> AddOTPDetails(OTPVerificationDTO details)
+        public async Task<Result<string>> AddOTPDetails(OTPVerificationDTO details)
         {
-            Result result = new Result();
+            Result<string> result = new();
 
             try
             {
                 OTPVerification OTPDetails = new OTPVerification()
                 {
+                    Id = Guid.NewGuid().ToString(),
                     IsValid = details.IsValid,
                     OTP = details.OTP,
                     SentTime = details.SentTime,
@@ -55,41 +66,67 @@ namespace eSim.Implementations.Services.Account
             }
             catch (Exception ex)
             {
-                result.Message = ex.Message;
+                result.Data = ex.Message;
             }
 
             return result;
         }
 
-        public async Task<OTPVerificationDTO?> GetValidOTPDetails(string userId)
+        public async Task<Result<OTPVerificationDTO>> GetValidOTPDetails(string userId)
         {
+            Result<OTPVerificationDTO> result = new();
+
             var OTPDetails = await _db.OTPVerification.FirstOrDefaultAsync(u => u.UserId == userId && u.IsValid == true);
 
-            return OTPDetails == null ? null : new OTPVerificationDTO
+            if (OTPDetails == null)
             {
-                UserId = OTPDetails.UserId,
-                OTP = OTPDetails.OTP,
-                SentTime = OTPDetails.SentTime,
-                Type = OTPDetails.Type,
-                IsValid = OTPDetails.IsValid,
-            };
-        }
-        public async Task<OTPVerificationDTO?> VerifyOTP(OTPVerificationDTO details)
-        {
-            var OTPDetails = await _db.OTPVerification.FirstOrDefaultAsync(u => u.OTP == details.OTP);
+                result.Data = null;
+            }
+            else
+            {
+                result.Data = new OTPVerificationDTO
+                {
+                    UserId = OTPDetails.UserId,
+                    OTP = OTPDetails.OTP,
+                    SentTime = OTPDetails.SentTime,
+                    Type = OTPDetails.Type,
+                    IsValid = OTPDetails.IsValid,
+                };
 
-            return OTPDetails == null ? null : new OTPVerificationDTO
-            {
-                UserId = OTPDetails.UserId,
-                OTP = OTPDetails.OTP,
-                SentTime = OTPDetails.SentTime,
-                Type = OTPDetails.Type,
-                IsValid = OTPDetails.IsValid,
-            };
+                result.Success = true;
+            }
+
+            return result;
         }
-        public async Task<Result> RemoveOTPDetails(string userId)
+        public async Task<Result<OTPVerificationDTO>> VerifyOTP(OTPVerificationDTO input)
         {
-            Result result = new();
+            Result<OTPVerificationDTO> result = new();
+
+            var OTPDetails = await _db.OTPVerification.FirstOrDefaultAsync(u => u.OTP == input.OTP);
+           
+            if (OTPDetails == null)
+            {
+                result.Data = null;
+            }
+            else
+            {
+                result.Data = new OTPVerificationDTO
+                {
+                    UserId = OTPDetails.UserId,
+                    OTP = OTPDetails.OTP,
+                    SentTime = OTPDetails.SentTime,
+                    Type = OTPDetails.Type,
+                    IsValid = OTPDetails.IsValid,
+                };
+
+                result.Success = true;
+            }
+            return result;
+
+        }
+        public async Task<Result<string>> RemoveOTPDetails(string userId)
+        {
+            Result<string> result = new();
             try
             {
                 var otpDetailsList = await _db.OTPVerification.Where(u => u.UserId == userId).ToListAsync();
@@ -105,7 +142,7 @@ namespace eSim.Implementations.Services.Account
             }
             catch (Exception ex)
             {
-               result.Message = ex.Message;
+                result.Data = ex.Message;
             }
             return result;
         }
