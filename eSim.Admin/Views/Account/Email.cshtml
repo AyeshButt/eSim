@@ -1,5 +1,7 @@
-﻿@model EmailEntity
-
+﻿@model eSim.Infrastructure.DTOs.Email.EmailDTO
+@{
+    ViewBag.Title = "Email";
+}
 @if (TempData["Exception"] is not null)
 {
     <div class="alert alert-danger text-center">
@@ -20,20 +22,11 @@
 
             <div class="col-md-6">
                 <div class="quform-element form-group">
-                    <label asp-for="FromEmailAddress" class="form-label">From Email <span class="quform-required">*</span></label>
+                    <label asp-for="To" class="form-label">To Email <span class="quform-required">*</span> </label>
                     <div class="quform-input">
-                        <input class="form-control" asp-for="FromEmailAddress" type="email" placeholder="Your email here">
+                        <input class="form-control" asp-for="To" type="email" placeholder="Your email here">
                     </div>
-                    <span asp-validation-for="FromEmailAddress" class="text-danger"></span>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="quform-element form-group">
-                    <label asp-for="ToEmailAddress" class="form-label">To Email <span class="quform-required">*</span> </label>
-                    <div class="quform-input">
-                        <input class="form-control" asp-for="ToEmailAddress" type="email" placeholder="Your email here">
-                    </div>
-                    <span asp-validation-for="ToEmailAddress" class="text-danger"></span>
+                    <span asp-validation-for="To" class="text-danger"></span>
 
                 </div>
             </div>
@@ -53,11 +46,11 @@
 
             <div class="col-md-12">
                 <div class="quform-element form-group">
-                    <label asp-for="EmailBody" class="form-label">Message <span class="quform-required">*</span></label>
+                    <label asp-for="Body" class="form-label">Message <span class="quform-required">*</span></label>
                     <div class="quform-input">
-                        <textarea class="form-control" asp-for="EmailBody" rows="3" placeholder="Tell us a few words"></textarea>
+                        <textarea class="form-control" asp-for="Body" rows="3" placeholder="Tell us a few words"></textarea>
                     </div>
-                    <span asp-validation-for="EmailBody" class="text-danger"></span>
+                    <span asp-validation-for="Body" class="text-danger"></span>
 
                 </div>
             </div>

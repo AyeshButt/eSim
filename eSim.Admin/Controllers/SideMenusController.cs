@@ -10,7 +10,7 @@ using eSim.EF.Context;
 using eSim.Infrastructure.DTOs;
 using eSim.EF.Entities;
 
-namespace RCBAC.Controllers
+namespace eSim.Admin.Controllers
 {
     public class SideMenusController : Controller
     {

@@ -7,8 +7,9 @@ using eSim.Common;
 using eSim.Infrastructure.DTOs;
 using eSim.EF.Entities;
 using eSim.Common.StaticClasses;
+using eSim.Infrastructure.DTOs.AccessControl;
 
-namespace RCBAC.Controllers
+namespace eSim.Admin.Controllers
 {
     public class UsersController : Controller
     {
