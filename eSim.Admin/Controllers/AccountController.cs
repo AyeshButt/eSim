@@ -132,11 +132,11 @@ namespace eSim.Admin.Controllers
             return View(model: input);
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> LogOut()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction(actionName: "Index");
+            return RedirectToAction("Index","Account");
         }
 
         [HttpGet]

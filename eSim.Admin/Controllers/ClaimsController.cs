@@ -117,7 +117,7 @@ namespace eSim.Admin.Controllers
             var subSideMenu = _systemClaims.GetSubSideMenus(sideMenuId).ToList();
 
             //// Filter options based on the selected id
-            var filteredOptions = subSideMenu.Select(u => u.Title).ToList();
+            var filteredOptions = subSideMenu.Select(u => u.ClaimType).ToList();
 
             return Json(filteredOptions);
         }
