@@ -6,6 +6,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using eSim.Implementations.Services.Auth;
+using eSim.Infrastructure.Interfaces.ConsumeApi;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -62,7 +63,9 @@ builder.Services.AddSwaggerGen(options =>
 
 });
 
+//services registration
 
+builder.Services.AddTransient<IConsumeApi, IConsumeApi>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 // ✅ Enable CORS(allow from frontend)
 builder.Services.AddCors(options =>
