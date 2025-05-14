@@ -109,13 +109,13 @@ namespace eSim.Implementations.Services.SystemClaimRepo
 
         public IQueryable<SideMenuDTO> GetSideMenus()
         {
-            var output = _db.SideMenu.Select(a => new SideMenuDTO { Id = a.Id, Title = a.Title,ParentId = a.ParentId });
+            var output = _db.SideMenu.Select(a => new SideMenuDTO { Id = a.Id, Title = a.Title,ParentId = a.ParentId,ClaimType = a.ClaimType });
 
             return output;
         }
         public IQueryable<SideMenuDTO> GetSubSideMenus(int sideMenuId)
         {
-            var output = _db.SideMenu.Where(u=>u.ParentId == sideMenuId).Select(a => new SideMenuDTO { Id = a.Id, Title = a.Title, ParentId = a.ParentId });
+            var output = _db.SideMenu.Where(u=>u.ParentId == sideMenuId).Select(a => new SideMenuDTO { Id = a.Id, Title = a.Title, ParentId = a.ParentId,ClaimType = a.ClaimType });
 
             return output;
         }

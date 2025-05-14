@@ -10,5 +10,6 @@ namespace eSim.EF.Entities
         public string? ActionName { get; set; }
         public string Title { get; set; }
         public int? ParentId { get; set; }
+        public string ClaimType { get; set; }
     }
 }
