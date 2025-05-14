@@ -192,7 +192,7 @@ namespace eSim.Admin.Controllers
 
             EmailDTO email = new EmailDTO();
 
-            email.To = BusinessManager.EmailTo;
+            email.To = OTPDetails.Email;
             email.Subject = BusinessManager.EmailSubject;
             email.Body = BusinessManager.EmailBody + OTPDetails.OTP;
 
