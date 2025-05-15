@@ -1,4 +1,5 @@
-﻿using System;
+﻿using eSim.Infrastructure.DTOs.Global;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -11,7 +12,7 @@ namespace eSim.EF.Entities
 
 
     [Table("Settings", Schema = "client")]
-    public class ClientSettings
+    public class ClientSettings : EntityBase
     {
         [Key]
         public Guid Id { get; set; }

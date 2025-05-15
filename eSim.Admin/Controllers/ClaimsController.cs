@@ -100,7 +100,7 @@ namespace eSim.Admin.Controllers
 
         }
         private void BindSideMenuWithParents(int? parentId = null)
-        {
+       {
             if (parentId is null)
             {
                 ViewBag.SideMenuChild = _systemClaims.GetSideMenus().Where(u => u.ParentId != null).Select(a => new SelectListItem { Text = a.Title, Value = a.Title }).ToList();

@@ -1,0 +1,25 @@
+﻿@model eSim.Infrastructure.DTOs.Client.ClientSettingsDTO
+
+@{
+    ViewData["Title"] = "Update Client Settings";
+}
+@if (TempData["UpdateClientSettings"] is not null)
+{
+    @TempData["UpdateClientSettings"]
+}
+<form asp-action="UpdateClientSettings" asp-controller="ClientSettings" method="post">
+
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <input type="hidden" name="ClientId" value="@Model.ClientId" />
+
+    <div>
+        <label asp-for="FixedCommission" class="form-label">Fixed Commission</label>
+        <input type="text" asp-for="FixedCommission" class="form-control" placeholder="Enter fixed commission" />
+        <span asp-validation-for="FixedCommission" class="text-danger"></span>
+    </div>
+
+    <div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a asp-controller="ClientSettings" asp-action="Index" asp-route-id = "@Model.ClientId" class="my-2 btn btn-warning">Back</a>
+    </div>
+</form>
