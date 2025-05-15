@@ -1,0 +1,64 @@
+﻿@model List<eSim.Infrastructure.DTOs.Client.ClientDTO>
+
+@{
+    ViewData["Title"] = "Client Index";
+}
+
+@if (TempData["ClientError"] is not null)
+{
+ <div class="alert alert-danger text-center my-3">
+     @TempData["ClientError"]
+ </div>   
+}
+@if (TempData["ClientNotFound"] is not null)
+{
+ <div class="alert alert-danger text-center my-3">
+        @TempData["ClientNotFound"]
+ </div>   
+}
+@if (TempData["ClientStatus"] is not null)
+{
+ <div class="alert alert-success text-center my-3">
+        @TempData["ClientStatus"]
+ </div>   
+}
+@if (TempData["ClientUpdated"] is not null)
+{
+    <div class="alert alert-success text-center my-3">
+        @TempData["ClientUpdated"]
+    </div>
+}
+@if (TempData["ClientCreated"] is not null)
+{
+    <div class="alert alert-success text-center my-3">
+        @TempData["ClientCreated"]
+    </div>
+}
+<a asp-action="CreateClient" asp-controller="Client" class="btn btn-danger">Create Client</a>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Is Active</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.IsActive</td>
+                <td>
+                    <a class="mx-2" asp-action="DisableClient" asp-controller="Client" asp-route-id="@item.Id">@(item.IsActive ? "Disable" : "Enable")</a>
+                    <a class="mx-2" asp-action="UpdateClient" asp-controller="Client" asp-route-id="@item.Id">Update</a>
+                    <a class="mx-2" asp-action="Index" asp-controller="ClientSettings" asp-route-id="@item.Id">Client Settings</a>
+                </td>
+
+            </tr>
+            
+        }
+    </tbody>
+</table>

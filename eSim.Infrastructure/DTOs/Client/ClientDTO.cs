@@ -2,34 +2,26 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace eSim.EF.Entities
+namespace eSim.Infrastructure.DTOs.Client
 {
-    [Table("Clients", Schema = "master")]
-    public class Client : EntityBase
+    public class ClientDTO : EntityBase
     {
         public Guid Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage ="Name is required")]
         [MaxLength(100)]
         public string Name { get; set; } = null!;
 
-        [Required]
         [MaxLength(30)]
-        public string Kid { get; set; } = null!;
+        public string? Kid { get; set; }
 
-        [Required]
         [MaxLength(50)]
-        public string Secret { get; set; } = null!;
+        public string? Secret { get; set; }
 
         public bool IsActive { get; set; } = true;
-
-
-
-
     }
 }

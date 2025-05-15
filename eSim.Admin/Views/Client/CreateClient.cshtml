@@ -1,0 +1,27 @@
+﻿@model eSim.Infrastructure.DTOs.Client.ClientDTO
+
+@{
+    ViewData["Title"] = "Create Client";
+}
+@if (TempData["ClientError"] is not null)
+{
+    <div class="alert alert-danger text-center my-3">
+        @TempData["ClientError"]
+    </div>
+}
+<form asp-action="CreateClient" asp-controller="Client" method="post">
+    <div>
+        <label asp-for="Name" class="form-label">Name</label>
+        <input type="text" asp-for="Name" class="form-control" placeholder="Enter your name"/>
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+        <label asp-for="IsActive" class="form-label">Is Active</label>
+        <input type="checkbox" asp-for="IsActive"/>
+        <span asp-validation-for="IsActive" class="text-danger"></span>
+    
+    <div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a asp-controller="Client" asp-action="Index" class="my-2 btn btn-warning">Back</a>
+    </div>
+</form>
