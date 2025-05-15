@@ -11,6 +11,9 @@ using eSim.EF.Context;
 using Microsoft.EntityFrameworkCore;
 using eSim.Infrastructure.Interfaces.ConsumeApi;
 
+using eSim.Implementations.Services.Middleware.Bundle;
+using eSim.Common.StaticClasses;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -80,10 +83,11 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 //services registration
-
-builder.Services.AddTransient<IConsumeApi, IConsumeApi>();
+builder.Services.AddHttpClient();
+builder.Services.AddTransient<IConsumeApi, ConsumeAPI>();
 builder.Services.AddTransient<IAuthService, AuthService>();
-builder.Services.AddHttpClient<IExternalApiService, ExternalApiService>();
+builder.Services.AddTransient<IBundleService, BundleService>();
+
 
 
 // ✅ Enable CORS(allow from frontend)

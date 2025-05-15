@@ -24,21 +24,34 @@ namespace eSim.Common.StaticClasses
         //Consume Get Api
         public async Task<T?> GetApi<T>(string Url)
         {
-            T? response = default;
+            T? response = default;  
 
             try
             {
-                var request = await _httpClient.GetAsync(Url);
-                request.Headers.Add("x-apiKey", _apiKey);
+                var req = new HttpRequestMessage(HttpMethod.Get, Url);
+                req.Headers.Add("x-api-Key", _apiKey);
+
+                var request = await _httpClient.SendAsync(req);
+                var sss = await request.Content.ReadAsStringAsync();
 
                 response = JsonConvert.DeserializeObject<T>(await request.Content.ReadAsStringAsync());
+
+
+
+
+         
+
             }
             catch (Exception ex)
             {
                 return default(T?);
             }
             return response;
-        }
+        
+        
+        
+        
+}
 
         //Consume Post Api
         public async Task<T?> PostApi<T, I>(string Url, I? input)
