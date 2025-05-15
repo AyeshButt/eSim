@@ -7,12 +7,26 @@ using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using eSim.Implementations.Services.Auth;
 using eSim.Implementations.Services.Middleware;
+using eSim.EF.Context;
+using Microsoft.EntityFrameworkCore;
+using eSim.Infrastructure.Interfaces.ConsumeApi;
 
 
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
+// Retrieve connection string from appsettings.json
+var connectionString = builder.Configuration.GetConnectionString("AppDbConnection");
+
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    Console.WriteLine("Unable to load the connection string from appsettings.json");
+}
+
+// Register DbContext with the retrieved connection string
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString));
 
 builder.Services.AddControllers(config =>
 {
@@ -65,7 +79,9 @@ builder.Services.AddSwaggerGen(options =>
 
 });
 
+//services registration
 
+builder.Services.AddTransient<IConsumeApi, IConsumeApi>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddHttpClient<IExternalApiService, ExternalApiService>();
 

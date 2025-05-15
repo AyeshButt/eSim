@@ -4,10 +4,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using eSim.EF.Entities;
+using eSim.Infrastructure.DTOs.Middleware;
 
 namespace eSim.Middleware.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -21,14 +22,14 @@ namespace eSim.Middleware.Controllers
         }
         [AllowAnonymous]
         [HttpPost("login")]
-        public IActionResult Login([FromBody] Login model)
+        public IActionResult Login([FromBody] AuthDTO model)
         {
-            var token = _authService.Authenticate(model.Username, model.Password);
+            var token = _authService.Authenticate(model);
 
             if (token == null)
-                return Unauthorized("Invalid credentials");
+                return Unauthorized(new { message = "Invalid-credentials" });
 
-            return Ok(new { Token = token });
+            return Ok(new { access_token = token });
         }
 
         //[Authorize]

@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/eSim.Admin/appsettings.json
+/eSim.Admin/appsettings.json
+/.gitignore

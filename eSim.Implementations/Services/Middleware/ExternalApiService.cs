@@ -18,17 +18,22 @@ namespace eSim.Implementations.Services.Middleware
 
         public string? GetOrders()
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, "https://api.esim-go.com/v2.4/orders");
+            var url = "https://api.esim-go.com/v2.4/catalogue?perPage=50&direction=desc&orderBy=speed&region=Asia";
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+
+
+            
+
 
             // ✅ Add API Key in the header
-            request.Headers.Add("x-api-key", "7DdOrJC3Y3tBmESsjPGjJIGOHg-Md8QQzsdiAndR");
+            request.Headers.Add("x-api-key", "5iiPSVJSr0LUtbJRLxHyxOVNg-kyYZ4UngIGktEs");
 
             var response = _httpClient.SendAsync(request).GetAwaiter().GetResult();
 
             if (!response.IsSuccessStatusCode)
             {
                 var error = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                Console.WriteLine("API Error: " + error); // for debugging
+                Console.WriteLine("API Error: " + error);
                 return null;
             }
 

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using eSim.EF.Context;
+using eSim.Infrastructure.DTOs.Middleware;
 using eSim.Infrastructure.Interfaces.Middleware;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -14,36 +16,44 @@ namespace eSim.Implementations.Services.Auth
     public class AuthService : IAuthService
     {
 
-        private readonly IConfiguration _config;
 
-        public AuthService(IConfiguration config)
+
+        private readonly ApplicationDbContext _db;
+
+        private readonly IConfiguration _configuration;
+
+        public AuthService(ApplicationDbContext db, IConfiguration configuration)
         {
-            _config = config;
+            _db = db;
+            _configuration = configuration;
         }
 
-        public string? Authenticate(string username, string password)
+        public string? Authenticate(AuthDTO input)
         {
-            // Replace with DB check in real apps
-            if (username != "admin" || password != "123")
+
+
+            var client = _db.Client.FirstOrDefault(a => a.IsActive && a.Kid == input.Username && a.Secret == input.Password);
+
+            if (client is null)
                 return null;
 
             var claims = new[]
             {
-            new Claim(ClaimTypes.Name, username)
-        };
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"] ?? string.Empty));
+                 new Claim("client-id", client.Id.ToString())
+            };
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? string.Empty));
 
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-                var token = new JwtSecurityToken(
-                    issuer: _config["Jwt:Issuer"],
-                    audience: _config["Jwt:Audience"],
-                    claims: claims,
-                    expires: DateTime.Now.AddMinutes(Convert.ToDouble(_config["Jwt:ExpiresInMinutes"])),
-                    signingCredentials: creds
-                );
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_configuration["Jwt:ExpiresInMinutes"])),
+                signingCredentials: creds
+            );
 
-            
+
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
