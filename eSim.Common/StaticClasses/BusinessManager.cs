@@ -26,5 +26,9 @@ namespace eSim.Common.StaticClasses
         public static string LinkExpired = "Link Expired. Get a new link!!!";
 
         public static string PasswordSuccessfullyReset = "Password Successfully Reset";
+
+        public static string BaseURL = "https://api.esim-go.com/v2.4";
+
+
     }
 }
