@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /eSim.Admin/appsettings.json
 /eSim.Admin/appsettings.json
+/.gitignore

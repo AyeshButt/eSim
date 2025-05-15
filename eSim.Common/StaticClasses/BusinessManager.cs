@@ -96,5 +96,9 @@ namespace eSim.Common.StaticClasses
             return DateTime.UtcNow;
         }
 
+
+        public static string BaseURL = "https://api.esim-go.com/v2.4";
+
+
     }
 }
