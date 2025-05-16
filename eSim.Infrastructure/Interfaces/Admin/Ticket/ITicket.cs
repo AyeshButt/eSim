@@ -9,8 +9,9 @@ namespace eSim.Infrastructure.Interfaces.Admin.Ticket
 {
     public interface ITicket
     {
-        public Task<IQueryable<TicketDTO>> GetAllTicketsAsync();
-        public Task<IQueryable<TicketDTO>> FilterTicketsAsync(TicketDTO input);
-
+        public Task<IQueryable<TicketListDTO>> GetAllTicketsAsync();
+        public Task<IQueryable<TicketStatusDTO>> GetStatusListAsync();
+        public Task<IQueryable<TicketTypeDTO>> GetTypeListAsync();
+ 
     }
 }
