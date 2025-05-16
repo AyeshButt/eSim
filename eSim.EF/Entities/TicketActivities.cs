@@ -16,6 +16,7 @@ namespace eSim.EF.Entities
         public string TicketId { get; set; } = null!;
         public string Attachment { get; set; } = null!;
         public int AttachmentType { get; set; }
+        public Guid? ActivityId { get; set; }
 
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using eSim.Infrastructure.DTOs.Global;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 namespace eSim.EF.Entities
 {
     [Table("TicketActivities", Schema = "client")]
-    public class TicketActivities
+    public class TicketActivities 
     {
         [Key]
         public Guid Id { get; set; }
@@ -19,7 +20,8 @@ namespace eSim.EF.Entities
         public int CommentType { get; set; }
         public bool IsVisibleToCustomer { get; set; }
         public string ActivityBy { get; set; } = null!;
-        public DateTime CreatedAt { get; set; }
+        public DateTime ActivityAt { get; set; }
+
 
     }
 }

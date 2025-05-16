@@ -5,10 +5,12 @@ using eSim.Implementations.Services.Account;
 using eSim.Implementations.Services.Client;
 using eSim.Implementations.Services.Email;
 using eSim.Implementations.Services.SystemClaimRepo;
+using eSim.Implementations.Services.Ticket;
 using eSim.Infrastructure.DTOs.Email;
 using eSim.Infrastructure.Interfaces.Admin.Account;
 using eSim.Infrastructure.Interfaces.Admin.Client;
 using eSim.Infrastructure.Interfaces.Admin.Email;
+using eSim.Infrastructure.Interfaces.Admin.Ticket;
 using eSim.Infrastructure.Interfaces.SystemClaimRepo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -35,6 +37,7 @@ builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddTransient<IClient, ClientService>();
 builder.Services.AddTransient<IClientSettings, ClientSettingsService>();
+builder.Services.AddTransient<ITicket, TicketService>();
 builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailConfiguration"));
 
 builder.Services.

@@ -13,6 +13,7 @@ namespace eSim.Admin.Controllers
             _logger = logger;
         }
 
+        [HttpGet("dc")]
         public IActionResult Index()
         {
             //testing ci pipeline changes

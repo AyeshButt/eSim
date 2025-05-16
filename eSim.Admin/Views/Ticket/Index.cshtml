@@ -1,0 +1,36 @@
+﻿@model List<eSim.Infrastructure.DTOs.Ticket.TicketDTO>
+
+@{
+    ViewData["Title"] = "Tickets List";
+}
+
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>TRN</th>
+            <th>Subject</th>
+            <th>Status</th>
+            <th>Ticket Type</th>
+            <th>Created At</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.TRN</td>
+                <td>@item.Subject</td>
+                <td>@item.Status</td>
+                <td>@item.TicketType</td>
+                <td>@item.CreatedAt</td>
+                <td>
+                    <a class="mx-2" asp-action="TicketDetails" asp-controller="Ticket" asp-route-id="@item.Id">Ticket Details</a>
+                </td>
+
+            </tr>
+
+        }
+    </tbody>
+</table>
