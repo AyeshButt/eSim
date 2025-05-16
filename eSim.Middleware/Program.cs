@@ -1,4 +1,5 @@
-﻿using eSim.Infrastructure.Interfaces.Middleware;
+﻿
+using eSim.Infrastructure.Interfaces.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -13,6 +14,8 @@ using eSim.Infrastructure.Interfaces.ConsumeApi;
 
 using eSim.Implementations.Services.Middleware.Bundle;
 using eSim.Common.StaticClasses;
+using eSim.Implementations.Services.Middleware.Ticket;
+using eSim.Infrastructure.Interfaces.Middleware.Ticket;
 
 
 
@@ -87,6 +90,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddTransient<IConsumeApi, ConsumeAPI>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IBundleService, BundleService>();
+builder.Services.AddTransient<ITicketServices, TicketService>();
 
 
 
