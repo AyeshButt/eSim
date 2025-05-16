@@ -1,19 +1,14 @@
-﻿using eSim.Infrastructure.DTOs.Global;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace eSim.EF.Entities
+namespace eSim.Infrastructure.DTOs.Ticket
 {
-    [Table("Ticket", Schema = "client")]
-
-    public class Ticket : EntityBase
+    public class TicketDTO
     {
-        [Key]
         public Guid Id { get; set; }
 
         [MaxLength(15)]
@@ -22,6 +17,8 @@ namespace eSim.EF.Entities
         public string Subject { get; set; } = null!;
         public string Description { get; set; } = null!;
         public int TicketType { get; set; }
+        public DateTime CreatedAt { get; set; }
         public int Status { get; set; }
     }
 }
+
