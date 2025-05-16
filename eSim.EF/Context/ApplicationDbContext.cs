@@ -24,6 +24,8 @@ namespace eSim.EF.Context
         public DbSet<Ticket> Ticket { get; set; }
         public DbSet<TicketAttachments> TicketAttachments { get; set; }
         public DbSet<TicketActivities> TicketActivities { get; set; }
+        public DbSet<TicketStatus> TicketStatus { get; set; }
+        public DbSet<TicketType> TicketType { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

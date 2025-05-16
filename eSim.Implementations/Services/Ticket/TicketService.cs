@@ -21,25 +21,48 @@ namespace eSim.Implementations.Services.Ticket
             _logger = logger;
         }
 
-        public async Task<IQueryable<TicketDTO>> FilterTicketsAsync(TicketDTO input)
+        public async Task<IQueryable<TicketListDTO>> GetAllTicketsAsync()
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<IQueryable<TicketDTO>> GetAllTicketsAsync()
-        {
-            var ticketList = _db.Ticket.AsNoTracking().Select(u => new TicketDTO()
-            {
-                Id = u.Id,
-                TRN = u.TRN,
-                TicketType = u.TicketType,
-                Subject = u.Subject,
-                Status = u.Status,
-                Description = u.Description,
-                CreatedAt = u.CreatedAt,
-            }).AsQueryable();
+            var ticketList = (from ti in _db.Ticket
+                              join ty in _db.TicketType on ti.TicketType equals ty.Id
+                              join st in _db.TicketStatus on ti.Status equals st.Id
+                              select new TicketListDTO()
+                              {
+                                  Id = ti.Id,
+                                  TRN = ti.TRN,
+                                  StatusName = st.Status,
+                                  TypeName = ty.Type,
+                                  Status = ti.Status,
+                                  CreatedAt = ti.CreatedAt,
+                                  Description = ti.Description,
+                                  Subject = ti.Subject,
+                                  TicketType = ti.TicketType,
+                              }
+                              ).AsQueryable();
 
             return await Task.FromResult(ticketList);
+        }
+
+        public async Task<IQueryable<TicketStatusDTO>> GetStatusListAsync()
+        {
+            var statusList = _db.TicketStatus.AsNoTracking().Select(u => new TicketStatusDTO()
+            {
+                Id = u.Id,
+                Status = u.Status,
+            }).AsQueryable();
+
+            return await Task.FromResult(statusList);
+        }
+
+        public async Task<IQueryable<TicketTypeDTO>> GetTypeListAsync()
+        {
+            var typeList = _db.TicketType.AsNoTracking().Select(u => new TicketTypeDTO()
+            {
+                Id = u.Id,
+                Type = u.Type,
+            }).AsQueryable();
+
+            return await Task.FromResult(typeList);
         }
     }
 }
