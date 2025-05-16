@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 
 namespace eSim.Infrastructure.DTOs.Ticket
 {
-    public class TicketDTO
+    public class 
+        
+        TicketDTO
     {
         public Guid Id { get; set; }
 
