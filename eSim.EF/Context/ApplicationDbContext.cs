@@ -20,6 +20,7 @@ namespace eSim.EF.Context
         public DbSet<OTPVerification> OTPVerification { get; set; }
         public DbSet<Client> Client { get; set; }
         public DbSet<ClientSettings> ClientSettings { get; set; }
+        public DbSet<GlobalSetting> GlobalSetting { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
