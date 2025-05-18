@@ -17,6 +17,7 @@ namespace eSim.Admin.Controllers
         }
 
         [Route("admin/home")]
+        [HttpGet("dc")]
         public IActionResult Index()
         {
             //testing ci pipeline changes
