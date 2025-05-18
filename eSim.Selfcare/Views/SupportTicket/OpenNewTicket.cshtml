@@ -1,0 +1,66 @@
+﻿@{
+    ViewBag.Title = "Support";
+    ViewBag.pTitle = "Open New Ticket";
+    ViewBag.pageTitle = "Support";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card" style="box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;">
+            <div class="card-header text-center align-items-center d-flex bg-primary">
+                <h6 class="card-title text-white mb-0 flex-grow-1">Open New Ticket</h6>
+            </div><!-- end card header -->
+
+            <div class="card-body">
+                <div class="live-preview">
+                    <form action="javascript:void(0);">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label for="subject" class="form-label">Subject</label>
+                                    <input type="text" class="form-control rounded-5" placeholder="Enter Subject" id="subject">
+                                </div>
+                            </div><!--end col-->
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Description</label>
+                                    <textarea type="text" class="form-control rounded-5" id="description" rows="5"></textarea>
+                                </div>
+                            </div><!--end col-->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label id="attachment-label" for="attachment" class="btn btn-outline-primary rounded-pill">
+                                        <i class="bi bi-paperclip"></i> Attachment
+                                    </label>
+                                    <input id="attachment" type="file" hidden onchange="updateFileName()" />
+                                </div>
+                            </div>
+                            <!--end col-->
+                            <div class="col-lg-12">
+                                <div class="text-end">
+                                   <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </div><!--end col-->
+                        </div><!--end row-->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+     function updateFileName() {
+        const input = document.getElementById("attachment");
+        const label = document.getElementById("attachment-label");
+
+        if (input.files.length > 0) {
+            const fileName = input.files[0].name;
+            label.innerHTML = `<i class="bi bi-paperclip"></i> ${fileName}`;
+        } else {
+            label.innerHTML = `<i class="bi bi-paperclip"></i> Attachment`;
+        }
+    }
+</script>

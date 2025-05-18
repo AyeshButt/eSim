@@ -2,8 +2,11 @@ using eSim.Admin.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
+
+
 namespace eSim.Admin.Controllers
 {
+    
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -13,6 +16,7 @@ namespace eSim.Admin.Controllers
             _logger = logger;
         }
 
+        [Route("admin/home")]
         public IActionResult Index()
         {
             //testing ci pipeline changes
