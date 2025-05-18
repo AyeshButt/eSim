@@ -31,6 +31,7 @@ namespace eSim.Infrastructure.DTOs.AccessControl
     {
         public int Id { get; set; }
         public string Title { get; set; }
+        public string ClaimType { get; set; }
         public int? ParentId { get; set; }
     }
 

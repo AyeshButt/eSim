@@ -1,4 +1,5 @@
-﻿using eSim.Infrastructure.Interfaces.Middleware;
+﻿
+using eSim.Infrastructure.Interfaces.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -6,11 +7,32 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using eSim.Implementations.Services.Auth;
+using eSim.Implementations.Services.Middleware;
+using eSim.EF.Context;
+using Microsoft.EntityFrameworkCore;
+using eSim.Infrastructure.Interfaces.ConsumeApi;
+
+using eSim.Implementations.Services.Middleware.Bundle;
+using eSim.Common.StaticClasses;
+using eSim.Implementations.Services.Middleware.Ticket;
+using eSim.Infrastructure.Interfaces.Middleware.Ticket;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
+// Retrieve connection string from appsettings.json
+var connectionString = builder.Configuration.GetConnectionString("AppDbConnection");
+
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    Console.WriteLine("Unable to load the connection string from appsettings.json");
+}
+
+// Register DbContext with the retrieved connection string
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString));
 
 builder.Services.AddControllers(config =>
 {
@@ -25,6 +47,7 @@ builder.Services.AddControllers(config =>
 //builder.Services.AddOpenApi();
 
 builder.Services.AddEndpointsApiExplorer();
+
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -62,8 +85,15 @@ builder.Services.AddSwaggerGen(options =>
 
 });
 
-
+//services registration
+builder.Services.AddHttpClient();
+builder.Services.AddTransient<IConsumeApi, ConsumeAPI>();
 builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddTransient<IBundleService, BundleService>();
+builder.Services.AddTransient<ITicketServices, TicketService>();
+
+
+
 // ✅ Enable CORS(allow from frontend)
 builder.Services.AddCors(options =>
 {

@@ -65,7 +65,7 @@ namespace eSim.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ControllerName,ActionName,Title,ParentId")] SideMenu sideMenu)
+        public async Task<IActionResult> Create([Bind("Id,ControllerName,ActionName,ClaimType,Title,ParentId")] SideMenu sideMenu)
         {
             if (ModelState.IsValid)
             {

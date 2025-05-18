@@ -5,6 +5,7 @@
     ViewBag.Title = "Add Role Claim";
 }
 
+
 <h4>Add Role Claim</h4>
 <hr />
 
@@ -45,8 +46,11 @@
 
 
 @section scripts {
+@*     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+ *@
     <script>
         $(document).ready(function () {
+            console.log($);
             // Trigger the AJAX call when the dropdown value changes (or on page load if needed)
             $('#dropdown1').change(function () {
                 var selectedId = $(this).val(); // Get selected value from the first dropdown

@@ -132,11 +132,11 @@ namespace eSim.Admin.Controllers
             return View(model: input);
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> LogOut()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction(actionName: "Index");
+            return RedirectToAction("Index","Account");
         }
 
         [HttpGet]
@@ -192,7 +192,7 @@ namespace eSim.Admin.Controllers
 
             EmailDTO email = new EmailDTO();
 
-            email.To = BusinessManager.EmailTo;
+            email.To = OTPDetails.Email;
             email.Subject = BusinessManager.EmailSubject;
             email.Body = BusinessManager.EmailBody + OTPDetails.OTP;
 

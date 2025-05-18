@@ -19,4 +19,11 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\eSim.Common\eSim.Common.csproj" />
+    <ProjectReference Include="..\eSim.EF\eSim.EF.csproj" />
+    <ProjectReference Include="..\eSim.Implementations\eSim.Implementations.csproj" />
+    <ProjectReference Include="..\eSim.Infrastructure\eSim.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

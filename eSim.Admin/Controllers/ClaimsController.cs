@@ -100,7 +100,7 @@ namespace eSim.Admin.Controllers
 
         }
         private void BindSideMenuWithParents(int? parentId = null)
-        {
+       {
             if (parentId is null)
             {
                 ViewBag.SideMenuChild = _systemClaims.GetSideMenus().Where(u => u.ParentId != null).Select(a => new SelectListItem { Text = a.Title, Value = a.Title }).ToList();
@@ -117,7 +117,7 @@ namespace eSim.Admin.Controllers
             var subSideMenu = _systemClaims.GetSubSideMenus(sideMenuId).ToList();
 
             //// Filter options based on the selected id
-            var filteredOptions = subSideMenu.Select(u => u.Title).ToList();
+            var filteredOptions = subSideMenu.Select(u => u.ClaimType).ToList();
 
             return Json(filteredOptions);
         }

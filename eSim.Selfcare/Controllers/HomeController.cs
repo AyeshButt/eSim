@@ -4,6 +4,8 @@ using System.Diagnostics;
 
 namespace eSim.Selfcare.Controllers
 {
+
+   
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -13,6 +15,8 @@ namespace eSim.Selfcare.Controllers
             _logger = logger;
         }
 
+        [HttpGet]
+        [Route("selfcare/home")]
         public IActionResult Index()
         {
             return View();

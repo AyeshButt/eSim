@@ -1,0 +1,43 @@
+﻿@model eSim.Infrastructure.DTOs.Client.ClientSettingsDTO
+
+@{
+    ViewData["Title"] = "Client Settings Index";
+}
+
+@if (ViewBag.ClientSettingsNotFound is not null)
+{
+    <div class="alert alert-danger text-center my-3">
+        @ViewBag.ClientSettingsNotFound
+    </div>
+}
+
+<a class="btn btn-danger mx-2" asp-action="UpdateClientSettings" asp-controller="ClientSettings" asp-route-id="@TempData["clientid"]">Update</a>
+
+@if(Model is null)
+{
+    
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Fixed Commission</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            <tr>
+                <td>@Model.Name</td>
+                <td>@Model.FixedCommission</td>
+
+
+            </tr>
+
+
+        </tbody>
+    </table>
+}
+
