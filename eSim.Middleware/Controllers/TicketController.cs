@@ -18,7 +18,7 @@ namespace eSim.Middleware.Controllers
         #region Generate Ticket
         [AllowAnonymous]
         [HttpPost("create")]
-        public async Task<IActionResult> CreateTicket([FromBody] TicketDTO ticketDto)
+        public async Task<IActionResult> CreateTicket([FromBody] CreateTicketApiDto ticketDto)
         {
             try
             {
