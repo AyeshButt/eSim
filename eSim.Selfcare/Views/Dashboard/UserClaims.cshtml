@@ -1,0 +1,11 @@
+﻿@{
+    ViewBag.Title = "User Claims";
+}
+
+<h1>User Claims</h1>    <p>@User.FindAll("Settings")</p>
+
+
+
+@if (User.HasClaim("Home", "View"))
+{
+}

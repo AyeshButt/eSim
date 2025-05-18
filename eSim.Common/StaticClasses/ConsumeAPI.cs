@@ -65,8 +65,10 @@ namespace eSim.Common.StaticClasses
 
             try
             {
+                var httpreq = new HttpRequestMessage(HttpMethod.Post, Url);
+                httpreq.Headers.Add("X-API-Key", _apiKey);
                 var request = await _httpClient.PostAsJsonAsync(Url, input);
-                request.Headers.Add("x-apiKey", _apiKey);
+               
 
                 response = JsonConvert.DeserializeObject<T>(await request.Content.ReadAsStringAsync());
             }
