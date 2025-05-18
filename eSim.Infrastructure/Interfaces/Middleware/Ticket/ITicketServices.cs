@@ -3,12 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.DTOs.Ticket;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace eSim.Infrastructure.Interfaces.Middleware.Ticket
 {
     public interface ITicketServices
     {
-        Task<CreateTicketApiDto> CreateTicketAsync(CreateTicketApiDto ticketDto);
+        Task<Result<string?>> CreateTicketAsync(TicketRequestDTO ticketDto);
+        Result<IQueryable<TicketsResponseDTO>> Tickets();
+
+
+        Result<List<TicketTypeResponseDTO>> GetTicketType();
+
+
     }
 }

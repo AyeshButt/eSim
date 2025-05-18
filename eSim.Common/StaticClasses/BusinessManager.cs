@@ -9,6 +9,7 @@ namespace eSim.Common.StaticClasses
 {
     public static class BusinessManager
     {
+        public static string BaseURL = "https://api.esim-go.com/v2.4";
         public static string DefaultPassword = "Dev@123";
         public static string LockedOut = "User is locked out";
 
@@ -97,7 +98,17 @@ namespace eSim.Common.StaticClasses
         }
 
 
-        public static string BaseURL = "https://api.esim-go.com/v2.4";
+        public static long UnixOffSetTime()
+        {
+            return DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+           
+         
+        }
+        public static string GenerateTRN()
+        {
+            return $"TRN-{UnixOffSetTime()}";
+        }
+
 
 
     }
