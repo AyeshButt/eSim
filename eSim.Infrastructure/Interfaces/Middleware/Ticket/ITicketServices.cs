@@ -9,6 +9,6 @@ namespace eSim.Infrastructure.Interfaces.Middleware.Ticket
 {
     public interface ITicketServices
     {
-        Task<TicketDTO> CreateTicketAsync(TicketDTO ticketDto);
+        Task<CreateTicketApiDto> CreateTicketAsync(CreateTicketApiDto ticketDto);
     }
 }
