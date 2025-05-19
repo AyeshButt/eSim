@@ -305,6 +305,23 @@ namespace eSim.EF.Migrations
                     b.ToTable("Settings", "client");
                 });
 
+            modelBuilder.Entity("eSim.EF.Entities.GlobalSetting", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("FixedCommission")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("PercentageCommission")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Settings", "master");
+                });
+
             modelBuilder.Entity("eSim.EF.Entities.OTPVerification", b =>
                 {
                     b.Property<string>("Id")

@@ -34,17 +34,20 @@ if (string.IsNullOrWhiteSpace(connectionString))
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
+
+
+
+
 builder.Services.AddControllers(config =>
 {
-    var policy=new AuthorizationPolicyBuilder()  
+    var policy = new AuthorizationPolicyBuilder()
     .RequireAuthenticatedUser()
 
 
     .Build();
     config.Filters.Add(new AuthorizeFilter(policy));
 });
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-//builder.Services.AddOpenApi();
+
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -94,7 +97,7 @@ builder.Services.AddTransient<ITicketServices, TicketService>();
 
 
 
-// ✅ Enable CORS(allow from frontend)
+//  Enable CORS(allow for frontend)
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
