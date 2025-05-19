@@ -15,6 +15,8 @@ namespace eSim.Admin.Controllers
             _client = client;
         }
 
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -103,7 +105,7 @@ namespace eSim.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> DisableClient(Guid id)
+        public async Task<IActionResult> DisableClient(Guid id, bool enabled)
         {
             if (string.IsNullOrEmpty(id.ToString()))
             {
@@ -128,7 +130,7 @@ namespace eSim.Admin.Controllers
 
             TempData["ClientStatus"] = BusinessManager.ClientStatus;
 
-            return RedirectToAction("Index");
+            return Json(new { success = true, id = id, enabled = enabled });
         }
     }
 }
