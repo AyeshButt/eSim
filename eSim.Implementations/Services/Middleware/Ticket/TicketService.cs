@@ -23,7 +23,7 @@ namespace eSim.Implementations.Services.Middleware.Ticket
         {
             _Db = Db;
         }
-
+        #region CreateTicket
         public async Task<Result<string?>> CreateTicketAsync(TicketRequestDTO ticketDto)
         {
 
@@ -63,7 +63,9 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                 };
             }
         }
+        #endregion
 
+        #region GetTicketType
         public Result<List<TicketTypeResponseDTO>> GetTicketType()
         {
             List<TicketTypeResponseDTO> list = _Db.TicketType.AsNoTracking().
@@ -72,7 +74,9 @@ namespace eSim.Implementations.Services.Middleware.Ticket
 
             return new Result<List<TicketTypeResponseDTO>>() { Data = list };
         }
+        #endregion
 
+        #region TicketsResponse
         public Result<IQueryable<TicketsResponseDTO>> Tickets()
         {
             var types = _Db.TicketType.AsNoTracking();
@@ -87,5 +91,57 @@ namespace eSim.Implementations.Services.Middleware.Ticket
 
             return new Result<IQueryable<TicketsResponseDTO>>() { Data = tickets.OrderByDescending(a=>a.CreatedAt) };
         }
+        #endregion
+
+        #region TicketAttachment
+        public async  Task<Result<string?>> UploadAttachmentAsync(TicketAttachmentDTO dto)
+        {
+            try
+            {
+                var ticket = await _Db.Ticket.FirstOrDefaultAsync(x => x.TRN == dto.TRN);
+                if (ticket == null)
+                    return new Result<string?> { Success = false, Message = "Ticket not found." };
+
+                
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+                if (!Directory.Exists(uploadsFolder))
+                    Directory.CreateDirectory(uploadsFolder);
+
+                var fileName = $"{Guid.NewGuid()}_{dto.File.FileName}";
+                var filePath = Path.Combine(uploadsFolder, fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await dto.File.CopyToAsync(stream);
+                }
+
+           
+                var attachment = new TicketAttachments
+                {
+                    Id = Guid.NewGuid(),
+                    TicketId = ticket.Id.ToString(),
+                    Attachment = $"/uploads/{fileName}",
+                    AttachmentType = dto.AttachmentType,
+                    ActivityId = dto.ActivityId
+                };
+
+                _Db.TicketAttachments.Add(attachment);
+                await _Db.SaveChangesAsync();
+
+                return new Result<string?>
+                {
+                    Data = attachment.Attachment,
+                    Message = "Attachment uploaded successfully."
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Result<string?>
+                {
+                    Success = false,
+                    Message = "Error uploading attachment."
+                };
+            }
+        }
+        #endregion
     }
 }
