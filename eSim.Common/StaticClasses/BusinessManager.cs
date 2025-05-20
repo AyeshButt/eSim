@@ -94,9 +94,9 @@ namespace eSim.Common.StaticClasses
             }
             return new string(result);
         }
-    
 
-    public static DateTime GetDateTimeNow()
+
+        public static DateTime GetDateTimeNow()
         {
             return DateTime.UtcNow;
         }
@@ -105,8 +105,8 @@ namespace eSim.Common.StaticClasses
         public static long UnixOffSetTime()
         {
             return DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-           
-         
+
+
         }
         public static string GenerateTRN()
         {
@@ -116,4 +116,71 @@ namespace eSim.Common.StaticClasses
 
 
     }
+    public static class PasswordHasher
+    {
+        // Configuration parameters (can be adjusted)
+        private const int SaltSize = 16; // 128 bits
+        private const int HashSize = 32; // 256 bits
+        private const int Iterations = 100000; // Adjust based on your performance needs
+        public static string HashPassword(string password)
+        {
+            // Generate a random salt
+            byte[] salt = new byte[SaltSize];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(salt);
+            }
+
+            // Create the hash with the salt
+            byte[] hash = CreateHash(password, salt);
+
+            // Combine salt and hash
+            byte[] hashBytes = new byte[SaltSize + HashSize];
+            Array.Copy(salt, 0, hashBytes, 0, SaltSize);
+            Array.Copy(hash, 0, hashBytes, SaltSize, HashSize);
+
+            // Convert to base64 for storage
+            return Convert.ToBase64String(hashBytes);
+        }
+
+        /// <summary>
+        /// Verifies a password against a stored hash
+        /// </summary>
+        public static bool VerifyPassword(string password, string storedHash)
+        {
+            // Extract bytes from stored hash
+            byte[] hashBytes = Convert.FromBase64String(storedHash);
+
+            // Get the salt from the stored hash
+            byte[] salt = new byte[SaltSize];
+            Array.Copy(hashBytes, 0, salt, 0, SaltSize);
+
+            // Create hash with extracted salt
+            byte[] computedHash = CreateHash(password, salt);
+
+            // Compare computed hash with stored hash
+            for (int i = 0; i < HashSize; i++)
+            {
+                if (hashBytes[i + SaltSize] != computedHash[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private static byte[] CreateHash(string password, byte[] salt)
+        {
+            using (var pbkdf2 = new Rfc2898DeriveBytes(
+                password: password,
+                salt: salt,
+                iterations: Iterations,
+                hashAlgorithm: HashAlgorithmName.SHA256))
+            {
+                return pbkdf2.GetBytes(HashSize);
+            }
+        }
+    }
 }
+
+

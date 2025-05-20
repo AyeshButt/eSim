@@ -16,6 +16,7 @@ using eSim.Implementations.Services.Middleware.Bundle;
 using eSim.Common.StaticClasses;
 using eSim.Implementations.Services.Middleware.Ticket;
 using eSim.Infrastructure.Interfaces.Middleware.Ticket;
+using eSim.Implementations.Services.Middleware.Subscriber;
 
 
 
@@ -94,6 +95,7 @@ builder.Services.AddTransient<IConsumeApi, ConsumeAPI>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IBundleService, BundleService>();
 builder.Services.AddTransient<ITicketServices, TicketService>();
+builder.Services.AddTransient<ISubscriberService, SubscriberService>();
 
 
 
