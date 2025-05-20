@@ -21,6 +21,7 @@ namespace eSim.Middleware.Controllers
 
 
         #region Generate Ticket
+       
         [HttpGet]
         public IActionResult Get()
         {
@@ -70,6 +71,29 @@ namespace eSim.Middleware.Controllers
         public IActionResult GET()
         {
             return Ok(_ticketServices.GetTicketType());
+        }
+
+        #endregion
+        #region TicketAttachment
+        [AllowAnonymous]
+        [HttpPost("UploadAttachment")]
+        public async Task<IActionResult> UploadAttachment([FromForm] TicketAttachmentDTO dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = "Invalid data provided.",
+                    Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
+                });
+            }
+            var result = await _ticketServices.UploadAttachmentAsync(dto);
+
+            if (result.Success)
+                return Ok(result);
+            else
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
         }
 
         #endregion

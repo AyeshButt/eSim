@@ -151,7 +151,7 @@ namespace eSim.Implementations.Services.Client
                     return result;
                 }
 
-                findClient.IsActive = input.IsActive;
+                //findClient.IsActive = input.IsActive;
                 findClient.Name = input.Name;
                 findClient.ModifiedBy = input.ModifiedBy;
                 findClient.ModifiedAt = BusinessManager.GetDateTimeNow();

@@ -13,6 +13,7 @@ namespace eSim.Infrastructure.Interfaces.Middleware.Ticket
     {
         Task<Result<string?>> CreateTicketAsync(TicketRequestDTO ticketDto);
         Result<IQueryable<TicketsResponseDTO>> Tickets();
+        Task<Result<string?>> UploadAttachmentAsync(TicketAttachmentDTO dto);
 
 
         Result<List<TicketTypeResponseDTO>> GetTicketType();
