@@ -17,42 +17,53 @@ namespace eSim.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(Guid id)
+        public async Task<IActionResult> Index(string id)
         {
-            if (string.IsNullOrEmpty(id.ToString()))
+            if(!Guid.TryParse(id,out Guid parseId))
             {
-                return RedirectToAction("Index", "Client");
+                return RedirectToAction("Error", "Home");
             }
+            
+            var verifyClient = await _clientSettings.CheckIfClientExists(parseId);
 
-            var clientSettingsList = await _clientSettings.GetClientSettingsAsync(id);
-
-            if (!clientSettingsList.Success)
+            if (!verifyClient.Success)
             {
-                ViewBag.ClientSettingsNotFound = BusinessManager.ClientSettingsNotFound;
+                return RedirectToAction("Error", "Home");
             }
+            
+            var clientSettings = await _clientSettings.GetClientSettingsAsync(parseId);
 
-            TempData["clientid"] = id;
-            TempData.Keep();
+            ViewBag.clientid = id;
 
-            return View(clientSettingsList.Data);
+            return View(clientSettings.Data);
         }
 
         [HttpGet]
-        public async Task<IActionResult> UpdateClientSettings(Guid id)
+        public async Task<IActionResult> UpdateClientSettings(string id)
         {
-            var client = await _clientSettings.GetClientSettingsAsync(id);
-
-            if (!client.Success)
+            if (!Guid.TryParse(id, out Guid parseId))
             {
-                client.Data = new ClientSettingsDTO()
-                {
-                    Id = Guid.NewGuid(),
-                    ClientId = id,
-                };
-                return View(client.Data);
+                return RedirectToAction("Error", "Home");
+            }
+            var verifyClient = await _clientSettings.CheckIfClientExists(parseId);
+
+            if (!verifyClient.Success)
+            {
+                return RedirectToAction("Error", "Home");
             }
 
-            return View(client.Data);
+            var clientsettings = await _clientSettings.GetClientSettingsAsync(parseId);
+
+            if (!clientsettings.Success)
+            {
+                clientsettings.Data = new ClientSettingsDTO()
+                {
+                    ClientId = parseId,
+                    Id = Guid.NewGuid(),
+                };
+            }
+
+            return View(clientsettings.Data);
         }
         [HttpPost]
         public async Task<IActionResult> UpdateClientSettings(ClientSettingsDTO input)
@@ -67,21 +78,14 @@ namespace eSim.Admin.Controllers
 
             var client = await _clientSettings.UpdateClientSettingsAsync(input);
 
-            if (!client.Success && client.Data is not null)
-            {
-                TempData["ClientError"] = client.Data;
-
-                return RedirectToAction("UpdateClientSettings", new { id = input.Id });
-            }
-
             if (!client.Success)
             {
-                TempData["ClientNotFound"] = BusinessManager.ClientNotFound;
+                TempData["ClientError"] = client.Message;
 
                 return RedirectToAction("UpdateClientSettings", new { id = input.Id });
             }
 
-            TempData["ClientSettingsUpdated"] = BusinessManager.ClientUpdated;
+            TempData["ClientSettingsUpdated"] = BusinessManager.ClientSettingsUpdated;
             
             return RedirectToAction("Index",new {id = input.ClientId});
 

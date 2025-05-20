@@ -28,6 +28,10 @@ namespace eSim.EF.Entities
 
         public bool IsActive { get; set; } = true;
 
+        [Required]
+        [EmailAddress]
+        [MaxLength(500)]
+        public string PrimaryEmail { get; set; }
 
 
 

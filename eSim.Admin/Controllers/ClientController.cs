@@ -1,6 +1,7 @@
 ﻿using eSim.Common.StaticClasses;
 using eSim.Infrastructure.DTOs.Client;
 using eSim.Infrastructure.Interfaces.Admin.Client;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -16,6 +17,7 @@ namespace eSim.Admin.Controllers
         }
 
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+        [Authorize(Policy = "Clients:view")]
 
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -24,11 +26,15 @@ namespace eSim.Admin.Controllers
 
             return View(clientList.ToList());
         }
+        [Authorize(Policy = "Clients:create")]
+
         [HttpGet]
         public IActionResult CreateClient()
         {
             return View(new ClientDTO());
         }
+        [Authorize(Policy = "Clients:create")]
+
         [HttpPost]
         public async Task<IActionResult> CreateClient(ClientDTO input)
         {
@@ -43,7 +49,7 @@ namespace eSim.Admin.Controllers
 
             if (!client.Success)
             {
-                TempData["ClientError"] = client.Data;
+                TempData["ClientError"] = client.Message;
                 return RedirectToAction("CreateClient");
 
             }
@@ -53,16 +59,17 @@ namespace eSim.Admin.Controllers
             return RedirectToAction("Index");
 
         }
+        [Authorize(Policy = "Clients:edit")]
 
         [HttpGet]
-        public async Task<IActionResult> UpdateClient(Guid id)
+        public async Task<IActionResult> UpdateClient(string id)
         {
-            if (string.IsNullOrEmpty(id.ToString()))
+            if (!Guid.TryParse(id,out Guid parseId))
             {
-                return RedirectToAction("Index");
+                return RedirectToAction("Error","Home");
             }
 
-            var client = await _client.GetClientAsync(id);
+            var client = await _client.GetClientAsync(parseId);
 
             if (!client.Success)
             {
@@ -73,6 +80,8 @@ namespace eSim.Admin.Controllers
             return View(client.Data);
         }
         [HttpPost]
+        [Authorize(Policy = "Clients:edit")]
+
         public async Task<IActionResult> UpdateClient(ClientDTO input)
         {
             if (!ModelState.IsValid)
@@ -105,14 +114,17 @@ namespace eSim.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> DisableClient(Guid id, bool enabled)
+        [Authorize(Policy = "Clients:disable")]
+
+        public async Task<IActionResult> DisableClient(string id, bool enabled)
         {
-            if (string.IsNullOrEmpty(id.ToString()))
+
+            if (!Guid.TryParse(id, out Guid parseId))
             {
-                return RedirectToAction("Index");
+                return RedirectToAction("Error", "Home");
             }
 
-            var client = await _client.DisableClientAsync(id);
+            var client = await _client.DisableClientAsync(parseId);
             
             if (!client.Success && client.Data is not null)
             {
@@ -127,8 +139,6 @@ namespace eSim.Admin.Controllers
 
                 return RedirectToAction("Index");
             }
-
-            TempData["ClientStatus"] = BusinessManager.ClientStatus;
 
             return Json(new { success = true, id = id, enabled = enabled });
         }

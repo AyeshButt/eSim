@@ -27,10 +27,10 @@
 {
     <a asp-action="Index" asp-controller="ActiveBundle" class="btn btn-warning">Active Bundles</a>
 }
-@if (User.HasClaim("Roles", "view"))
-{
+@* @if (User.HasClaim("Roles", "view"))
+{ *@
     <a asp-action="ManageRoles" asp-controller="Roles" class="btn btn-primary">Roles</a>
-}
+@* } *@
 
 @if (User.HasClaim("Claims", "view"))
 {
