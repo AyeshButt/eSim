@@ -31,7 +31,7 @@ namespace eSim.Implementations.Services.Client
 
             var clientSettings = await (from cs in _db.ClientSettings
                                         join c in _db.Client on cs.ClientId equals c.Id
-                                        //where cs.ClientId == id
+                                        where cs.ClientId == id
                                         select new ClientSettingsDTO()
                                         {
                                             Id = cs.Id,

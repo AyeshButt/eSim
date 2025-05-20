@@ -1,64 +1,195 @@
 ﻿@model List<eSim.Infrastructure.DTOs.Client.ClientDTO>
 
 @{
-    ViewData["Title"] = "Client Index";
+    ViewData["Title"] = "Client List";
 }
 
-@if (TempData["ClientError"] is not null)
+@* @if (TempData["ClientError"] is not null)
 {
- <div class="alert alert-danger text-center my-3">
-     @TempData["ClientError"]
- </div>   
+    <div class="alert alert-danger text-center my-3">
+        @TempData["ClientError"]
+    </div>
 }
 @if (TempData["ClientNotFound"] is not null)
 {
- <div class="alert alert-danger text-center my-3">
+    <div class="alert alert-danger text-center my-3">
         @TempData["ClientNotFound"]
- </div>   
+    </div>
 }
 @if (TempData["ClientStatus"] is not null)
 {
- <div class="alert alert-success text-center my-3">
+    <div class="alert alert-success text-center my-3">
         @TempData["ClientStatus"]
- </div>   
-}
-@if (TempData["ClientUpdated"] is not null)
-{
-    <div class="alert alert-success text-center my-3">
-        @TempData["ClientUpdated"]
     </div>
 }
-@if (TempData["ClientCreated"] is not null)
-{
-    <div class="alert alert-success text-center my-3">
-        @TempData["ClientCreated"]
+
+ *@
+<div class="row">
+    <div class="col-xl-12">
+        <a asp-action="CreateClient" asp-controller="Client" class="float-end my-3 btn rounded-pill btn-secondary waves-effect waves-light">Create</a>
     </div>
+</div>
+
+@if (Model.Any())
+{
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-header align-items-center d-flex">
+                    <h4 class="card-title mb-0 flex-grow-1">Client List</h4>
+
+                </div><!-- end card header -->
+
+                <div class="card-body">
+                    <div class="live-preview">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-nowrap align-middle mb-0">
+                                <thead>
+
+
+                                    <tr>
+
+                                        <th scope="col">Active</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input client-toggle-switch"
+                                                    type="checkbox"
+                                                    id="switch-@item.Id"
+                                                    data-url="@Url.Action("DisableClient", "Client", new { id = item.Id })"
+                                                    data-client-id="@item.Id"
+                                                    @(item.IsActive ? "checked" : "") />
+                                                </div>
+                                            </td>
+                                            <td>@item.Name</td>
+                                            <td>
+
+                                                <a class="mx-2" asp-action="UpdateClient" asp-controller="Client" asp-route-id="@item.Id"><i class="ri-pencil-fill fs-5"></i></a>
+
+                                                <a asp-action="Index"
+                                                asp-controller="ClientSettings"
+                                                asp-route-id="@item.Id"
+                                                class="settings-icon "
+                                                id="settings-@item.Id"
+                                                style="@(item.IsActive ? "" : "pointer-events: none; opacity: 0.5;")">
+                                                    <i class=" ri-settings-2-fill fs-5"></i>
+                                                </a>
+                                            </td>
+
+                                        </tr>
+
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div><!-- end card-body -->
+            </div><!-- end card -->
+        </div>
+        <!-- end col -->
+    </div>
+    <!-- end row -->
 }
-<a asp-action="CreateClient" asp-controller="Client" class="btn btn-danger">Create Client</a>
+else
+{
+    <!-- Danger Alert -->
+    <div class="alert alert-danger text-center alert-dismissible fade show" role="alert">
+        <strong> No client available</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
 
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Is Active</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
+}
+@if (true)
+{
 
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Name</td>
-                <td>@item.IsActive</td>
-                <td>
-                    <a class="mx-2" asp-action="DisableClient" asp-controller="Client" asp-route-id="@item.Id">@(item.IsActive ? "Disable" : "Enable")</a>
-                    <a class="mx-2" asp-action="UpdateClient" asp-controller="Client" asp-route-id="@item.Id">Update</a>
-                    <a class="mx-2" asp-action="Index" asp-controller="ClientSettings" asp-route-id="@item.Id">Client Settings</a>
-                </td>
+}
 
-            </tr>
-            
+@section scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.client-toggle-switch').forEach(function (toggle) {
+        toggle.addEventListener('change', function () {
+        //console.log(this.dataset);
+        const url = this.dataset.url;
+        const clientId = this.dataset.clientId;
+        const isChecked = this.checked;
+        //console.log(isChecked);
+
+
+        const settingsIcon = document.getElementById(`settings-${clientId}`);
+        //console.log(settingsIcon);
+        // 🔄 Ensure initial sync on page load
+
+        syncSettingsIcon(settingsIcon, toggle.checked);
+
+        fetch(url + '?enabled=' + isChecked, {
+        method: 'GET',
+        headers: {
+        'Accept': 'application/json'
         }
-    </tbody>
-</table>
+        })
+        .then(response => {
+        if (!response.ok) throw new Error('Network error');
+        return response.json();
+        })
+        .then(data => {
+        console.log('Toggle success:', data);
+        syncSettingsIcon(settingsIcon, isChecked);
+
+        })
+        .catch(error => {
+        console.error('Toggle failed:', error);
+        // 🔁 Revert toggle if server failed
+        this.checked = !isChecked;
+        alert('Failed to update status.');
+        });
+        });
+        });
+        function syncSettingsIcon(icon, isEnabled) {
+        if (!icon) return;
+        icon.style.pointerEvents = isEnabled ? 'auto' : 'none';
+        icon.style.opacity = isEnabled ? '1' : '0.5';
+        }
+        });
+    </script>
+    <script>
+        window.addEventListener('pageshow', function (event) {
+        if (event.persisted || performance.getEntriesByType("navigation")[0]?.type === "back_forward") {
+        location.reload();
+        }
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        @if (TempData["ClientCreated"] != null)
+        {
+            <text>
+                ToastNotification("@TempData["ClientCreated"]","success");
+            </text>
+        }
+        @if (TempData["ClientUpdated"] != null)
+        {
+            <text>
+                ToastNotification("@TempData["ClientUpdated"]","success");
+            </text>
+        }
+        @if ((TempData["ClientError"] != null))
+        {
+            <text>
+                        ToastNotification("@TempData["ClientError"]","error");
+            </text>
+
+        }
+        });
+    </script>
+}
+

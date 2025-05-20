@@ -84,7 +84,7 @@ namespace eSim.Common.StaticClasses
         }
         private static string GenerateRandomString(int length)
         {
-            const string validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            const string validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; 
             var random = new Random();
 
             char[] result = new char[length];
