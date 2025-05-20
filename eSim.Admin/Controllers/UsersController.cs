@@ -117,7 +117,7 @@ namespace eSim.Admin.Controllers
 
             return View(model: new ManagerUserDTO());
         }
-        [Authorize(Policy = "Users:create")]
+        //[Authorize(Policy = "Users:create")]
 
         [HttpPost]
         public async Task<IActionResult> AddUser(ManagerUserDTO input)

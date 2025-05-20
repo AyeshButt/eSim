@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eSim.EF.Context;
 
@@ -11,9 +12,11 @@ using eSim.EF.Context;
 namespace eSim.EF.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250520175623_AspNetUsersTypeModelAdded")]
+    partial class AspNetUsersTypeModelAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -429,49 +432,6 @@ namespace eSim.EF.Migrations
                     b.ToTable("SideMenu");
                 });
 
-            modelBuilder.Entity("eSim.EF.Entities.Subscribers", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Active")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("ClientId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Hash")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Subscribers", "client");
-                });
-
             modelBuilder.Entity("eSim.EF.Entities.SystemClaims", b =>
                 {
                     b.Property<string>("Id")
@@ -674,22 +634,22 @@ namespace eSim.EF.Migrations
                         new
                         {
                             Id = 1,
-                            Status = "Open"
+                            Status = "open"
                         },
                         new
                         {
                             Id = 2,
-                            Status = "Close"
+                            Status = "close"
                         },
                         new
                         {
                             Id = 3,
-                            Status = "In-progress"
+                            Status = "in-progress"
                         },
                         new
                         {
                             Id = 4,
-                            Status = "Waiting for reply"
+                            Status = "waiting for reply"
                         });
                 });
 
@@ -713,12 +673,12 @@ namespace eSim.EF.Migrations
                         new
                         {
                             Id = 1,
-                            Type = "Bundle"
+                            Type = "bundle"
                         },
                         new
                         {
                             Id = 2,
-                            Type = "Payment"
+                            Type = "payment"
                         });
                 });
 

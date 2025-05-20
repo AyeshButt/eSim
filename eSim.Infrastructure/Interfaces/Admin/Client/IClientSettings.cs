@@ -11,6 +11,7 @@ namespace eSim.Infrastructure.Interfaces.Admin.Client
     public interface IClientSettings
     {
         public Task<Result<ClientSettingsDTO>> GetClientSettingsAsync(Guid id);
+        public Task<Result<string>> CheckIfClientExists(Guid id);
         public Task<Result<string>> UpdateClientSettingsAsync(ClientSettingsDTO input);
     }
 }
