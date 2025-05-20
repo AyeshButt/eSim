@@ -18,7 +18,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
         private readonly ApplicationDbContext _db = db;
 
 
-
+       
 
         public async Task<Result<string>> CreateSubscriber(SubscriberRequestDTO input)
         {
@@ -28,7 +28,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
 
                 var salt = BusinessManager.GenerateUniqueAlphanumericId(10);
 
-                var client = await _db.Client.FindAsync(Guid.Parse("9329801C-433D-4AB2-8CDF-D6345659FBAF"));
+                var client = await _db.Client.FindAsync(Guid.Parse("5271422D-1CB6-4853-B6F4-DC67A8A71C38"));
 
                 if (client is not null)
                 {
