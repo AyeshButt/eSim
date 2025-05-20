@@ -27,6 +27,7 @@ namespace eSim.EF.Context
         public DbSet<TicketActivities> TicketActivities { get; set; }
         public DbSet<TicketStatus> TicketStatus { get; set; }
         public DbSet<TicketType> TicketType { get; set; }
+        public DbSet<Subscribers> Subscribers { get; set; }
         public DbSet<AspNetUsersType> AspNetUsersType { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -42,14 +43,14 @@ namespace eSim.EF.Context
             });
 
             modelBuilder.Entity<TicketType>().HasData(
-               new TicketType { Id = 1, Type = "bundle" },
-               new TicketType { Id = 2, Type = "payment" }
+               new TicketType { Id = 1, Type = "Bundle" },
+               new TicketType { Id = 2, Type = "Payment" }
            );
             modelBuilder.Entity<TicketStatus>().HasData(
-               new TicketStatus { Id = 1, Status = "open" },
-               new TicketStatus { Id = 2, Status = "close" },
-               new TicketStatus { Id = 3, Status = "in-progress" },
-               new TicketStatus { Id = 4, Status = "waiting for reply" }
+               new TicketStatus { Id = 1, Status = "Open" },
+               new TicketStatus { Id = 2, Status = "Close" },
+               new TicketStatus { Id = 3, Status = "In-progress" },
+               new TicketStatus { Id = 4, Status = "Waiting for reply" }
 
            );
             modelBuilder.Entity<TicketAttachmentType>().HasData(

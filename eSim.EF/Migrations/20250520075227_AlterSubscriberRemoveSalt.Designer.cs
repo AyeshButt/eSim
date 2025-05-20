@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eSim.EF.Context;
 
@@ -11,9 +12,11 @@ using eSim.EF.Context;
 namespace eSim.EF.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250520075227_AlterSubscriberRemoveSalt")]
+    partial class AlterSubscriberRemoveSalt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -229,50 +232,6 @@ namespace eSim.EF.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("eSim.EF.Entities.AspNetUsersType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AspNetUsersType");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Type = "Developer"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Type = "Superadmin"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Type = "Subadmin"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Type = "Client"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Type = "Subclient"
-                        });
-                });
-
             modelBuilder.Entity("eSim.EF.Entities.Client", b =>
                 {
                     b.Property<Guid>("Id")
@@ -305,11 +264,6 @@ namespace eSim.EF.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("PrimaryEmail")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Secret")
                         .IsRequired()
@@ -731,9 +685,6 @@ namespace eSim.EF.Migrations
 
                     b.Property<string>("UserRoleId")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserType")
-                        .HasColumnType("int");
 
                     b.HasDiscriminator().HasValue("ApplicationUser");
                 });
