@@ -9,12 +9,14 @@ namespace eSim.Infrastructure.DTOs.Ticket
 {
     public class TicketRequestDTO
     {
-        [Required]
+        [Required (ErrorMessage ="select ticket Type")]
         public int TicketType { get; set; }
-        [Required]
+
+        [Required(ErrorMessage ="Subject is required")]
         [MaxLength(250)]
         public string Subject { get; set; } = null!;
-        [Required]
+
+        [Required(ErrorMessage = "Description is Required")]
         public string Description { get; set; } = null!;
        
     }

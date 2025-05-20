@@ -1,5 +1,7 @@
 using eSim.Implementations.Services.Selfcare.Authentication;
+using eSim.Implementations.Services.Selfcare.Ticket;
 using eSim.Infrastructure.Interfaces.Selfcare.Authentication;
+using eSim.Infrastructure.Interfaces.Selfcare.Ticket;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -12,7 +14,8 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddHttpClient();
 builder.Services.AddTransient<ISignIn, SignInService>();
-//builder.Services.AddTransient<IAuthentication, >();
+builder.Services.AddTransient<ITicketService, TicketService>();
+
 builder.Services.AddControllersWithViews();
 
 
