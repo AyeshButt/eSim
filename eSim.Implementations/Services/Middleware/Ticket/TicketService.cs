@@ -94,15 +94,16 @@ namespace eSim.Implementations.Services.Middleware.Ticket
         #endregion
 
         #region TicketAttachment
-        public async  Task<Result<string?>> UploadAttachmentAsync(TicketAttachmentDTO dto)
+        public async Task<Result<string?>> UploadAttachmentAsync(TicketAttachmentDTO dto)
         {
             try
             {
+                dto.AttachmentType = 2;
                 var ticket = await _Db.Ticket.FirstOrDefaultAsync(x => x.TRN == dto.TRN);
                 if (ticket == null)
                     return new Result<string?> { Success = false, Message = "Ticket not found." };
+ 
 
-                
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
                 if (!Directory.Exists(uploadsFolder))
                     Directory.CreateDirectory(uploadsFolder);
