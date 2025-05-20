@@ -12,6 +12,23 @@ namespace eSim.Middleware.Controllers
     public class SubscriberController(ISubscriberService subscriber) : ControllerBase
     {
         private readonly ISubscriberService _subscriber = subscriber;
+        [HttpGet("check-email")]
+        public async Task<IActionResult> CheckEmailExists([FromQuery] string email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return BadRequest("Email is required.");
+            }
+
+            var exists = await _subscriber.EmailExists(email);
+
+            if (exists)
+            {
+                return Ok("Email already exists.");
+            }
+
+            return Ok("Email is available.");
+        }
 
 
         [HttpPost]
