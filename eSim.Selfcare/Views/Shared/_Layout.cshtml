@@ -5,16 +5,19 @@
     @RenderSection("styles", required: false)
     <partial name="~/Views/Shared/_head_css.cshtml" />
 
-@*     @Html.Partial("~/Views/Shared/_title_meta.cshtml")
-    @Html.Partial("~/Views/Shared/_head_css.cshtml") *@
+    <!-- One of the following themes -->
+    <link rel="stylesheet" href="~/assets/libs/@('@')simonwep/pickr/themes/classic.min.css" /> <!-- 'classic' theme -->
+    <link rel="stylesheet" href="~/assets/libs/@('@')simonwep/pickr/themes/monolith.min.css" /> <!-- 'monolith' theme -->
+    <link rel="stylesheet" href="~/assets/libs/@('@')simonwep/pickr/themes/nano.min.css" /> <!-- 'nano' theme -->
 
+
+    @* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"> *@
 </head>
 <body>
     <!-- Begin page -->
     <div id="layout-wrapper">
-@*         @Html.Partial("~/Views/Shared/_menu.cshtml")
- *@        
- <partial name="~/Views/Shared/_menu.cshtml" />
+
+        <partial name="~/Views/Shared/_menu.cshtml" />
 
 
         <!-- ============================================================== -->
@@ -24,7 +27,6 @@
 
             <div class="page-content">
                 <div class="container-fluid">
-@*                     @Html.Partial("~/Views/Shared/_page_title.cshtml") *@
                     <partial name="~/Views/Shared/_page_title.cshtml" />
 
 
@@ -33,7 +35,6 @@
 
                 </div>
             </div>
-@*             @Html.Partial("~/Views/Shared/_footer.cshtml") *@
             <partial name="~/Views/Shared/_footer.cshtml" />
 
         </div>
@@ -41,26 +42,74 @@
     </div>
     <!-- END layout-wrapper -->
 
- @*    @Html.Partial("~/Views/Shared/_customizer.cshtml")
-  *@
-  <partial name="~/Views/Shared/_customizer.cshtml" />
+
+    <partial name="~/Views/Shared/_customizer.cshtml" />
+
+    <partial name="~/Views/Shared/_vendor_scripts.cshtml" />
 
 
-@*     @Html.Partial("~/Views/Shared/_vendor_scripts.cshtml")
- *@
- <partial name="~/Views/Shared/_vendor_scripts.cshtml" />
 
-@*     @{
-        Html.RenderPartial("_ValidationScriptsPartial");
-    } *@
-@*     <partial name="_ValidationScriptsPartial" />
- *@
+
+    <script src="~/assets/js/app.js"></script>
 
     <script src="~/lib/jquery/dist/jquery.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script> 
 
+    <script>
+        function ToastNotification(message,type) {
+            var backgroundColor = "linear-gradient(to right, #00b09b, #96c93d)";
+            if(type === "error"){
+                        backgroundColor = "linear-gradient(to right, #ff416c, #ff4b2b)";
 
+            }
+            else if(type === "warning"){
+                        backgroundColor = "linear-gradient(to right, #ff416c, #ff4b2b)";
+            }
+
+            Toastify({
+                text: message,
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                style: {
+                    background: backgroundColor
+                },
+                stopOnFocus: true,
+                newWindow: true
+            }).showToast();
+        }
+    </script>
+    @*     <script>
+        function ToastNotification(message,type) {
+
+             var backgroundColor;
+
+            if(type === "Success"){
+                var backgroundColor = "linear-gradient(to right, #00b09b, #96c93d)";
+
+            }
+            else if(type === "warning"){
+                   backgroundColor = "linear-gradient(to right, #ff416c, #ff4b2b)";
+            }
+
+            Toastify({
+                text: message,
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                style: {
+                    background: backgroundColor
+                },
+                stopOnFocus: true,
+                newWindow: true
+            }).showToast();
+        }
+    </script>
+ *@
     @RenderSection("scripts", required: false)
 </body>
 </html>

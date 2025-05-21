@@ -18,16 +18,29 @@ namespace eSim.Selfcare.Controllers
 
         #region Get Ticket
         [HttpGet]
-        public async Task<IActionResult> ListView()
+        public async Task<IActionResult> List(string? search, string? dateRange, string? status)
         {
             var data = await _ts.Get();
+
+            //search on the base of TRN
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                data.Data = data.Data.Where(x => x.TRN.Contains(search, StringComparison.OrdinalIgnoreCase)).ToList();
+                return View(data);
+            }
+
+            //search on the bases of status
+            //if (!string.IsNullOrWhiteSpace(status) && status != "all")
+            //{
+            //    data.Data = data.Data.Where(x=> x.)
+            //}
             return View(data);
         }
 
         #endregion
 
         [HttpGet]
-        public async Task<IActionResult> TicketDetails()
+        public IActionResult TicketDetails()
         {
             return View();
         }
@@ -52,11 +65,15 @@ namespace eSim.Selfcare.Controllers
 
                 if (resp.Success)
                 {
-                    return RedirectToAction("ListView");
+                    TempData["ToastMessage"] = resp.Message + " " + "Ticket Has been genrated";
+                    TempData["ToastType"] = "Success";
+                    return RedirectToAction("List");
                 }
                 else
                 {
-                    return View(resp);
+                    ViewBag.ToastMessage = resp.Message;
+                    ViewBag.ToastType = "error";
+                    return View();
                 }
             }
             else
