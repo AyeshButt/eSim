@@ -41,5 +41,12 @@ namespace eSim.EF.Entities
         [DataType(DataType.DateTime)]
         public DateTime ModifiedAt { get; set; }
 
+
+        [Required]
+        [MaxLength(2)]
+        public string Country { get; set; }
+        public bool IsEmailVerifired { get; set; } = false;
+        public bool TermsAndConditions { get; set; }
+
     }
 }

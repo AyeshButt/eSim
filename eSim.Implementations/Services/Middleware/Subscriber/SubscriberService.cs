@@ -28,13 +28,10 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                
                 var salt = BusinessManager.GenerateUniqueAlphanumericId(10);
 
-                var client = await _db.Client.FindAsync(Guid.Parse("5271422D-1CB6-4853-B6F4-DC67A8A71C38"));
+                var client = await _db.Client.FirstOrDefaultAsync(a=>a.Name ==input.MerchantId);
 
                 if (client is not null)
                 {
-
-
-
 
 
                     string hashedPassword = PasswordHasher.HashPassword(input.Password);
@@ -50,7 +47,8 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                         LastName = input.LastName,
                         Email = input.Email,
                         Hash = hashedPassword,
-                        ClientId = client.Id
+                        ClientId = client.Id,
+                        Country = input.Country
 
 
 

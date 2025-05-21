@@ -5,7 +5,9 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using eSim.Common.StaticClasses;
 using eSim.EF.Context;
+using eSim.EF.Entities;
 using eSim.Infrastructure.DTOs.Middleware;
 using eSim.Infrastructure.Interfaces.Middleware;
 using Microsoft.Extensions.Configuration;
@@ -32,14 +34,17 @@ namespace eSim.Implementations.Services.Auth
         {
 
 
-            var client = _db.Client.FirstOrDefault(a => a.IsActive && a.Kid == input.Username && a.Secret == input.Password);
+            Subscribers? subscriber = _db.Subscribers.FirstOrDefault(a => a.Active && a.Email == input.Username);
 
-            if (client is null)
+            if (subscriber is null)
+                return null;
+
+            if (!PasswordHasher.VerifyPassword(input.Password, subscriber.Hash))
                 return null;
 
             var claims = new[]
             {
-                 new Claim("client-id", client.Id.ToString())
+                 new Claim(BusinessManager.LoginSubcriberClaim, subscriber.Id.ToString())
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? string.Empty));
 
@@ -52,7 +57,6 @@ namespace eSim.Implementations.Services.Auth
                 expires: DateTime.Now.AddMinutes(Convert.ToDouble(_configuration["Jwt:ExpiresInMinutes"])),
                 signingCredentials: creds
             );
-
 
 
             return new JwtSecurityTokenHandler().WriteToken(token);
