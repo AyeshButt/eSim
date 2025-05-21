@@ -25,6 +25,20 @@ namespace eSim.Implementations.Services.Client
             _db = db;
         }
 
+        public async Task<Result<string>> CheckIfClientExists(Guid id)
+        {
+            var result = new Result<string>();
+           
+            var client = await _db.Client.FindAsync(id);
+            
+            if(client is null)
+            {
+                result.Success = false;
+            }
+
+            return result;
+        }
+
         public async Task<Result<ClientSettingsDTO>> GetClientSettingsAsync(Guid id)
         {
             Result<ClientSettingsDTO> result = new();
@@ -48,11 +62,12 @@ namespace eSim.Implementations.Services.Client
             if (clientSettings is null)
             {
                 result.Data = null;
+                result.Success = false;
+                result.Message = string.Empty;
             }
             else
             {
                 result.Data = clientSettings;
-                result.Success = true;
             }
 
             return result;
@@ -100,7 +115,8 @@ namespace eSim.Implementations.Services.Client
             {
                 _logger.LogError(ex.Message);
 
-                result.Data = ex.Message;
+                result.Message = ex.Message;
+                result.Success = false;
             }
 
             return result;

@@ -68,6 +68,7 @@ namespace eSim.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+
                 var signInResult = await _signInManager.PasswordSignInAsync(userName: input.Email, password: input.Password, isPersistent: true, lockoutOnFailure: false);
 
                 if (signInResult.Succeeded)

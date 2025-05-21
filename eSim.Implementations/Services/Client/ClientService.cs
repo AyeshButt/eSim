@@ -63,6 +63,7 @@ namespace eSim.Implementations.Services.Client
                 _logger.LogError(ex.Message);
 
                 result.Data = ex.Message;
+                result.Success = false;
             }
             return result;
         }
@@ -77,6 +78,8 @@ namespace eSim.Implementations.Services.Client
 
                 if (client is null)
                 {
+                    result.Data = null;
+                    result.Success = false;
                     return result;
                 }
 
@@ -90,6 +93,7 @@ namespace eSim.Implementations.Services.Client
             {
                 _logger.LogError(ex.Message);
 
+                result.Success = false;
                 result.Data = ex.Message;
             }
 
@@ -120,6 +124,7 @@ namespace eSim.Implementations.Services.Client
             if (client is null)
             {
                 result.Data = null;
+                result.Success = false;
             }
             else
             {
@@ -148,6 +153,8 @@ namespace eSim.Implementations.Services.Client
 
                 if (findClient is null)
                 {
+                    result.Success = false;
+
                     return result;
                 }
 
@@ -165,6 +172,7 @@ namespace eSim.Implementations.Services.Client
             {
                 _logger.LogError(ex.Message);
 
+                result.Success = false;
                 result.Data = ex.Message;
             }
 
