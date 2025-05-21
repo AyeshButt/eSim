@@ -1,0 +1,165 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using eSim.EF.Context;
+using eSim.EF.Entities;
+using eSim.Infrastructure.DTOs.Account;
+using eSim.Infrastructure.DTOs.Email;
+using eSim.Infrastructure.DTOs.Global;
+using eSim.Infrastructure.Interfaces.Admin.Email;
+using eSim.Infrastructure.Interfaces.Middleware;
+using Microsoft.EntityFrameworkCore;
+using static System.Net.WebRequestMethods;
+
+namespace eSim.Implementations.Services.Middleware.Subscriber
+{  
+    public class ForgotPasswordServices : IForgotPassword
+    {
+        private readonly ApplicationDbContext _db;
+        private readonly IEmailService _emailService;
+        public ForgotPasswordServices(ApplicationDbContext db, IEmailService emailService)
+        {
+            _db = db;
+            _emailService = emailService;
+        }
+        #region ForgotPassword
+        public async Task<Result<string>> ForgotPasswordAsync(ForgotPasswordDTO input)
+        {
+            var result = new Result<string>();
+
+
+            var user = await _db.Subscribers.FirstOrDefaultAsync(u => u.Email == input.Email);
+
+            if (user == null)
+            {
+                result.Success = false;
+                result.Data = "Email not found.";
+                return result;
+            }
+
+        
+            var otp = new Random().Next(100000, 999999).ToString();
+
+            var otpRecord = new OTPVerification
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserId = user.Id.ToString(), 
+                OTP = otp,
+                SentTime = DateTime.UtcNow,
+                IsValid = true,
+                Type = "ForgotPassword"
+            };
+            _db.OTPVerification.Add(otpRecord);
+            await _db.SaveChangesAsync();
+
+   
+            var emailResult = await _emailService.SendEmail(new EmailDTO
+            {
+                To = user.Email,
+                Subject = "Your OTP for Password Reset",
+                Body = $"Your OTP is: {otp}."
+            });
+
+            if (!emailResult.Success)
+            {
+                result.Success = false;
+                result.Data = "Failed to send OTP email: " + emailResult.Data;
+                return result;
+            }
+
+            result.Success = true;
+            result.Data = "OTP sent to your email.";
+            return result;
+
+        }
+        #endregion
+
+        #region VerifyOtp
+        public async Task<Result<string>> VerifyOtpAsync(string otp)
+        {
+            var result = new Result<string>();
+
+            var otpRecords = await _db.OTPVerification
+      .Where(o => o.OTP == otp && o.IsValid && o.Type == "ForgotPassword")
+      .ToListAsync();
+
+            var otpRecord = otpRecords
+                .FirstOrDefault(o => (DateTime.UtcNow - o.SentTime).TotalMinutes <= 10);
+
+
+            if (otpRecord == null)
+            {
+                result.Success = false;
+                result.Data = "Invalid or expired OTP.";
+                return result;
+            }
+
+            otpRecord.IsValid = false;
+            await _db.SaveChangesAsync();
+
+            result.Success = true;
+            result.Data = "OTP verified successfully.";
+            return result;
+
+        }
+        #endregion
+
+        #region ResetPassword
+        public async Task<Result<string>> ResetPasswordAsync(ResetPasswordDTO input)
+        {
+            var result = new Result<string>();
+
+            var user = await _db.Subscribers.FindAsync(Guid.Parse(input.UserId));
+            if (user == null)
+            {
+                result.Success = false;
+                result.Data = "User not found.";
+                return result;
+            }
+
+            
+            user.Hash = ComputeSha256Hash(input.NewPassword);
+            user.ModifiedAt = DateTime.UtcNow; 
+            await _db.SaveChangesAsync();
+
+         
+            var emailResult = await _emailService.SendEmail(new EmailDTO
+            {
+                To = user.Email,
+                Subject = "Password Changed Successfully",
+                Body = "Your password has been changed successfully."
+            });
+
+            if (!emailResult.Success)
+            {
+                result.Success = false;
+                result.Data = "Password changed but failed to send confirmation email.";
+                return result;
+            }
+
+            result.Success = true;
+            result.Data = "Password changed successfully.";
+            return result;
+        }
+
+     
+        private string ComputeSha256Hash(string rawData)
+        {
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                    builder.Append(bytes[i].ToString("x2"));
+                return builder.ToString();
+            }
+        }
+        #endregion
+
+
+    }
+
+}

@@ -17,6 +17,9 @@ using eSim.Common.StaticClasses;
 using eSim.Implementations.Services.Middleware.Ticket;
 using eSim.Infrastructure.Interfaces.Middleware.Ticket;
 using eSim.Implementations.Services.Middleware.Subscriber;
+using eSim.Implementations.Services.Email;
+using eSim.Infrastructure.Interfaces.Admin.Email;
+using eSim.Infrastructure.DTOs.Email;
 
 
 
@@ -31,12 +34,13 @@ if (string.IsNullOrWhiteSpace(connectionString))
     Console.WriteLine("Unable to load the connection string from appsettings.json");
 }
 
+
 // Register DbContext with the retrieved connection string
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 
-
+builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailConfiguration"));
 
 
 builder.Services.AddControllers(config =>
@@ -96,6 +100,8 @@ builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IBundleService, BundleService>();
 builder.Services.AddTransient<ITicketServices, TicketService>();
 builder.Services.AddTransient<ISubscriberService, SubscriberService>();
+builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddTransient<IForgotPassword, ForgotPasswordServices>();
 
 
 
