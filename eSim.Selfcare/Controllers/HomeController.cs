@@ -19,8 +19,11 @@ namespace eSim.Selfcare.Controllers
         [Route("selfcare/home")]
         public IActionResult Index()
         {
+
             return View();
         }
+
+
 
         public IActionResult Privacy()
         {
