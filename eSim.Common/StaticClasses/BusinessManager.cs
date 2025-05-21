@@ -13,6 +13,9 @@ namespace eSim.Common.StaticClasses
         public static string AuthToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnQtaWQiOiJlMzYwOTMzNy1hMTg4LTQzMWItYjg1NC02NjUwOGVkOTg2MzUiLCJleHAiOjE3NDc3NTc4MjYsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTA1OCIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTA1OCJ9.zvw2Q3OXviHEaQN922EBejLQsc05COIElkFLiq0iuOw";
         public static string MdwBaseURL = "https://localhost:7264/";
 
+        public static string LoginSubcriberClaim = "sub-key";
+
+
         public static string BaseURL = "https://api.esim-go.com/v2.4";
         public static string DefaultPassword = "Dev@123";
         public static string LockedOut = "User is locked out";

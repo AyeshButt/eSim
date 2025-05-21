@@ -28,6 +28,11 @@ namespace eSim.Infrastructure.DTOs.Account
         [MaxLength(75)]
         public string Password { get; set; }
 
+        [Required]
+        [MinLength(2)]
+        [MaxLength(2)]
+        public string Country { get; set; }
+
     }
 
     public class EmailExistsAttribute : ValidationAttribute
