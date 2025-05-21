@@ -4,31 +4,15 @@
     ViewData["Title"] = "Client List";
 }
 
-@* @if (TempData["ClientError"] is not null)
+@if (User.HasClaim("Clients", "create"))
 {
-    <div class="alert alert-danger text-center my-3">
-        @TempData["ClientError"]
+    <div class="row">
+        <div class="col-xl-12">
+            <a asp-action="CreateClient" asp-controller="Client" class="float-end my-3 btn rounded-pill btn-secondary waves-effect waves-light">Create</a>
+        </div>
     </div>
-}
-@if (TempData["ClientNotFound"] is not null)
-{
-    <div class="alert alert-danger text-center my-3">
-        @TempData["ClientNotFound"]
-    </div>
-}
-@if (TempData["ClientStatus"] is not null)
-{
-    <div class="alert alert-success text-center my-3">
-        @TempData["ClientStatus"]
-    </div>
-}
 
- *@
-<div class="row">
-    <div class="col-xl-12">
-        <a asp-action="CreateClient" asp-controller="Client" class="float-end my-3 btn rounded-pill btn-secondary waves-effect waves-light">Create</a>
-    </div>
-</div>
+}
 
 @if (Model.Any())
 {
@@ -59,28 +43,40 @@
                                     {
                                         <tr>
                                             <td>
-                                                <div class="form-check form-switch">
-                                                    <input class="form-check-input client-toggle-switch"
-                                                    type="checkbox"
-                                                    id="switch-@item.Id"
-                                                    data-url="@Url.Action("DisableClient", "Client", new { id = item.Id })"
-                                                    data-client-id="@item.Id"
-                                                    @(item.IsActive ? "checked" : "") />
-                                                </div>
+                                                @if (User.HasClaim("Clients", "disable"))
+                                                {
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input client-toggle-switch"
+                                                               type="checkbox"
+                                                               id="switch-@item.Id"
+                                                               data-url="@Url.Action("DisableClient", "Client", new { id = item.Id })"
+                                                               data-client-id="@item.Id"
+                                                        @(item.IsActive ? "checked" : "") />
+                                                    </div>
+
+                                                }
                                             </td>
                                             <td>@item.Name</td>
                                             <td>
+                                                @if (User.HasClaim("Clients", "edit"))
+                                                {
+                                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="edit" class="mx-2" asp-action="UpdateClient" asp-controller="Client" asp-route-id="@item.Id"><i class="ri-pencil-fill fs-5"></i></a>
 
-                                                <a class="mx-2" asp-action="UpdateClient" asp-controller="Client" asp-route-id="@item.Id"><i class="ri-pencil-fill fs-5"></i></a>
+                                                }
+                                                @if (User.HasClaim("Clients", "client_settings"))
+                                                {
+                                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="client settings"
+                                                       asp-action="Index"
+                                                       asp-controller="ClientSettings"
+                                                       asp-route-id="@item.Id"
+                                                       class="settings-icon "
+                                                       id="settings-@item.Id"
+                                                       style="@(item.IsActive ? "" : "pointer-events: none; opacity: 0.5;")">
+                                                        <i class=" ri-settings-2-fill fs-5"></i>
+                                                    </a>
 
-                                                <a asp-action="Index"
-                                                asp-controller="ClientSettings"
-                                                asp-route-id="@item.Id"
-                                                class="settings-icon "
-                                                id="settings-@item.Id"
-                                                style="@(item.IsActive ? "" : "pointer-events: none; opacity: 0.5;")">
-                                                    <i class=" ri-settings-2-fill fs-5"></i>
-                                                </a>
+                                                }
+
                                             </td>
 
                                         </tr>
@@ -107,59 +103,88 @@ else
     </div>
 
 }
-@if (true)
-{
-
-}
 
 @section scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.client-toggle-switch').forEach(function (toggle) {
-        toggle.addEventListener('change', function () {
-        //console.log(this.dataset);
-        const url = this.dataset.url;
-        const clientId = this.dataset.clientId;
-        const isChecked = this.checked;
-        //console.log(isChecked);
+            document.querySelectorAll('.client-toggle-switch').forEach(function (toggle) {
+                toggle.addEventListener('change', function () {
+                    const url = this.dataset.url;
+                    const clientId = this.dataset.clientId;
+                    const isChecked = this.checked;
+                    const settingsIcon = document.getElementById(`settings-${clientId}`);
+                    const toggleSwitch = this;
 
+                    if (!isChecked) {
+                        // Show SweetAlert when disabling
+                        Swal.fire({
+                            html: '<div class="mt-3">' +
+                                '<lord-icon src="https://cdn.lordicon.com/tdrtiskw.json" trigger="loop" colors="primary:#f06548,secondary:#f7b84b" style="width:120px;height:120px"></lord-icon>' +
+                                '<div class="mt-4 pt-2 fs-15 mx-5">' +
+                                '<h4>Are you Sure?</h4>' +
+                                '<p class="text-muted mx-4 mb-0">Are you sure you want to disable this client?</p>' +
+                                '</div>' +
+                                '</div>',
+                            showCancelButton: true,
+                            confirmButtonClass: 'btn rounded-pill btn-secondary waves-effect waves-light w-xs me-2 mb-1',
+                            confirmButtonText: 'Disable',
+                            cancelButtonClass: 'btn rounded-pill btn-danger waves-effect waves-light w-xs mb-1',
+                            buttonsStyling: false,
+                            showCloseButton: true
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                updateToggleState(url, isChecked, settingsIcon, toggleSwitch);
+                                ToastNotification("Client disabled successfully", "success");
 
-        const settingsIcon = document.getElementById(`settings-${clientId}`);
-        //console.log(settingsIcon);
-        // 🔄 Ensure initial sync on page load
+                            } else {
+                                // Revert toggle back ON
+                                toggleSwitch.checked = true;
+                                syncSettingsIcon(settingsIcon, true);
 
-        syncSettingsIcon(settingsIcon, toggle.checked);
+                            }
+                        });
+                    } else {
+                        // If enabling, proceed without confirmation
+                        updateToggleState(url, isChecked, settingsIcon, toggleSwitch);
+                        ToastNotification("Client enabled successfully", "success");
 
-        fetch(url + '?enabled=' + isChecked, {
-        method: 'GET',
-        headers: {
-        'Accept': 'application/json'
-        }
-        })
-        .then(response => {
-        if (!response.ok) throw new Error('Network error');
-        return response.json();
-        })
-        .then(data => {
-        console.log('Toggle success:', data);
-        syncSettingsIcon(settingsIcon, isChecked);
+                    }
+                });
+            });
 
-        })
-        .catch(error => {
-        console.error('Toggle failed:', error);
-        // 🔁 Revert toggle if server failed
-        this.checked = !isChecked;
-        alert('Failed to update status.');
+            function updateToggleState(url, isChecked, settingsIcon, toggleSwitch) {
+                fetch(url + '?enabled=' + isChecked, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Network error');
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Toggle success:', data);
+                    syncSettingsIcon(settingsIcon, isChecked);
+
+                })
+                .catch(error => {
+                    console.error('Toggle failed:', error);
+                    toggleSwitch.checked = !isChecked; // Revert on error
+                    syncSettingsIcon(settingsIcon, !isChecked);
+                    alert('Failed to update status.');
+                });
+            }
+
+            function syncSettingsIcon(icon, isEnabled) {
+                if (!icon) return;
+                icon.style.pointerEvents = isEnabled ? 'auto' : 'none';
+                icon.style.opacity = isEnabled ? '1' : '0.5';
+            }
         });
-        });
-        });
-        function syncSettingsIcon(icon, isEnabled) {
-        if (!icon) return;
-        icon.style.pointerEvents = isEnabled ? 'auto' : 'none';
-        icon.style.opacity = isEnabled ? '1' : '0.5';
-        }
-        });
+
     </script>
+
     <script>
         window.addEventListener('pageshow', function (event) {
         if (event.persisted || performance.getEntriesByType("navigation")[0]?.type === "back_forward") {
@@ -173,22 +198,29 @@ else
         @if (TempData["ClientCreated"] != null)
         {
             <text>
-                ToastNotification("@TempData["ClientCreated"]","success");
+                  ToastNotification("@TempData["ClientCreated"]","success");
             </text>
         }
         @if (TempData["ClientUpdated"] != null)
         {
             <text>
-                ToastNotification("@TempData["ClientUpdated"]","success");
+                 ToastNotification("@TempData["ClientUpdated"]","success");
             </text>
         }
         @if ((TempData["ClientError"] != null))
         {
             <text>
-                        ToastNotification("@TempData["ClientError"]","error");
+                ToastNotification("@TempData["ClientError"]","error");
             </text>
 
         }
+    @if (TempData["ClientNotFound"] != null)
+        {
+            <text>
+               ToastNotification("@TempData["ClientNotFound"]","error");
+            </text>
+
+        }  
         });
     </script>
 }

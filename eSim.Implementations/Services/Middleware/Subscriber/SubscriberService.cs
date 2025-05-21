@@ -25,7 +25,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             var transaction = await _db.Database.BeginTransactionAsync();
             try
             {
-
+               
                 var salt = BusinessManager.GenerateUniqueAlphanumericId(10);
 
                 var client = await _db.Client.FirstOrDefaultAsync(a=>a.Name ==input.MerchantId);

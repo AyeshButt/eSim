@@ -61,3 +61,22 @@
     </div>
     <!--end col-->
 </div>
+
+@section scripts{
+    @if (TempData["ClientError"] != null)
+    {
+        <text>
+            ToastNotification("@TempData["ClientError"]","error");
+        </text>
+
+    }
+    @if (TempData["ClientNotFound"] != null)
+    {
+        <text>
+            ToastNotification("@TempData["ClientNotFound"]","error");
+        </text>
+
+    }
+
+}
+                        

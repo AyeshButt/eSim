@@ -6,6 +6,7 @@ namespace eSim.EF.Entities
     {
         public string? UserRoleId { get; set; }
         public string? ParentId { get; set; }
+        public int UserType { get; set; }
 
     }
 }

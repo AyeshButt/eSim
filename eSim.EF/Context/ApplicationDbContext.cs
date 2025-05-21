@@ -28,6 +28,7 @@ namespace eSim.EF.Context
         public DbSet<TicketStatus> TicketStatus { get; set; }
         public DbSet<TicketType> TicketType { get; set; }
         public DbSet<Subscribers> Subscribers { get; set; }
+        public DbSet<AspNetUsersType> AspNetUsersType { get; set; }
 
         public DbSet<Countries> Countries { get; set; }
 
@@ -337,8 +338,16 @@ new Countries { Id = 252, CountryName = "South Georgia and the South Sandwich Is
             modelBuilder.Entity<TicketCommentType>().HasData(
                new TicketCommentType { Id = 1, CommentType = "Customer" },
                new TicketCommentType { Id = 2, CommentType = "Admin" }
-           
+
            );
+                        modelBuilder.Entity<AspNetUsersType>().HasData(
+               new AspNetUsersType { Id = 1, Type = "Developer" },
+               new AspNetUsersType { Id = 2, Type = "Superadmin" },
+               new AspNetUsersType { Id = 3, Type = "Subadmin" },
+               new AspNetUsersType { Id = 4, Type = "Client" },
+               new AspNetUsersType { Id = 5, Type = "Subclient" }
+
+);
         }
     }
 }
