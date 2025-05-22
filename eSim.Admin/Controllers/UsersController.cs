@@ -8,18 +8,21 @@ using eSim.Infrastructure.DTOs;
 using eSim.EF.Entities;
 using eSim.Common.StaticClasses;
 using eSim.Infrastructure.DTOs.AccessControl;
+using eSim.Common.Enums;
+using eSim.Infrastructure.Interfaces.Admin.Account;
 
 namespace eSim.Admin.Controllers
 {
     public class UsersController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-
-        public UsersController(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
+        private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly IAccountService _account;
+        public UsersController(RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager, IAccountService account)
         {
             _roleManager = roleManager;
             _userManager = userManager;
+            _account = account;
         }
 
         [Authorize(Policy = "Users:view")]
@@ -40,6 +43,8 @@ namespace eSim.Admin.Controllers
         {
 
             BindRoleList();
+            BindAspNetUsersType();
+
             var user = _userManager.Users.First(a => a.Id == id);
             if (user is null)
             {
@@ -52,10 +57,9 @@ namespace eSim.Admin.Controllers
                 Email = user.Email,
                 Id = user.Id,
                 Username = user.UserName,
-                Role = user.UserRoleId
-
-
-
+                Role = user.UserRoleId,
+                UserType = user.UserType
+                
             };
             return View(model: model);
         }
@@ -98,6 +102,7 @@ namespace eSim.Admin.Controllers
 
                 user.Email = input.Email;
                 user.UserName = input.Username;
+                user.UserType = input.UserType;
 
                 var updateUserResult = await _userManager.UpdateAsync(user);
                 if (updateUserResult.Succeeded)
@@ -106,6 +111,8 @@ namespace eSim.Admin.Controllers
                 }
             }
             BindRoleList();
+            BindAspNetUsersType();
+
             return View(model: input);
         }
         [Authorize(Policy = "Users:create")]
@@ -114,10 +121,10 @@ namespace eSim.Admin.Controllers
         public IActionResult AddUser()
         {
             BindRoleList();
-
+            BindAspNetUsersType();
             return View(model: new ManagerUserDTO());
         }
-        //[Authorize(Policy = "Users:create")]
+        [Authorize(Policy = "Users:create")]
 
         [HttpPost]
         public async Task<IActionResult> AddUser(ManagerUserDTO input)
@@ -130,6 +137,7 @@ namespace eSim.Admin.Controllers
                 UserName = input.Username,
                 Email = input.Email,
                 UserRoleId = role?.Id ?? null,
+                UserType = Convert.ToInt32(input.UserType),
             };
             var userCreationResult = await _userManager.CreateAsync(user, BusinessManager.DefaultPassword);
             
@@ -157,6 +165,8 @@ namespace eSim.Admin.Controllers
 
 
             BindRoleList();
+            BindAspNetUsersType();
+
             return View(model: input);
         }
 
@@ -184,6 +194,10 @@ namespace eSim.Admin.Controllers
         private void BindRoleList()
         {
             ViewBag.RolesList = _roleManager.Roles.Select(a => new SelectListItem { Value = a.Id, Text = a.Name }).ToList();
+        }
+        private void BindAspNetUsersType()
+        {
+            ViewBag.UsersType = _account.GetUsersType().Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Type }).ToList();
         }
     }
 }

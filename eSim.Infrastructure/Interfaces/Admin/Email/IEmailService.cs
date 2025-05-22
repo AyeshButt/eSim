@@ -6,6 +6,6 @@ namespace eSim.Infrastructure.Interfaces.Admin.Email
 {
     public interface IEmailService
     {
-        public Task<Result<string>> SendEmail(EmailDTO input);
+        public Result<string> SendEmail(EmailDTO input);
     }
 }

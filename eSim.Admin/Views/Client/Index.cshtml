@@ -35,6 +35,7 @@
 
                                         <th scope="col">Active</th>
                                         <th scope="col">Name</th>
+                                        <th scope="col">Email</th>
                                         <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
@@ -57,6 +58,7 @@
                                                 }
                                             </td>
                                             <td>@item.Name</td>
+                                            <td>@item.PrimaryEmail</td>
                                             <td>
                                                 @if (User.HasClaim("Clients", "edit"))
                                                 {
@@ -220,7 +222,14 @@ else
                ToastNotification("@TempData["ClientNotFound"]","error");
             </text>
 
-        }  
+        } 
+        @if (TempData["EmailNotReceived"] != null)
+        {
+            <text>
+                               ToastNotification("@TempData["EmailNotReceived"]","error");
+            </text>
+
+        }
         });
     </script>
 }

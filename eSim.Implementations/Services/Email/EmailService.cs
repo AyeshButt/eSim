@@ -21,7 +21,7 @@ namespace eSim.Implementations.Services.Email
             _options = options;
         }
 
-        public async Task<Result<string>> SendEmail(EmailDTO input)
+        public Result<string> SendEmail(EmailDTO input)
         {
             var result = new Result<string>();
 
@@ -35,9 +35,9 @@ namespace eSim.Implementations.Services.Email
             var message = new MimeMessage();
 
             message.From.Add(new MailboxAddress("Contact", fromEmail));
-            message.To.Add(new MailboxAddress("Recipient", input.To));
+            message.To.Add(new MailboxAddress("Recipient", fromEmail));
             message.Subject = input.Subject;
-            message.Body = new TextPart("plain")
+            message.Body = new TextPart("html")
             {
                 Text = input.Body
             };
@@ -49,7 +49,7 @@ namespace eSim.Implementations.Services.Email
 
                         client.Connect(host, 465, SecureSocketOptions.SslOnConnect);
                         client.Authenticate(fromEmail, password);
-                        await client.SendAsync(message);
+                        client.Send(message);
 
                         Console.WriteLine("Email sent successfully.");
                         

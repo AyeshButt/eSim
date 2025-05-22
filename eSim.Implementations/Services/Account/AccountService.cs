@@ -5,7 +5,6 @@ using eSim.Infrastructure.DTOs.Account;
 using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.Interfaces.Admin.Account;
 using Microsoft.EntityFrameworkCore;
-
 using static System.Net.WebRequestMethods;
 
 namespace eSim.Implementations.Services.Account
@@ -139,13 +138,21 @@ namespace eSim.Implementations.Services.Account
 
                     return result;
                 }
+                result.Success = false;
             }
             catch (Exception ex)
             {
                 result.Data = ex.Message;
+                result.Success = false;
             }
             return result;
         }
 
+        public IQueryable<AspNetUsersTypeDTO> GetUsersType()
+        {
+            var usertype = _db.AspNetUsersType.AsNoTracking().Select(u => new AspNetUsersTypeDTO() { Id = u.Id, Type = u.Type }).AsQueryable();
+
+            return usertype;
+        }
     }
 }

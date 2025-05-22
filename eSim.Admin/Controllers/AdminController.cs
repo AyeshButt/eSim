@@ -16,10 +16,10 @@ namespace eSim.Admin.Controllers
     public class AdminController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly ISystemClaimService _systemClaims;
 
-        public AdminController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ISystemClaimService systemClaims)
+        public AdminController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ISystemClaimService systemClaims)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -140,9 +140,12 @@ namespace eSim.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var roleCreationResult = await _roleManager.CreateAsync(new IdentityRole
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                var roleCreationResult = await _roleManager.CreateAsync(new ApplicationRole
                 {
                     Name = input.RoleName,
+                    CreatedBy = userId ?? string.Empty, 
                 });
 
                 if (roleCreationResult.Succeeded)

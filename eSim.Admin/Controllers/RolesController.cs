@@ -12,10 +12,9 @@ namespace eSim.Admin.Controllers
     public class RolesController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly ISystemClaimService _systemClaims;
-
-        public RolesController(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager, ISystemClaimService systemClaims)
+        public RolesController(RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager, ISystemClaimService systemClaims)
         {
             _roleManager = roleManager;
             _userManager = userManager;
@@ -28,7 +27,9 @@ namespace eSim.Admin.Controllers
         [HttpGet]
         public IActionResult ManageRoles()
         {
-            var roles = _roleManager.Roles.Select(a => new ManageRoleDTO { Id = a.Id, RoleName = a.Name });
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var roles = _roleManager.Roles.Where(u=>u.CreatedBy == userId).Select(a => new ManageRoleDTO { Id = a.Id, RoleName = a.Name });
             return View(model: roles.ToList());
         }
         [Authorize(Policy = "Roles:create")]
@@ -44,11 +45,15 @@ namespace eSim.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> AddRole(RoleDTO input)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             if (ModelState.IsValid)
             {
-                var roleCreationResult = await _roleManager.CreateAsync(new IdentityRole
+                var roleCreationResult = await _roleManager.CreateAsync(new ApplicationRole
                 {
                     Name = input.RoleName,
+
+                    CreatedBy = userId ?? string.Empty,
                 });
 
                 if (roleCreationResult.Succeeded)
@@ -211,8 +216,6 @@ namespace eSim.Admin.Controllers
                             }
                         }
                     }
-
-
 
                     return RedirectToAction(nameof(ManageRoles));
                 }

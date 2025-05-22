@@ -41,7 +41,7 @@ builder.Services.AddTransient<ITicket, TicketService>();
 builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailConfiguration"));
 
 builder.Services.
-    AddIdentity<ApplicationUser, IdentityRole>(options =>
+    AddIdentity<ApplicationUser, ApplicationRole>(options =>
     {
         /// password options and other here!
         options.Password.RequireNonAlphanumeric = false;

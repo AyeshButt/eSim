@@ -35,10 +35,16 @@
             <div class="card-body">
                 @for (int menu = 0; menu < Model.Claims[sideMenu].Count(); menu++)
                 {
-                    <input asp-for="Claims[sideMenu][menu].isSelected" type="checkbox" />
                     <input asp-for="Claims[sideMenu][menu].Value" type="hidden" />
                     <input asp-for="Claims[sideMenu][menu].Type" type="hidden" />
-                    <span>@Model.Claims[sideMenu][menu].Value</span>
+                    @if (User.HasClaim($"{Model.Claims[sideMenu][menu].Type}", $"{Model.Claims[sideMenu][menu].Value}"))
+                    {
+
+                        <input asp-for="Claims[sideMenu][menu].isSelected" type="checkbox" /> <span>@Model.Claims[sideMenu][menu].Value</span>
+
+                    }
+
+
                     <br />
 
                 }

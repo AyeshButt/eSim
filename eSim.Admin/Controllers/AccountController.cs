@@ -19,6 +19,7 @@ using System.ComponentModel.DataAnnotations;
 using eSim.Common.StaticClasses;
 using Microsoft.Extensions.Options;
 using eSim.Infrastructure.DTOs.Configuration;
+using System.Security.Claims;
 
 namespace eSim.Admin.Controllers
 {
@@ -43,6 +44,18 @@ namespace eSim.Admin.Controllers
         }
 
         [HttpGet]
+        public IActionResult Configs()
+        {
+            ConfigDTO model = new ConfigDTO();
+
+            var key = _config.GetValue("KeyId", "DEFAULT");
+
+            model.ConnectionString = _config.GetConnectionString("AppDbConnection") ?? "unable to located";
+            model.KeyId = key;
+
+            return View(model: model);
+        }
+        [HttpGet]
         public IActionResult Index(string? ReturnUrl)
         {
             var model = new LoginDTO();
@@ -53,21 +66,26 @@ namespace eSim.Admin.Controllers
             return View(model: model);
         }
 
-        [HttpGet]
-        public IActionResult Configs()
-        {
-            ConfigDTO model = new ConfigDTO();
-            var key = _config.GetValue("KeyId", "DEFAULT");
-            model.ConnectionString = _config.GetConnectionString("AppDbConnection") ?? "unable to located";
-            model.KeyId = key;
-            return View(model: model);
-        }
-
         [HttpPost]
         public async Task<IActionResult> Index(LoginDTO input)
         {
             if (ModelState.IsValid)
             {
+                var user = await _userManager.FindByEmailAsync(input.Email);
+
+                if (user == null)
+                {
+                    TempData["InvalidUser"] = BusinessManager.InvalidUser;
+
+                    return RedirectToAction("Index");
+                }
+
+                if (!user.EmailConfirmed)
+                {
+                    TempData["EmailNotVerified"] = BusinessManager.EmailNotVerified;
+
+                    return RedirectToAction("Index");
+                }
 
                 var signInResult = await _signInManager.PasswordSignInAsync(userName: input.Email, password: input.Password, isPersistent: true, lockoutOnFailure: false);
 
@@ -79,65 +97,32 @@ namespace eSim.Admin.Controllers
                     }
                     return RedirectToAction(actionName: "Index", controllerName: "Home");
                 }
+
                 if (signInResult.IsLockedOut)
                 {
                     TempData["LockedOut"] = BusinessManager.LockedOut;
-                    return View();
+                    return RedirectToAction("Index");
                 }
 
             }
+
             TempData["LoginFailed"] = BusinessManager.LoginFailed;
 
-            return View(model: input);
-        }
-
-        [HttpGet]
-        public IActionResult Register()
-        {
-            return View(model: new RegisterDTO());
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Register(RegisterDTO input)
-        {
-
-            if (ModelState.IsValid)
-            {
-                ApplicationUser user = new ApplicationUser
-                {
-                    Email = input.Email,
-                    UserName = input.Email,
-                };
-                var registerResult = await _userManager.CreateAsync(user: user, password: input.Password); // pass the plain password, Identity will hash it self
-
-                if (registerResult.Succeeded)
-                {
-                    // on success creation will login the user automatically
-                    var signInResult = await _signInManager.PasswordSignInAsync(userName: input.Email, password: input.Password, isPersistent: true, lockoutOnFailure: false);
-                    if (signInResult.Succeeded)
-                    {
-                        return RedirectToAction(actionName: "Index", controllerName: "Home");
-                    }
-                }
-                else
-                {
-                    foreach (var error in registerResult.Errors)
-                    {
-                        ModelState.AddModelError(key: string.Empty, errorMessage: error.Description);
-                    }
-
-                }
-
-            }
-
-            return View(model: input);
+            return RedirectToAction("Index");
         }
 
         [HttpGet]
         public async Task<IActionResult> LogOut()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Index","Account");
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public IActionResult Error()
+        {
+            return View();
         }
 
         [HttpGet]
@@ -197,7 +182,7 @@ namespace eSim.Admin.Controllers
             email.Subject = BusinessManager.EmailSubject;
             email.Body = BusinessManager.EmailBody + OTPDetails.OTP;
 
-            var IsEmailSent = await _email.SendEmail(email);
+            var IsEmailSent = _email.SendEmail(email);
             #endregion
 
             if (IsEmailSent.Success)
@@ -219,6 +204,7 @@ namespace eSim.Admin.Controllers
 
             return RedirectToAction(nameof(ForgotPassword));
         }
+
         [HttpGet]
         public async Task<IActionResult> OTP(string id)
         {
@@ -241,17 +227,16 @@ namespace eSim.Admin.Controllers
                 return View();
             }
 
-            TempData["ResetLinkExpired"] = BusinessManager.LinkExpired;
 
-            return RedirectToAction("ForgotPassword", "Account");
+                return RedirectToAction("ForgotPassword");
         }
 
         [HttpPost]
-        public async Task<IActionResult> OTP(OTPVerificationDTO otpDetails)
+        public async Task<IActionResult> OTP(OTPVerificationDTO input)
         {
-            if (!string.IsNullOrEmpty(otpDetails.OTP))
+            if (!string.IsNullOrEmpty(input.OTP))
             {
-                var verifyOTP = await _account.VerifyOTP(otpDetails);
+                var verifyOTP = await _account.VerifyOTP(input);
 
                 if (verifyOTP.Success && verifyOTP.Data is not null)
                 {
@@ -261,7 +246,6 @@ namespace eSim.Admin.Controllers
 
                 TempData["OTPFailed"] = BusinessManager.OTPFailed;
             }
-
 
             return RedirectToAction("OTP", "Account");
         }
@@ -324,15 +308,17 @@ namespace eSim.Admin.Controllers
 
             return View();
         }
+       
+        #region Testing Email
         [HttpGet]
         public IActionResult Email()
         {
             return View(new EmailDTO());
         }
         [HttpPost]
-        public async Task<IActionResult> Email(EmailDTO input)
+        public IActionResult Email(EmailDTO input)
         {
-            var email = await _email.SendEmail(input);
+            var email = _email.SendEmail(input);
 
             if (email.Success)
             {
@@ -345,6 +331,7 @@ namespace eSim.Admin.Controllers
 
             return View();
         }
+        #endregion
     }
 
 }
