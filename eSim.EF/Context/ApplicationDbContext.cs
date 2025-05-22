@@ -16,6 +16,7 @@ namespace eSim.EF.Context
         {
         }
         public DbSet<ApplicationUser> ApplicationUser { get; set; }
+        public DbSet<ApplicationRole> ApplicationRole { get; set; }
         public DbSet<SystemClaims> SystemClaims { get; set; }
         public DbSet<SideMenu> SideMenu { get; set; }
         public DbSet<OTPVerification> OTPVerification { get; set; }

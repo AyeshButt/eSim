@@ -1,43 +1,54 @@
 ﻿@model ErrorViewModel
+
 @{
-    ViewData["Title"] = "Error";
-}
-@{
+    ViewData["Title"] = "401 Unauthorized";
     Layout = null;
 }
-<!DOCTYPE html>
-<html lang="en">
-<link href="~/btsui/assets/css/customcss.css" rel="stylesheet" />
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<!doctype html>
+<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="ladylip" data-sidebar-size="lg">
+<head>
+    <partial name="~/Views/Shared/_title_meta.cshtml" />
+    <partial name="~/Views/Shared/_head_css.cshtml" />
+</head>
+<body>
 
+    <!-- auth-page wrapper -->
+    <div class="auth-page-wrapper auth-bg-cover py-5 d-flex justify-content-center align-items-center min-vh-100">
+        <div class="bg-overlay"></div>
+        <!-- auth-page content -->
+        <div class="auth-page-content overflow-hidden pt-lg-5">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-xl-5">
+                        <div class="card overflow-hidden">
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <lord-icon class="avatar-xl"
+                                               src="https://cdn.lordicon.com/ofbvmdiz.json"
+                                               trigger="loop"
+                                               colors="primary:#405189,secondary:#0ab39c">
+                                    </lord-icon>
+                                    <h1 class="text-primary mb-4">Oops !</h1>
+                                    <h4 class="text-uppercase">401, Unauthorized 😭</h4>
+                                    <p class="text-muted mb-4">You are not allowed to access this page!</p>
+                                    <a href="@Url.Action("Index", "Home")" class="btn btn-success"><i class="mdi mdi-home me-1"></i>Back to home</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
 
-
-
-<body style="margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; background-color: #212837; color: white;">
-
-    <div class="custom-error-page">
-        <div class="custom-error-page-content" style="color: white;">
-            <div class="custom-error-img main-div">
-                <div class="custom-error-img-code inner-div">401</div>
-                <img src="/UserImages/404.svg" alt="">
-
+                </div>
+                <!-- end row -->
             </div>
-
-
-            <div class="d-flex flex-column justify-content-center align-items-center text-white text-center">
-                <h6 class="display-3 text-warning" style="margin-top: 0; margin-bottom: 0;">Oops, Unauthorized!</h6>
-
-                <a asp-action="Index" asp-controller="Home" class="btn btn-primary mt-3 mb-1">Go to Home</a>
-            </div>
-
-
+            <!-- end container -->
         </div>
+        <!-- end auth page content -->
     </div>
+    <!-- end auth-page-wrapper -->
+    <partial name="~/Views/Shared/_vendor_scripts.cshtml" />
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
-
 </html>
-
-

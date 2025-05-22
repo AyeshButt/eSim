@@ -1,0 +1,11 @@
+﻿@model List<(string Key, string Class)>
+
+@foreach (var (Key, Class) in Model)
+{
+    if (TempData[Key] != null)
+    {
+        <div class="alert @Class alert-dismissible fade show text-center" role="alert">
+            @TempData[Key]
+        </div>
+    }
+}
