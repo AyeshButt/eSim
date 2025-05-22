@@ -21,14 +21,14 @@ namespace eSim.Admin.Controllers
         {
             if(!Guid.TryParse(id,out Guid parseId))
             {
-                return RedirectToAction("Error", "Home");
+                return RedirectToAction("Error", "Account");
             }
             
             var verifyClient = await _clientSettings.CheckIfClientExists(parseId);
 
             if (!verifyClient.Success)
             {
-                return RedirectToAction("Error", "Home");
+                return RedirectToAction("Error", "Account");
             }
             
             var clientSettings = await _clientSettings.GetClientSettingsAsync(parseId);
@@ -43,13 +43,13 @@ namespace eSim.Admin.Controllers
         {
             if (!Guid.TryParse(id, out Guid parseId))
             {
-                return RedirectToAction("Error", "Home");
+                return RedirectToAction("Error", "Account");
             }
             var verifyClient = await _clientSettings.CheckIfClientExists(parseId);
 
             if (!verifyClient.Success)
             {
-                return RedirectToAction("Error", "Home");
+                return RedirectToAction("Error", "Account");
             }
 
             var clientsettings = await _clientSettings.GetClientSettingsAsync(parseId);

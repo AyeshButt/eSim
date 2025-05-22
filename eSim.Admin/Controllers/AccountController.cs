@@ -71,6 +71,21 @@ namespace eSim.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                var user = await _userManager.FindByEmailAsync(input.Email);
+
+                if (user == null)
+                {
+                    TempData["InvalidUser"] = BusinessManager.InvalidUser;
+
+                    return RedirectToAction("Index");
+                }
+
+                if (!user.EmailConfirmed)
+                {
+                    TempData["EmailNotVerified"] = BusinessManager.EmailNotVerified;
+
+                    return RedirectToAction("Index");
+                }
 
                 var signInResult = await _signInManager.PasswordSignInAsync(userName: input.Email, password: input.Password, isPersistent: true, lockoutOnFailure: false);
 
@@ -102,6 +117,12 @@ namespace eSim.Admin.Controllers
             await _signInManager.SignOutAsync();
 
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public IActionResult Error()
+        {
+            return View();
         }
 
         [HttpGet]
@@ -161,7 +182,7 @@ namespace eSim.Admin.Controllers
             email.Subject = BusinessManager.EmailSubject;
             email.Body = BusinessManager.EmailBody + OTPDetails.OTP;
 
-            var IsEmailSent = await _email.SendEmail(email);
+            var IsEmailSent = _email.SendEmail(email);
             #endregion
 
             if (IsEmailSent.Success)
@@ -211,11 +232,11 @@ namespace eSim.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> OTP(OTPVerificationDTO otpDetails)
+        public async Task<IActionResult> OTP(OTPVerificationDTO input)
         {
-            if (!string.IsNullOrEmpty(otpDetails.OTP))
+            if (!string.IsNullOrEmpty(input.OTP))
             {
-                var verifyOTP = await _account.VerifyOTP(otpDetails);
+                var verifyOTP = await _account.VerifyOTP(input);
 
                 if (verifyOTP.Success && verifyOTP.Data is not null)
                 {
@@ -295,9 +316,9 @@ namespace eSim.Admin.Controllers
             return View(new EmailDTO());
         }
         [HttpPost]
-        public async Task<IActionResult> Email(EmailDTO input)
+        public IActionResult Email(EmailDTO input)
         {
-            var email = await _email.SendEmail(input);
+            var email = _email.SendEmail(input);
 
             if (email.Success)
             {

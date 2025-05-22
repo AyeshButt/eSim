@@ -25,11 +25,6 @@ namespace eSim.Admin.Controllers
             return View();
         }
 
-        [AllowAnonymous]
-        public IActionResult Error()
-        {
-            return View();
-        }
         public IActionResult Privacy()
         {
             return View();

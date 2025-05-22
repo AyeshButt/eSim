@@ -1,7 +1,11 @@
 ﻿using eSim.Common.StaticClasses;
+using eSim.EF.Entities;
 using eSim.Infrastructure.DTOs.Client;
+using eSim.Infrastructure.DTOs.Email;
 using eSim.Infrastructure.Interfaces.Admin.Client;
+using eSim.Infrastructure.Interfaces.Admin.Email;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -10,10 +14,15 @@ namespace eSim.Admin.Controllers
     public class ClientController : Controller
     {
         private readonly IClient _client;
-
-        public ClientController(IClient client)
+        private readonly IEmailService _email;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IConfiguration _config;
+        public ClientController(IClient client, IEmailService email, UserManager<ApplicationUser> userManager, IConfiguration config)
         {
             _client = client;
+            _email = email;
+            _userManager = userManager;
+            _config = config;
         }
 
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
@@ -43,7 +52,7 @@ namespace eSim.Admin.Controllers
                 return RedirectToAction("CreateClient");
             }
 
-            input.CreatedBy = input.ModifiedBy =  User.FindFirstValue(ClaimTypes.Name) ?? string.Empty;
+            input.CreatedBy = input.ModifiedBy = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
 
             var client = await _client.CreateClientAsync(input);
 
@@ -56,17 +65,39 @@ namespace eSim.Admin.Controllers
 
             TempData["ClientCreated"] = BusinessManager.ClientCreated;
 
+            //client verification email
+
+            var verificationSuccess = SendVerificationEmail(input.PrimaryEmail, type: "verification", input: client.Data);
+
+            // client password email
+
+            if (verificationSuccess)
+            {
+                var passwordSuccess = SendVerificationEmail(input.PrimaryEmail,input:client.Data);
+
+                if (passwordSuccess)
+                {
+                    TempData["PasswordEmailReceieved"] = BusinessManager.PasswordEmailReceieved;
+                }
+            }
+            else
+            {
+                TempData["EmailNotReceived"] = BusinessManager.EmailNotReceived;
+            }
+
             return RedirectToAction("Index");
 
         }
+
+
         [Authorize(Policy = "Clients:edit")]
 
         [HttpGet]
         public async Task<IActionResult> UpdateClient(string id)
         {
-            if (!Guid.TryParse(id,out Guid parseId))
+            if (!Guid.TryParse(id, out Guid parseId))
             {
-                return RedirectToAction("Error","Home");
+                return RedirectToAction("Error", "Account");
             }
 
             var client = await _client.GetClientAsync(parseId);
@@ -121,11 +152,11 @@ namespace eSim.Admin.Controllers
 
             if (!Guid.TryParse(id, out Guid parseId))
             {
-                return RedirectToAction("Error", "Home");
+                return RedirectToAction("Error", "Account");
             }
 
             var client = await _client.DisableClientAsync(parseId);
-            
+
             if (!client.Success && client.Data is not null)
             {
                 TempData["ClientError"] = client.Data;
@@ -141,6 +172,93 @@ namespace eSim.Admin.Controllers
             }
 
             return Json(new { success = true, id = id, enabled = enabled });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> IsEmailAvailable(string PrimaryEmail, string Id)
+        {
+            Guid.TryParse(Id, out Guid parsedId);
+
+            bool isUnique = await _client.IsEmailUniqueAsync(PrimaryEmail, parsedId);
+
+            return Json(isUnique);
+        }
+        [HttpGet]
+        public async Task<IActionResult> IsNameAvailable(string Name, string Id)
+        {
+            Guid.TryParse(Id, out Guid parsedId);
+
+            bool isUnique = await _client.IsNameUniqueAsync(Name, parsedId);
+
+            return Json(isUnique);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> VerifyEmail(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                TempData["InvalidUser"] = BusinessManager.InvalidUser;
+
+                return View();
+            }
+
+            if (!user.EmailConfirmed)
+            {
+                user.EmailConfirmed = true;
+                var result = await _userManager.UpdateAsync(user);
+
+                if (!result.Succeeded)
+                {
+                    TempData["VerificationFailed"] = BusinessManager.VerificationFailed;
+
+                    return View();
+                }
+            }
+            else
+            {
+                TempData["AlreadyVerified"] = BusinessManager.AlreadyVerified;
+
+            }
+
+            return View();
+        }
+        private bool SendVerificationEmail(string primaryEmail, string type = "", ClientUserDTO? input = null)
+        {
+            var baseUrl = _config.GetValue<string>("VerificationEmail:url") ?? string.Empty;
+
+            EmailDTO email = new EmailDTO()
+            {
+                To = primaryEmail
+            };
+
+             
+            if (input != null && !string.IsNullOrEmpty(baseUrl))
+            {
+                if (type == "verification")
+                {
+                    //verification configuration
+
+                    email.Subject = BusinessManager.Verification_EmailSubject;
+                    email.Body = BusinessManager.Verification_EmailBody(input.UserId, baseUrl);
+
+                }
+                else
+                {
+                    //password configuration
+
+                    email.Subject = BusinessManager.Password_EmailSubject;
+                    email.Body = input.Password;
+
+                }
+
+                var result = _email.SendEmail(email);
+                return result.Success;
+            }
+
+            return false;
         }
     }
 }

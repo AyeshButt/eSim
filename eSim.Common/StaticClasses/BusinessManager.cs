@@ -16,6 +16,8 @@ namespace eSim.Common.StaticClasses
         public static string BaseURL = "https://api.esim-go.com/v2.4";
         public static string DefaultPassword = "Dev@123";
         public static string LockedOut = "User is locked out";
+        public static string UserNotFound { get; } = "Email not found. Please check the entered email address and try again.";
+        public static string InvalidUser = "User not found";
 
         public static string ClientCreated = "Client created successfully";
         public static string ClientNotFound = "Client not found";
@@ -24,11 +26,17 @@ namespace eSim.Common.StaticClasses
         public static string UpdateClientSettings = "These are default client settings";
         public static string ClientSettingsNotFound = "Client settings not found";
         public static string ClientSettingsUpdated = "Client settings updated successfully";
+        public static string PasswordEmailReceieved = "Verify your email please";
 
-        public static string EmailValidationError { get; } = "Email cannot be null or empty";
-        public static string UserNotFound { get; } = "Email not found. Please check the entered email address and try again.";
-
+        //Email
         public static string EmailSubject = "Forgot Password";
+        public static string VerificationFailed = "Verification Failed";
+        public static string AlreadyVerified = "Already Verified";
+        public static string EmailNotVerified = "Email not confirmed. Please verify your email before logging in.";
+        public static string EmailValidationError { get; } = "Email cannot be null or empty";
+        
+        public static string Verification_EmailSubject = "Client Verification";
+        public static string Password_EmailSubject = "Client Password Available";
         public static string EmailTo = "ayeshbutt012@gmail.com";
 
         public static string LoginFailed = "Enter correct email or password";
@@ -38,7 +46,6 @@ namespace eSim.Common.StaticClasses
         public static string OTPDetailsNotAdded = "Error occurred while adding OTP details. Try again !!!";
         public static string OTPFailed = "OTP Failed";
         public static string LinkExpired = "Link Expired. Get a new link!!!";
-
         public static string PasswordSuccessfullyReset = "Password Successfully Reset";
 
         public static string GenerateUniqueAlphanumericId(int length)
@@ -94,14 +101,10 @@ namespace eSim.Common.StaticClasses
             }
             return new string(result);
         }
-
-
         public static DateTime GetDateTimeNow()
         {
             return DateTime.UtcNow;
         }
-
-
         public static long UnixOffSetTime()
         {
             return DateTimeOffset.UtcNow.ToUnixTimeSeconds();
@@ -112,7 +115,10 @@ namespace eSim.Common.StaticClasses
         {
             return $"TRN-{UnixOffSetTime()}";
         }
-
+        public static string Verification_EmailBody(string userId, string baseUrl)
+        {
+            return $"Hello, please verify your login by clicking the link below:<br/>\r\n<a href=\"{baseUrl}/Client/VerifyEmail?userId={userId}\">Click here to verify your OTP</a>";
+        }
 
 
     }

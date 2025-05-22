@@ -2,19 +2,16 @@
 
 @{
     ViewData["Title"] = "Update Client";
+
+    var tempMessages = new List<(string Key, string Class)>
+    {
+        ("ClientError", "alert-danger"),
+        ("ClientNotFound", "alert-danger"),
+    };
 }
-@if (TempData["ClientError"] is not null)
-{
-    <div class="alert alert-danger text-center my-3">
-        @TempData["ClientError"]
-    </div>
-}
-@if (TempData["ClientNotFound"] is not null)
-{
-    <div class="alert alert-danger text-center my-3">
-        @TempData["ClientNotFound"]
-    </div>
-}
+
+<partial name="_FlashMessages" for="@tempMessages" />
+
 <div class="row my-2">
     <a asp-controller="Client" asp-action="Index">
         <i class=" ri-arrow-left-line fs-3"></i>
@@ -42,7 +39,12 @@
 
                                 </div>
 
+                                <div>
+                                    <label asp-for="PrimaryEmail" class="form-label">Email</label>
+                                    <input type="text" asp-for="PrimaryEmail" class="form-control" placeholder="Enter your email" />
+                                    <span asp-validation-for="PrimaryEmail" class="text-danger"></span>
 
+                                </div>
 
                             </div>
                             <!--end col-->
