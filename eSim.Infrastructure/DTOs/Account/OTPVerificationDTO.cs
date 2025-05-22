@@ -14,4 +14,5 @@ namespace eSim.Infrastructure.DTOs.Account
         public string? Email { get; set; }
 
     }
+  
 }

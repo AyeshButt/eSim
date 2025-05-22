@@ -1,4 +1,5 @@
 ﻿@{
+
     ViewData["Title"] = "Home Page";
 }
 
@@ -6,3 +7,28 @@
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+@section scripts{
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        @if (true)
+        {
+            <text>
+                    ToastNotification("lok","success");
+            </text>
+        }
+        @if (TempData["ClientUpdated"] != null)
+        {
+            <text>
+                    ToastNotification("@TempData["ClientUpdated"]","success");
+            </text>
+        }
+        @if ((TempData["ClientError"] != null))
+        {
+            <text>
+                            ToastNotification("@TempData["ClientError"]","error");
+            </text>
+
+        }
+        });
+    </script>
+} 

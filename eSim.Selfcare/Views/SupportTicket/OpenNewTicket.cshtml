@@ -83,4 +83,15 @@
             label.innerHTML = `<i class="bi bi-paperclip"></i> Attachment`;
         }
     }
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+            const message = '@TempData["ToastMessage"]';
+            const type = '@TempData["ToastType"]';
+
+            if (message && message!== null) {
+                ToastNotification(message, type || "success");
+            }
+        });
+
 </script>

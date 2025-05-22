@@ -1,63 +1,19 @@
-﻿using eSim.EF.Entities;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using eSim.EF.Entities;
 
-namespace eSim.EF.Context
+namespace eSim.Common.StaticClasses
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public static class CountrySeeder
     {
-        public ApplicationDbContext(DbContextOptions options) : base(options)
+        public static List<Countries> GetCountries()
         {
-        }
-        public DbSet<ApplicationUser> ApplicationUser { get; set; }
-        public DbSet<ApplicationRole> ApplicationRole { get; set; }
-        public DbSet<SystemClaims> SystemClaims { get; set; }
-        public DbSet<SideMenu> SideMenu { get; set; }
-        public DbSet<OTPVerification> OTPVerification { get; set; }
-        public DbSet<Client> Client { get; set; }
-        public DbSet<ClientSettings> ClientSettings { get; set; }
-        public DbSet<GlobalSetting> GlobalSetting { get; set; }
-        public DbSet<Ticket> Ticket { get; set; }
-        public DbSet<TicketAttachments> TicketAttachments { get; set; }
-        public DbSet<TicketActivities> TicketActivities { get; set; }
-        public DbSet<TicketStatus> TicketStatus { get; set; }
-        public DbSet<TicketType> TicketType { get; set; }
-        public DbSet<Subscribers> Subscribers { get; set; }
-        public DbSet<AspNetUsersType> AspNetUsersType { get; set; }
-
-        public DbSet<Countries> Countries { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+            return new List<Countries>
         {
-            base.OnModelCreating(modelBuilder);
-
-
-            modelBuilder.Entity<Countries>(entity =>
-            {
-                entity.ToTable("Countries");
-
-                entity.HasKey(e => e.Id);
-
-                entity.Property(e => e.CountryName)
-                    .HasMaxLength(255)
-                    .IsRequired();
-
-                entity.Property(e => e.Iso3)
-                    .HasMaxLength(3)
-                    .IsRequired();
-
-                entity.Property(e => e.Iso2)
-                    .HasMaxLength(2)
-                    .IsRequired();
-
-                // Seeding data
-                entity.HasData(new Countries { Id = 1, CountryName = "Afghanistan", Iso3 = "AFG", Iso2 = "AF" },
+            new Countries { Id = 1, CountryName = "Afghanistan", Iso3 = "AFG", Iso2 = "AF" },
 new Countries { Id = 2, CountryName = "Aland Islands", Iso3 = "ALA", Iso2 = "AX" },
 new Countries { Id = 3, CountryName = "Albania", Iso3 = "ALB", Iso2 = "AL" },
 new Countries { Id = 4, CountryName = "Algeria", Iso3 = "DZA", Iso2 = "DZ" },
@@ -309,46 +265,8 @@ new Countries { Id = 249, CountryName = "Curaçao", Iso3 = "CUW", Iso2 = "CW" },
 new Countries { Id = 250, CountryName = "Sint Maarten (Dutch part)", Iso3 = "SXM", Iso2 = "SX" },
 new Countries { Id = 251, CountryName = "Cyprus, Turkish Republic of Northern", Iso3 = "CYP", Iso2 = "CY" },
 new Countries { Id = 252, CountryName = "South Georgia and the South Sandwich Islands", Iso3 = "SGS", Iso2 = "GS" }
-);
-            });
 
-
-
-            modelBuilder.Entity<ClientSettings>(entity =>
-            {
-                entity.HasOne(e => e.Client)
-                      .WithMany()
-                      .HasForeignKey(e => e.ClientId);
-            });
-
-            modelBuilder.Entity<TicketType>().HasData(
-               new TicketType { Id = 1, Type = "Bundle" },
-               new TicketType { Id = 2, Type = "Payment" }
-           );
-            modelBuilder.Entity<TicketStatus>().HasData(
-               new TicketStatus { Id = 1, Status = "Open" },
-               new TicketStatus { Id = 2, Status = "Close" },
-               new TicketStatus { Id = 3, Status = "In-progress" },
-               new TicketStatus { Id = 4, Status = "Waiting for reply" }
-
-           );
-            modelBuilder.Entity<TicketAttachmentType>().HasData(
-               new TicketAttachmentType { Id = 1, AttachmentType = "Internal" },
-               new TicketAttachmentType { Id = 2, AttachmentType = "External" }
-           );
-            modelBuilder.Entity<TicketCommentType>().HasData(
-               new TicketCommentType { Id = 1, CommentType = "Customer" },
-               new TicketCommentType { Id = 2, CommentType = "Admin" }
-
-           );
-                        modelBuilder.Entity<AspNetUsersType>().HasData(
-               new AspNetUsersType { Id = 1, Type = "Developer" },
-               new AspNetUsersType { Id = 2, Type = "Superadmin" },
-               new AspNetUsersType { Id = 3, Type = "Subadmin" },
-               new AspNetUsersType { Id = 4, Type = "Client" },
-               new AspNetUsersType { Id = 5, Type = "Subclient" }
-
-);
+        };
         }
     }
 }

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using eSim.Common.StaticClasses;
+using eSim.EF.Context;
+using eSim.Infrastructure.DTOs.Account;
 using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.DTOs.Middleware.Bundle;
 using eSim.Infrastructure.Interfaces.ConsumeApi;
@@ -15,11 +17,15 @@ namespace eSim.Implementations.Services.Middleware.Bundle
 {
     public class BundleService : IBundleService
     {
+
+        private readonly ApplicationDbContext _db;
+
         private readonly IConsumeApi   _consumeApi;
 
-        public BundleService(IConsumeApi consumeApi)
+        public BundleService(IConsumeApi consumeApi, ApplicationDbContext db)
         {
             _consumeApi = consumeApi;
+            _db = db;
         }
         #region GetBundleDetail
         public async Task<Result<GetBundleCatalogueDetailDTO.GetBundleCatalogueDetail>> GetBundleDetailAsync(string name)
@@ -78,7 +84,21 @@ namespace eSim.Implementations.Services.Middleware.Bundle
 
             return result;
         }
+
+       
         #endregion
+        
+        public Result<List<CountriesDTO>> GetCountries()
+        {
+            var listOfCountry = _db.Countries.Select(a=> new CountriesDTO { CountryName = a.CountryName, Iso2 = a.Iso2, Iso3 = a.Iso3 }).ToList();
+
+
+            return new Result<List<CountriesDTO>>() {
+            
+                Data = listOfCountry,
+            
+            };
+        }
     }
 }
 

@@ -9,9 +9,8 @@
     ViewBag.pageTitle = "Support";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@{
-    var row = 0;
-}
+
+
 @section styles{
 <!-- Sweet Alert css-->
 <link href="~/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
@@ -32,33 +31,33 @@
                 </div>
             </div>
             <div class="card-body border border-dashed border-end-0 border-start-0">
-                <form>
+                <form asp-action="List" method="get">
                     <div class="row g-3">
                         <div class="col-xxl-5 col-sm-12">
                             <div class="search-box">
-                                <input type="text" class="form-control search bg-light border-light" placeholder="Search for ticket details or something...">
+                                <input type="text" name="search" class="form-control search bg-light border-light" placeholder="Search with Ticket Refrence Number" value="@Context.Request.Query["search"]">
                                 <i class="ri-search-line search-icon"></i>
                             </div>
                         </div><!--end col-->
 
                         <div class="col-xxl-3 col-sm-4">
-                            <input type="text" class="form-control bg-light border-light" data-provider="flatpickr" data-date-format="d M, Y" data-range-date="true" id="demo-datepicker" placeholder="Select date range">
+                            <input type="text" name="dateRange" class="form-control bg-light border-light" data-provider="flatpickr" data-date-format="d M, Y" data-range-date="true" id="demo-datepicker" placeholder="Select date range">
                         </div><!--end col-->
 
                         <div class="col-xxl-3 col-sm-4">
                             <div class="input-light">
-                                <select class="form-control" data-choices data-choices-search-false name="choices-single-default" id="idStatus">
+                                <select name="status" class="form-control" data-choices data-choices-search-false  id="idStatus">
                                     <option value="">Status</option>
                                     <option value="all" selected>All</option>
                                     <option value="Open">Open</option>
-                                    <option value="Inprogress">Inprogress</option>
+                                    <option value="Inprogress">Inprogress</option> 
                                     <option value="Closed">Closed</option>
                                     <option value="New">New</option>
                                 </select>
                             </div>
                         </div><!--end col-->
                         <div class="col-xxl-1 col-sm-4">
-                            <button type="button" class="btn btn-primary w-100" onclick="SearchData();">
+                            <button type="submit" class="btn btn-primary w-100">
                                 <i class="ri-equalizer-fill me-1 align-bottom"></i>
                                 Filters
                             </button>
@@ -71,8 +70,7 @@
                     <table class="table align-middle table-nowrap mb-0" id="ticketTable">
                         <thead>
                             <tr>
-                                <th class="sort" data-sort="">#</th>
-                                <th class="sort" data-sort="">TRN</th>
+                                <th class="sort" data-sort="">Ticket Refrence Number</th>
                                 <th class="sort" data-sort="tasks_name">Subject</th>
                                 <th class="sort" data-sort="client_name">Type</th>
                                 <th class="sort" data-sort="create_date">Created Date</th>
@@ -86,10 +84,10 @@
                                 @foreach(var item in Model.Data)
                                 {
                                     <tr>
-
-                                        <td class="">@(row +=1)</td>
                                         <td class="">@item.TRN</td>
-                                        <td class="">@item.Subject</td>
+                                        <td class="">
+                                            @(item.Subject.Length > 30 ? item.Subject.Substring(0,30) + "..." : item.Subject)    
+                                        </td>
                                         <td class="">@item.Type</td>
                                         <td class="">@item.CreatedAt</td>
                                         <td>
@@ -115,18 +113,14 @@
 </div><!--end row-->
 
 @section scripts{
-    <!-- list.js min js -->
-    <script src="~/assets/libs/list.js/list.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const message = '@TempData["ToastMessage"]';
+            const type = '@TempData["ToastType"]';
 
-    <!--list pagination js-->
-    @* <script src="~/assets/libs/list.pagination.js/list.pagination.min.js"></script> *@
-
-    <!-- titcket init js -->
-    <script src="~/assets/js/pages/ticketlist.init.js"></script>
-
-    <!-- Sweet Alerts js -->
-    <script src="~/assets/libs/sweetalert2/sweetalert2.min.js"></script>
-
-    <!-- App js -->
-    <script src="~/assets/js/app.js"></script>
+            if (message && message!== null) {
+                ToastNotification(message, type || "success");
+            }
+        });
+    </script>
 }
