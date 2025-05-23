@@ -56,9 +56,7 @@ namespace eSim.Middleware.Controllers
 
             return Ok(result);
         }
-        // code ok
-
-
+         
         #endregion
         [AllowAnonymous]
         [HttpPost("forgot-password")]

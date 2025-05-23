@@ -21,7 +21,7 @@ namespace eSim.Common.StaticClasses
             _apiKey = "5iiPSVJSr0LUtbJRLxHyxOVNg-kyYZ4UngIGktEs";
         }
 
-        //Consume Get Api
+        //Consume Get Api by Bilal
         public async Task<T?> GetApi<T>(string Url)
         {
             T? response = default;  
@@ -32,14 +32,8 @@ namespace eSim.Common.StaticClasses
                 req.Headers.Add("x-api-Key", _apiKey);
 
                 var request = await _httpClient.SendAsync(req);
-                var sss = await request.Content.ReadAsStringAsync();
 
                 response = JsonConvert.DeserializeObject<T>(await request.Content.ReadAsStringAsync());
-
-
-
-
-         
 
             }
             catch (Exception ex)
@@ -47,10 +41,7 @@ namespace eSim.Common.StaticClasses
                 return default(T?);
             }
             return response;
-        
-        
-        
-        
+     
 }
 
         //Consume Post Api

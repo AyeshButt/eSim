@@ -82,34 +82,7 @@
             }).showToast();
         }
     </script>
-    @*     <script>
-        function ToastNotification(message,type) {
-
-             var backgroundColor;
-
-            if(type === "Success"){
-                var backgroundColor = "linear-gradient(to right, #00b09b, #96c93d)";
-
-            }
-            else if(type === "warning"){
-                   backgroundColor = "linear-gradient(to right, #ff416c, #ff4b2b)";
-            }
-
-            Toastify({
-                text: message,
-                duration: 3000,
-                close: true,
-                gravity: "top",
-                position: "right",
-                style: {
-                    background: backgroundColor
-                },
-                stopOnFocus: true,
-                newWindow: true
-            }).showToast();
-        }
-    </script>
- *@
+   
     @RenderSection("scripts", required: false)
 </body>
 </html>

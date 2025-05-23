@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace eSim.Selfcare.Controllers
 {
+    [Authorize]
     public class DashboardController : Controller
     {
         public IActionResult Index()

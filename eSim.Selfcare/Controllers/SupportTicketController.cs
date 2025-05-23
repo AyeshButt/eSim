@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace eSim.Selfcare.Controllers
 {
+    [Authorize]
     public class SupportTicketController : Controller
     {
         private readonly ITicketService _ts;
