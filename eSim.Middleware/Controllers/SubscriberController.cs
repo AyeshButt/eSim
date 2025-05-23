@@ -45,26 +45,21 @@ namespace eSim.Middleware.Controllers
                 return BadRequest(new Result<string>
                 {
                     Success = false,
-                    Message = "Invalid input data",
-                    Data = null
+                    Message = "Invalid input data"
                 });
             }
 
             var result = await _subscriber.CreateSubscriber(input);
 
             if (!result.Success)
-            {
                 return BadRequest(result);
-            }
 
-      
-            var email = new EmailDTO
-            {
-                To = input.Email,
-                Body = $"Hi {input.FirstName},\n\nYou are successfully signed up on our platform.\n\nThanks,\neSim Team"
-            };
+            return Ok(result);
+        }
 
-            var emailResult = _emailService.SendEmail(email);
+
+
+            var emailResult = await _emailService.SendEmail(email);
 
             if (!emailResult.Success)
             {
@@ -119,7 +114,7 @@ namespace eSim.Middleware.Controllers
                 {
                     Success = false,
                     Message = "OTP is required.",
-                    Data = null
+                   
                 });
             }
 
