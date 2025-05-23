@@ -1,6 +1,10 @@
+using eSim.Common.StaticClasses;
 using eSim.Implementations.Services.Selfcare.Authentication;
+using eSim.Implementations.Services.Selfcare.Reference;
 using eSim.Implementations.Services.Selfcare.Ticket;
+using eSim.Infrastructure.Interfaces.ConsumeApi;
 using eSim.Infrastructure.Interfaces.Selfcare.Authentication;
+using eSim.Infrastructure.Interfaces.Selfcare.Refrence;
 using eSim.Infrastructure.Interfaces.Selfcare.Ticket;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -10,12 +14,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddHttpContextAccessor();
-
-builder.Services.AddHttpClient();
-builder.Services.AddTransient<ISignIn, SignInService>();
+builder.Services.AddTransient<IMiddlewareConsumeApi, MiddlewareConsumeApi>();
+builder.Services.AddTransient<eSim.Infrastructure.Interfaces.Selfcare.Authentication.IAuthenticationService, eSim.Implementations.Services.Selfcare.Authentication.AuthenticationService>();
 builder.Services.AddTransient<ITicketService, TicketService>();
-
+builder.Services.AddTransient<ICountyService, CountryService>();
 builder.Services.AddControllersWithViews();
 
 
@@ -23,16 +25,24 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
+
         options.LoginPath = "/Authentication/SignIn";
         options.AccessDeniedPath = "/Authentication/AccessDenied";
         options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.SlidingExpiration = false;
+
     });
+
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.IdleTimeout = TimeSpan.FromMinutes(8);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+    
 });
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
 
 
 var app = builder.Build();
@@ -49,6 +59,7 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseSession();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

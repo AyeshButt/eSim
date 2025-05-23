@@ -11,6 +11,7 @@ using eSim.EF.Context;
 using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.DTOs.Ticket;
 using eSim.Infrastructure.Interfaces.Selfcare.Ticket;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 
@@ -19,11 +20,13 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
     public class TicketService : ITicketService
     {
         private readonly HttpClient _http;
+        private readonly IHttpContextAccessor _httpContext;
 
-        public TicketService(HttpClient http )
+        public TicketService(HttpClient http , IHttpContextAccessor httpContext)
         {
             
             _http = http;
+            _httpContext = httpContext;
         }
 
         #region GetTicket List 
@@ -31,7 +34,12 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
         {
             string URL = BusinessManager.MdwBaseURL + "Ticket";
 
-            _http.DefaultRequestHeaders.Authorization   = new AuthenticationHeaderValue("Bearer", BusinessManager.AuthToken);
+            //var token = User.FindFirst("Token")?.Value;
+            var token = _httpContext.HttpContext?.User?.FindFirst("Token")?.Value;
+
+            //var token = _httpContext.HttpContext?.Session.GetString("Token");
+
+            _http.DefaultRequestHeaders.Authorization   = new AuthenticationHeaderValue("Bearer", token);
 
             var resp = await _http.GetAsync(URL);
 
@@ -52,7 +60,11 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
         public async Task<Result<List<TicketTypeResponseDTO>>> GetTicketType()
         {
             string URL = BusinessManager.MdwBaseURL + "Ticket/Types";
-            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", BusinessManager.AuthToken);
+            //var token = _httpContext.HttpContext?.Session.GetString("Token");
+            var token = _httpContext.HttpContext?.User?.FindFirst("Token")?.Value;
+
+
+            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var req = await _http.GetAsync(URL);
             if (req.IsSuccessStatusCode) 
@@ -71,9 +83,13 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
         public async Task<Result<string>> Create(TicketRequestDTO dto)
         {
             string URL = BusinessManager.MdwBaseURL + "Ticket";
+            //var token = _httpContext.HttpContext?.Session.GetString("Token");
+            var token = _httpContext.HttpContext?.User?.FindFirst("Token")?.Value;
+
+
             try
             {
-                _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", BusinessManager.AuthToken);
+                _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var req = await _http.PostAsJsonAsync(URL, dto);
                 var json = await req.Content.ReadAsStringAsync();
