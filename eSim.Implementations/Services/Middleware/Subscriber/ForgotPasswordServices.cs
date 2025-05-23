@@ -85,6 +85,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             var result = new Result<string>();
 
             var otpRecords = await _db.OTPVerification
+
                 .Where(o => o.OTP == otp && o.IsValid && o.Type == "ForgotPassword")
                 .ToListAsync();
 
@@ -95,7 +96,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             {
                 result.Success = false;
                 result.Message = "Invalid or expired OTP.";
-                result.Data = null;
+         
                 return result;
             }
 
@@ -104,31 +105,32 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
 
             result.Success = true;
             result.Message = "OTP verified successfully.";
-            result.Data = null;
+   
+  
             return result;
         }
 
         #endregion
 
         #region ResetPassword
+
         public async Task<Result<string>> ResetPasswordAsync(ResetPasswordDTO input)
         {
             var result = new Result<string>();
 
-            var user = await _db.Subscribers.FindAsync(Guid.Parse(input.UserId));
+            var user = await _db.Subscribers.FirstOrDefaultAsync(x => x.Email == input.Email);
             if (user == null)
             {
                 result.Success = false;
                 result.Message = "User not found.";
-                result.Data = null;
                 return result;
             }
 
             user.Hash = ComputeSha256Hash(input.NewPassword);
             user.ModifiedAt = DateTime.UtcNow;
-           await  _db.SaveChangesAsync();
+            await _db.SaveChangesAsync();
 
-            var emailResult =  _emailService.SendEmail(new EmailDTO
+            var emailResult = _emailService.SendEmail(new EmailDTO
             {
                 To = user.Email,
                 Subject = "Password Changed Successfully",
@@ -139,16 +141,13 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             {
                 result.Success = false;
                 result.Message = "Password changed but failed to send confirmation email.";
-                result.Data = emailResult.Data; // You can also use null here if you prefer
                 return result;
             }
 
             result.Success = true;
             result.Message = "Password changed successfully.";
-            result.Data = null;
             return result;
         }
-
 
 
         private string ComputeSha256Hash(string rawData)
@@ -169,13 +168,13 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
         {
             var result = new Result<string>();
 
-            // Step 1: User lookup
-            var user = await _db.Subscribers.FindAsync(Guid.Parse(input.UserId));
+
+            var user = await _db.Subscribers.FirstOrDefaultAsync(u => u.Email == input.Email);
             if (user == null)
             {
                 result.Success = false;
                 result.Message = "User not found.";
-                result.Data = null;
+           
                 return result;
             }
 
@@ -185,7 +184,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             {
                 result.Success = false;
                 result.Message = "Old password is incorrect.";
-                result.Data = null;
+          
                 return result;
             }
 
@@ -194,14 +193,14 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             {
                 result.Success = false;
                 result.Message = "New password and Confirm password do not match.";
-                result.Data = null;
+         
                 return result;
             }
 
             // Step 4: Proceed with reset
             var resetDto = new ResetPasswordDTO
             {
-                UserId = input.UserId,
+                Email= input.Email,
                 NewPassword = input.NewPassword,
                 ConfirmPassword = input.ConfirmPassword
             };
