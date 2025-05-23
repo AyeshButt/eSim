@@ -64,7 +64,7 @@ namespace eSim.Middleware.Controllers
                 Body = $"Hi {input.FirstName},\n\nYou are successfully signed up on our platform.\n\nThanks,\neSim Team"
             };
 
-            var emailResult = await _emailService.SendEmail(email);
+            var emailResult =  _emailService.SendEmail(email);
 
             if (!emailResult.Success)
             {
