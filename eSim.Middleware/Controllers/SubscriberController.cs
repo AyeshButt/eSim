@@ -56,29 +56,7 @@ namespace eSim.Middleware.Controllers
 
             return Ok(result);
         }
-
-
-
-            var emailResult = await _emailService.SendEmail(email);
-
-            if (!emailResult.Success)
-            {
-                return StatusCode(500, new Result<string>
-                {
-                    Success = false,
-                    Message = "User created, but email sending failed",
-                    Data = null
-                });
-            }
-
-            return Ok(new Result<string>
-            {
-                Success = true,
-                Message = "User created and email sent successfully",
-                Data = null
-            });
-        }
-
+         
         #endregion
         [AllowAnonymous]
         [HttpPost("forgot-password")]
