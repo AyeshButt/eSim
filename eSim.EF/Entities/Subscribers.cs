@@ -41,6 +41,8 @@ namespace eSim.EF.Entities
         [DataType(DataType.DateTime)]
         public DateTime ModifiedAt { get; set; }
 
+        [MaxLength(500)]
+        public string? ProfileImage { get; set; }
 
         [Required]
         [MaxLength(2)]

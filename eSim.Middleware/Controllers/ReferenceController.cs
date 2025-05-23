@@ -1,11 +1,12 @@
 ﻿using eSim.Common.StaticClasses;
 using eSim.Infrastructure.Interfaces.Middleware;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eSim.Middleware.Controllers
 {
-    
+    [AllowAnonymous]
     [ApiController]
     public class ReferenceController(IBundleService bundleService) : ControllerBase
     {

@@ -17,6 +17,7 @@ namespace eSim.Middleware.Controllers
         private readonly ISubscriberService _subscriber = subscriber;
         private readonly IEmailService _emailService = email;
         private readonly IForgotPassword _password = password;
+        [AllowAnonymous]
         [HttpGet("check-email")]
         public async Task<IActionResult> CheckEmailExists([FromQuery] string email)
         {
@@ -35,83 +36,186 @@ namespace eSim.Middleware.Controllers
             return Ok("Email is available.");
         }
         #region Subscriber
-
+        [AllowAnonymous]
         [HttpPost]
-
-        public IActionResult POST(SubscriberRequestDTO input)
+        public async Task<IActionResult> Post([FromBody] SubscriberRequestDTO input)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var result = _subscriber.CreateSubscriber(input).GetAwaiter().GetResult();
-                if (result.Success)
+                return BadRequest(new Result<string>
                 {
-                    var email = new EmailDTO
-                    {
-                        To = input.Email, 
-                        Body = $"Hi {input.FirstName},\n\nYou are successfully signed up on our platform.\n\nThanks,\neSim Team"
-                    };
-
-                    var emailResult = _emailService.SendEmail(email).GetAwaiter().GetResult();
-                    if (!emailResult.Success)
-                    {
-                        Console.WriteLine("Email error: " + emailResult.Data);
-                     
-                    }
-                    return Ok(input);
-                }
-                else
-                {
-                    return Problem(result.Data);
-                }
-            }
-            else
-            {
-
-                return BadRequest();
+                    Success = false,
+                    Message = "Invalid input data",
+                    Data = null
+                });
             }
 
+            var result = await _subscriber.CreateSubscriber(input);
+
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+      
+            var email = new EmailDTO
+            {
+                To = input.Email,
+                Body = $"Hi {input.FirstName},\n\nYou are successfully signed up on our platform.\n\nThanks,\neSim Team"
+            };
+
+            var emailResult = await _emailService.SendEmail(email);
+
+            if (!emailResult.Success)
+            {
+                return StatusCode(500, new Result<string>
+                {
+                    Success = false,
+                    Message = "User created, but email sending failed",
+                    Data = null
+                });
+            }
+
+            return Ok(new Result<string>
+            {
+                Success = true,
+                Message = "User created and email sent successfully",
+                Data = null
+            });
         }
+
         #endregion
         [AllowAnonymous]
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO model)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            {
+                return BadRequest(new Result<string>
+                {
+                    Success = false,
+                    Message = "Invalid input.",
+                    Data = null
+                });
+            }
 
             var result = await _password.ForgotPasswordAsync(model);
 
             if (!result.Success)
-                return BadRequest(result.Data);
+            {
+                return BadRequest(result); // full response with success, message, and data
+            }
 
-            return Ok(result.Data);
+            return Ok(result); // full response with success, message, and data
         }
+
         [AllowAnonymous]
         [HttpGet("verify-otp")]
         public async Task<IActionResult> VerifyOtp([FromQuery] string otp)
         {
             if (string.IsNullOrEmpty(otp))
-                return BadRequest("OTP is required.");
+            {
+                return BadRequest(new Result<string>
+                {
+                    Success = false,
+                    Message = "OTP is required.",
+                    Data = null
+                });
+            }
 
             var result = await _password.VerifyOtpAsync(otp);
 
             if (!result.Success)
-                return BadRequest(result.Data);
+                return BadRequest(result);
 
-            return Ok(result.Data);
+            return Ok(result);
         }
+
+        [AllowAnonymous]
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO model)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            {
+                return BadRequest(new Result<string>
+                {
+                    Success = false,
+                    Message = "Invalid input.",
+                    Data = null
+                });
+            }
 
             var result = await _password.ResetPasswordAsync(model);
 
             if (!result.Success)
-                return BadRequest(result.Data);
+                return BadRequest(result);
 
-            return Ok(result.Data);
+            return Ok(result);
         }
+
+        [AllowAnonymous]
+        [HttpPut("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO input)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new Result<string>
+                {
+                    Success = false,
+                    Message = "Invalid input.",
+                    Data = null
+                });
+            }
+
+            var result = await _password.ChangePasswordAsync(input);
+
+            if (!result.Success)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> UpdateSubscriber(Guid id, [FromBody] UpdateSubscriberDTO input)
+        {
+            var result = await _subscriber.UpdateSubscriberAsync(id, input);
+            if (result.Success)
+                return Ok(result.Data);
+
+            return BadRequest(result.Data);
+        }
+
+
+        [AllowAnonymous]
+        [HttpPost("Upload")]
+        public async Task<IActionResult> UploadProfileImage([FromBody] FormFile file)
+        {
+            var s = Request.Form.Files;
+
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = "No image file provided."
+                    
+                });
+            }
+
+            var dto = new ProfileImageDTO();
+
+            var result = await _subscriber.UploadProfileImageAsync(file, dto);
+
+            if (!result.Success)
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+
+            return Ok(result);
+        }
+
+
+
+
+
     }
 }
