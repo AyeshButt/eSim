@@ -69,6 +69,7 @@ namespace eSim.Implementations.Services.Middleware.Bundle
                 {
                     result.Success = false;
                     result.Data = null;
+                    result.Message = string.Empty;
                     return result;
                 }
 
@@ -76,10 +77,11 @@ namespace eSim.Implementations.Services.Middleware.Bundle
                 result.Data = response;
                
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 result.Success = false;
                 result.Data = null;
+                result.Message=ex.Message;
             }
 
             return result;

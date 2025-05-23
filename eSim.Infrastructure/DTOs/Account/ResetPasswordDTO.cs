@@ -16,4 +16,6 @@ namespace eSim.Infrastructure.DTOs.Account
         public string ConfirmPassword { get; set; }
 
     }
+   
+
 }

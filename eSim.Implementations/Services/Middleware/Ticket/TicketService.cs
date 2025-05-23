@@ -110,6 +110,10 @@ namespace eSim.Implementations.Services.Middleware.Ticket
 
                 var fileName = $"{Guid.NewGuid()}_{dto.File.FileName}";
                 var filePath = Path.Combine(uploadsFolder, fileName);
+
+
+
+
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await dto.File.CopyToAsync(stream);
