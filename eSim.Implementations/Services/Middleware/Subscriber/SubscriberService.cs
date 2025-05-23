@@ -5,8 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using eSim.Common.StaticClasses;
 using eSim.EF.Context;
+using eSim.EF.Entities;
 using eSim.Infrastructure.DTOs.Account;
+using eSim.Infrastructure.DTOs.Email;
 using eSim.Infrastructure.DTOs.Global;
+using eSim.Infrastructure.Interfaces.Admin.Email;
 using eSim.Infrastructure.Interfaces.Middleware;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -15,91 +18,105 @@ using Microsoft.EntityFrameworkCore;
 
 namespace eSim.Implementations.Services.Middleware.Subscriber
 {
-    public class SubscriberService(ApplicationDbContext db) : ISubscriberService
+    public class SubscriberService: ISubscriberService
     {
-        private readonly ApplicationDbContext _db = db;
+        private readonly ApplicationDbContext _db;
+        private readonly IEmailService _emailService;
 
-
-       
-
-        public async Task<Result<string>> CreateSubscriber(SubscriberRequestDTO input)
+        // Constructor
+        public SubscriberService(ApplicationDbContext db, IEmailService email)
         {
-            var transaction = await _db.Database.BeginTransactionAsync();
-            try
-            {
-               
-                var salt = BusinessManager.GenerateUniqueAlphanumericId(10);
-
-                var client = await _db.Client.FirstOrDefaultAsync(a=>a.Name ==input.MerchantId);
-
-                if (client is not null)
-                {
-
-
-                    string hashedPassword = PasswordHasher.HashPassword(input.Password);
-
-
-                    await _db.Subscribers.AddAsync(new EF.Entities.Subscribers
-                    {
-
-                        Active = true,
-                        CreatedAt = BusinessManager.GetDateTimeNow(),
-                        ModifiedAt = BusinessManager.GetDateTimeNow(),
-                        FirstName = input.FirstName,
-                        LastName = input.LastName,
-                        Email = input.Email,
-                        Hash = hashedPassword,
-                        ClientId = client.Id,
-                        Country = input.Country
-
-
-
-
-                    });
-
-                    await _db.SaveChangesAsync();
-                    var r = PasswordHasher.VerifyPassword(input.Password, hashedPassword);
-
-
-
-                    await transaction.CommitAsync();
-                    return new Result<string>()
-                    {
-                        Data = null
-                    };
-                }
-                else
-                {
-                    return new Result<string>()
-                    {
-
-                        Data = "Invalid Merchant Details"
-
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-
-                await transaction.RollbackAsync();
-
-                return new Result<string>()
-                {
-
-                    Data = ex.Message,
-
-                };
-
-            }
-
+            _db = db;
+            _emailService = email;
         }
+
+
 
         public Task<bool> EmailExists(string email)
         {
             return _db.Subscribers.AnyAsync(x => x.Email == email);
         }
 
-       
+
+        public async Task<Result<string>> CreateSubscriber(SubscriberRequestDTO input)
+        {
+            var result = new Result<string>();
+
+            // Transaction start karo
+            await using var transaction = await _db.Database.BeginTransactionAsync();
+
+            try
+            {
+                var client = await _db.Client.FirstOrDefaultAsync(c => c.Name == input.MerchantId);
+                if (client == null)
+                {
+                    result.Success = false;
+                    result.Message = "Invalid Merchant Details";
+                    return result;
+                }
+
+                string hashedPassword = PasswordHasher.HashPassword(input.Password);
+
+                var subscriber = new Subscribers
+                {
+                    Active = true,
+                    CreatedAt = DateTime.UtcNow,
+                    ModifiedAt = DateTime.UtcNow,
+                    FirstName = input.FirstName,
+                    LastName = input.LastName,
+                    Email = input.Email,
+                    Hash = hashedPassword,
+                    ClientId = client.Id,
+                    Country = input.Country
+                };
+
+                await _db.Subscribers.AddAsync(subscriber);
+                await _db.SaveChangesAsync();
+
+                // Email bhejna
+                var email = new EmailDTO
+                {
+                    To = input.Email,
+                    Subject = "Welcome to eSim",
+                    Body = $"Hi {input.FirstName},\n\nYou are successfully signed up on our platform.\n\nThanks,\neSim Team"
+                };
+
+                var emailResult = _emailService.SendEmail(email);
+
+                if (!emailResult.Success)
+                {
+                    // Email fail hone par bhi transaction commit kar do, lekin warning bhej do
+                    await transaction.CommitAsync();
+                    result.Success = true;
+                    result.Message = "User created, but email sending failed.";
+                    return result;
+                }
+
+                // Sab kuch theek ho to commit karo transaction
+                await transaction.CommitAsync();
+
+                result.Success = true;
+                result.Message = "User created and email sent successfully.";
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // Exception aane par rollback karo transaction
+                try
+                {
+                    await transaction.RollbackAsync();
+                }
+                catch
+                {
+                    // Rollback fail ho to isko ignore karo, warna asli error chhup jayega
+                }
+
+                result.Success = false;
+                result.Message = "An error occurred: " + ex.Message;
+                return result;
+            }
+        }
+
 
         public async Task<Result<string>> UpdateSubscriberAsync(Guid id, UpdateSubscriberDTO input)
         {
