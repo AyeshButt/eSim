@@ -76,10 +76,10 @@ namespace eSim.Middleware.Controllers
 
             if (!result.Success)
             {
-                return BadRequest(result); // full response with success, message, and data
+                return BadRequest(result); 
             }
 
-            return Ok(result); // full response with success, message, and data
+            return Ok(result); 
         }
 
         [AllowAnonymous]
