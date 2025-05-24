@@ -10,26 +10,30 @@ namespace eSim.Middleware.Controllers
     public class BundleController : ControllerBase
     {
         private readonly IBundleService _bundleService;
-
+         
         public BundleController(IBundleService bundleService)
         {
             _bundleService = bundleService;
         }
         #region GetBundles
+
+        
         [AllowAnonymous]
         [HttpPost("GetByRegion")]
         public async Task<IActionResult> GetBundles([FromBody] RegionDTO request)
         {
             if (request == null) return BadRequest("Request body is missing.");
 
-           // request.Region = string.IsNullOrEmpty(request.Region) ? "Asia" : request.Region;
-
+            // request.Region = string.IsNullOrEmpty(request.Region) ? "Asia" : request.Region;
+            
 
             var result = await _bundleService.GetBundlesAsync(request.Region);
 
             if (!result.Success || result.Data == null)
             {
-                return NotFound("No bundles found or API call failed.");
+                result.Message = "No bundles found or API call failed.";
+                //return NotFound("No bundles found or API call failed.");
+                return NotFound(result);
             }
 
             if (result.Data.bundles == null || !result.Data.bundles.Any())

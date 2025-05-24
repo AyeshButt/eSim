@@ -1,10 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace eSim.Infrastructure.DTOs.Account
 {
-    public class ResetPasswordDTO
+    public class SubscriberResetPasswordDTO
     {
-        public string UserId { get; set; }
+        public string Email { get; set; }
 
         [Required(ErrorMessage = "Password is required")]
         [DataType(DataType.Password)]
@@ -14,8 +19,5 @@ namespace eSim.Infrastructure.DTOs.Account
         [Required(ErrorMessage = "Confirm Password is required"), Compare("NewPassword", ErrorMessage = "Password and Confirm Password should match")]
         [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; }
-
     }
-   
-
 }

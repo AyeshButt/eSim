@@ -1,6 +1,13 @@
-﻿using eSim.Common.StaticClasses;
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
+using eSim.Common.StaticClasses;
+using eSim.Infrastructure.DTOs.Account;
 using eSim.Infrastructure.DTOs.Selfcare.Authentication;
+using eSim.Infrastructure.DTOs.Selfcare.Subscriber;
 using eSim.Infrastructure.Interfaces.Selfcare.Authentication;
+using eSim.Infrastructure.Interfaces.Selfcare.Refrence;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,13 +15,21 @@ namespace eSim.Selfcare.Controllers
 {
     public class AuthenticationController : Controller
     {
-        private readonly ISignIn _auth;
+        private readonly Infrastructure.Interfaces.Selfcare.Authentication.IAuthenticationService _auth;
+        private readonly IHttpContextAccessor _httpContext;
+        private readonly ICountyService _countryService;
 
-        public AuthenticationController(ISignIn auth)
+        public AuthenticationController(Infrastructure.Interfaces.Selfcare.Authentication.IAuthenticationService auth, IHttpContextAccessor httpContext, ICountyService countryService)
         {
             _auth = auth;
+            _httpContext = httpContext;
+            _countryService = countryService;
         }
 
+        public new HttpContext HttpContext => _httpContext.HttpContext!;
+
+
+        #region Login for User
 
         [HttpGet]
         public IActionResult SignIn()
@@ -31,38 +46,137 @@ namespace eSim.Selfcare.Controllers
                 return View(model); 
             }
             
-            if (ModelState.IsValid) 
-            {
-                var isAuthenticated = await _auth.AuthenticateAsync(model);
+            var token = await _auth.AuthenticateAsync(model);
 
-                if (isAuthenticated)
+            if (!string.IsNullOrEmpty(token))
+            {
+                HttpContext.Session.SetString("Token", token);
+
+
+                //creating claim 
+
+                var claims = new List<Claim>
                 {
-                    return RedirectToAction( actionName : "Index", controllerName:"Dashboard");
-                }
+                    new Claim("Token", token)
+                };
+
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var principle  = new ClaimsPrincipal(identity);
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principle);
+
+                return RedirectToAction("Index", "Dashboard");
                 
             }
-            TempData["LoginFailed"] = BusinessManager.LoginFailed;
 
-            return View(model: model);
+            TempData["ToastMessage"] = " Error! Login Failed";
+            TempData["ToastType"] = false;
+
+            return View(model);
         }
 
-        
-        public IActionResult SignInCover()
+
+        #endregion
+
+        #region SignUp
+
+        [HttpGet]
+        [AllowAnonymous]
+
+        public async Task<IActionResult> SignUp(string email)
         {
+            var country =await  _countryService.Countries();
+
+            if (country != null)
+            {
+                ViewBag.Country = country;
+            }
+
             return View();
         }
 
-        [ActionName("SignUpBasic")]
-        public IActionResult SignUpBasic()
+
+        #region Check Email
+
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> CheckEmail(string email) 
         {
+            var req = await _auth.Email(email);
+            
+            if (!string.IsNullOrEmpty(req) && req.Contains("Email already exists."))
+            {
+                return Json(false);
+            }
+
+            return Json(true);
+            
+        }
+        #endregion
+
+        [HttpPost]
+        [AllowAnonymous]
+
+        public async Task<IActionResult> SignUp(SubscriberViewModel input)
+        {     
+            if (ModelState.IsValid)
+            {
+                var response = await _auth.Create(input);
+
+                if (response != null) 
+                {
+                    TempData["ToastMessage"] =response.Message;
+                    TempData["ToastType"] = response.Success;
+                    return RedirectToAction("SignIn");
+                }
+
+                TempData["ToastMessage"] = response.Message;
+                TempData["ToastType"] = response.Success;
+
+            }
+
             return View();
         }
 
-        [ActionName("SignUpCover")]
-        public IActionResult SignUpCover()
+        #endregion
+
+        #region Logout
+        public async Task<IActionResult> Logout()
         {
+            await HttpContext.SignOutAsync();
+            
             return View();
         }
+
+        #endregion
+
+
+        #region Forgot Password
+
+        [HttpGet]
+        public IActionResult PasswordReset()
+        {
+           
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PasswordReset( ForgotPasswordDTO input)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = await _auth.ForgotPassword(input);
+
+                if (response.Success) 
+                {
+                    TempData["ToastMessage"] = response.Message;
+                    TempData["ToastType"] = response.Success;
+                    return RedirectToAction("SignIn");
+                }
+            }
+            return View();
+        }
+
+        #endregion
 
         [ActionName("PasswordChangeBasic")]
         public IActionResult PasswordChangeBasic()
@@ -76,11 +190,7 @@ namespace eSim.Selfcare.Controllers
             return View();
         }
 
-        [ActionName("PasswordResetBasic")]
-        public IActionResult PasswordResetBasic()
-        {
-            return View();
-        }
+        
 
         [ActionName("PasswordResetCover")]
         public IActionResult PasswordResetCover()
@@ -100,11 +210,7 @@ namespace eSim.Selfcare.Controllers
             return View();
         }
 
-        [ActionName("LogoutBasic")]
-        public IActionResult LogoutBasic()
-        {
-            return View();
-        }
+
 
         [ActionName("LogoutCover")]
         public IActionResult LogoutCover()

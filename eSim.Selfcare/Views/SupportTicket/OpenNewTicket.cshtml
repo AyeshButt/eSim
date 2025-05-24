@@ -23,20 +23,20 @@
 
                             <div class="col-md-12">
                                 <select asp-for="TicketType" class="form-select mb-3" aria-label="Default select example">
-
+                                    <option value= "" selected>--Select Type-- </option>
                                     @foreach(var item in ticketTypes){
 
                                         <option value=@item.Id>@item.Value</option>
 
                                     }
                                 </select>
-                                <small asp-validation-for="TicketType" class="text-dnager"></small>
+                                <span asp-validation-for="TicketType" class="text-danger"></span>
                             </div>
                             <div class="col-md-12">
                                 <div class="mb-3">
                                     <label for="subject" class="form-label">Subject</label>
                                     <input asp-for="Subject" type="text" class="form-control " placeholder="Enter Subject" id="subject">
-                                    <small asp-validation-for="Subject" class="text-dnager"></small>
+                                    <span asp-validation-for="Subject" class="text-danger"></span>
 
                                 </div>
                             </div><!--end col-->
@@ -44,7 +44,7 @@
                                 <div class="mb-3">
                                     <label for="description" class="form-label">Description</label>
                                     <textarea asp-for="Description" type="text" class="form-control" id="description" rows="5"></textarea>
-                                    <small asp-validation-for="Description" class="text-dnager"></small>
+                                    <span asp-validation-for="Description" class="text-danger"></span>
 
                                 </div>
                             </div><!--end col-->
@@ -85,13 +85,13 @@
     }
 
 
-    document.addEventListener('DOMContentLoaded', function () {
-            const message = '@TempData["ToastMessage"]';
-            const type = '@TempData["ToastType"]';
+    // document.addEventListener('DOMContentLoaded', function () {
+    //         const message = '@TempData["ToastMessage"]';
+    //         const type = '@TempData["ToastType"]';
 
-            if (message && message!== null) {
-                ToastNotification(message, type || "success");
-            }
-        });
+    //         if (message && message!== null) {
+    //             ToastNotification(message, type || "success");
+    //         }
+    //     });
 
 </script>
