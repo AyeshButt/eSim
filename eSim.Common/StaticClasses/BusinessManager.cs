@@ -29,6 +29,7 @@ namespace eSim.Common.StaticClasses
         public static string InvalidUser = "User not found";
 
         public static string ClientCreated = "Client created successfully";
+        public static string UserCreated = "User created successfully";
         public static string ClientNotFound = "Client not found";
         public static string ClientUpdated = "Client updated successfully";
         public static string ClientStatus = "Client Is Active status changed successfully";
@@ -36,9 +37,11 @@ namespace eSim.Common.StaticClasses
         public static string ClientSettingsNotFound = "Client settings not found";
         public static string ClientSettingsUpdated = "Client settings updated successfully";
         public static string PasswordEmailReceieved = "Verify your email please";
+        public static string EmailReceived = "Please confirm your email and login into the system";
 
         //Email
         public static string EmailSubject = "Forgot Password";
+        public static string EmailNotSent = "Error occured, failed to send email";
         public static string VerificationFailed = "Verification Failed";
         public static string AlreadyVerified = "Already Verified";
         public static string EmailNotVerified = "Email not confirmed. Please verify your email before logging in.";
@@ -124,9 +127,9 @@ namespace eSim.Common.StaticClasses
         {
             return $"TRN-{UnixOffSetTime()}";
         }
-        public static string Verification_EmailBody(string userId, string baseUrl)
+        public static string Verification_EmailBody(string userId, string baseUrl,string token)
         {
-            return $"Hello, please verify your login by clicking the link below:<br/>\r\n<a href=\"{baseUrl}/Client/VerifyEmail?userId={userId}\">Click here to verify your OTP</a>";
+            return $"Hello, please verify your login by clicking the link below:<br/>\r\n<a href=\"{baseUrl}/Client/EmailConfirmation?userId={userId}&token={token}\">Click here to verify your OTP</a>";
         }
 
 

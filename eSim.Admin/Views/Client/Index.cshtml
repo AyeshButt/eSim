@@ -2,6 +2,17 @@
 
 @{
     ViewData["Title"] = "Client List";
+
+    var notifications = new List<(string Key, string Type)>
+    {
+        ("ClientCreated", "success"),
+        ("ClientUpdated", "success"),
+        ("ClientError", "error"),
+        ("ClientNotFound", "error"),
+        ("EmailNotReceived", "error"),
+        ("EmailNotSent", "error"),
+        ("EmailReceived", "success")
+    };
 }
 
 @if (User.HasClaim("Clients", "create"))
@@ -65,7 +76,7 @@
                                                     <a data-bs-toggle="tooltip" data-bs-placement="top" title="edit" class="mx-2" asp-action="UpdateClient" asp-controller="Client" asp-route-id="@item.Id"><i class="ri-pencil-fill fs-5"></i></a>
 
                                                 }
-                                                @if (User.HasClaim("Clients", "client_settings"))
+                                                @if (User.HasClaim("Clients", "client:settings"))
                                                 {
                                                     <a data-bs-toggle="tooltip" data-bs-placement="top" title="client settings"
                                                        asp-action="Index"
@@ -197,40 +208,15 @@ else
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-        @if (TempData["ClientCreated"] != null)
+        @foreach (var (key, type) in notifications)
         {
-            <text>
-                  ToastNotification("@TempData["ClientCreated"]","success");
-            </text>
-        }
-        @if (TempData["ClientUpdated"] != null)
-        {
-            <text>
-                 ToastNotification("@TempData["ClientUpdated"]","success");
-            </text>
-        }
-        @if ((TempData["ClientError"] != null))
-        {
-            <text>
-                ToastNotification("@TempData["ClientError"]","error");
-            </text>
-
-        }
-    @if (TempData["ClientNotFound"] != null)
-        {
-            <text>
-               ToastNotification("@TempData["ClientNotFound"]","error");
-            </text>
-
-        } 
-        @if (TempData["EmailNotReceived"] != null)
-        {
-            <text>
-                               ToastNotification("@TempData["EmailNotReceived"]","error");
-            </text>
-
+            if (TempData[key] != null)
+            {
+                <text>ToastNotification("@TempData[key]", "@type");</text>
+            }
         }
         });
     </script>
+
 }
 

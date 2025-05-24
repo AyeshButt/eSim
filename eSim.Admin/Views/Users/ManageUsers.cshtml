@@ -2,6 +2,16 @@
 @model List<UserDTO>
 @{
     ViewBag.Title = "Manage Users";
+
+
+    var notifications = new List<(string Key, string Type)>
+    {
+        ("ValidationError", "error"),
+        ("EmailNotSent", "error"),
+        ("EmailNotReceived", "error"),
+        ("EmailReceived", "success"),
+        ("UserCreated", "success")
+    };
 }
 <h4>Manage Users</h4>
 
@@ -45,3 +55,17 @@
     }
 
 </table>
+
+@section scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        @foreach (var (key, type) in notifications)
+        {
+            if (TempData[key] != null)
+            {
+                <text>ToastNotification("@TempData[key]", "@type");</text>
+            }
+        }
+        });
+    </script>
+}
