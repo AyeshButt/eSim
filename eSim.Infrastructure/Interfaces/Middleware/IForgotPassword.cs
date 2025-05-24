@@ -13,7 +13,7 @@ namespace eSim.Infrastructure.Interfaces.Middleware
     {
         Task<Result<string>> ForgotPasswordAsync(ForgotPasswordDTO input);
         Task<Result<string>> VerifyOtpAsync(string otp);
-        Task<Result<string>> ResetPasswordAsync(ResetPasswordDTO input);
+        Task<Result<string>> ResetPasswordAsync(SubscriberResetPasswordDTO input);
         Task<Result<string>> ChangePasswordAsync(ChangePasswordDTO input);
 
 
