@@ -10,6 +10,12 @@ using eSim.Common.StaticClasses;
 using eSim.Infrastructure.DTOs.AccessControl;
 using eSim.Common.Enums;
 using eSim.Infrastructure.Interfaces.Admin.Account;
+using System.Security.Claims;
+using eSim.Infrastructure.Interfaces.Admin.Email;
+using eSim.Infrastructure.Interfaces.Admin.Client;
+using eSim.Infrastructure.DTOs.Client;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Text;
 
 namespace eSim.Admin.Controllers
 {
@@ -17,12 +23,14 @@ namespace eSim.Admin.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly IEmailService _email;
         private readonly IAccountService _account;
-        public UsersController(RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager, IAccountService account)
+        public UsersController(RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager, IAccountService account, IEmailService email)
         {
             _roleManager = roleManager;
             _userManager = userManager;
             _account = account;
+            _email = email;
         }
 
         [Authorize(Policy = "Users:view")]
@@ -43,7 +51,6 @@ namespace eSim.Admin.Controllers
         {
 
             BindRoleList();
-            BindAspNetUsersType();
 
             var user = _userManager.Users.First(a => a.Id == id);
             if (user is null)
@@ -59,7 +66,7 @@ namespace eSim.Admin.Controllers
                 Username = user.UserName,
                 Role = user.UserRoleId,
                 UserType = user.UserType
-                
+
             };
             return View(model: model);
         }
@@ -67,11 +74,11 @@ namespace eSim.Admin.Controllers
 
         [HttpPost]
         public async Task<IActionResult> EditUser(ManagerUserDTO input)
-        { 
+        {
             if (ModelState.IsValid)
             {
                 var user = _userManager.Users.First(a => a.Id == input.Id);
-                
+
                 if (user is null)
                 {
                     return View(viewName: "NotFound");
@@ -86,7 +93,7 @@ namespace eSim.Admin.Controllers
                 {
                     var old_role = _roleManager.Roles.FirstOrDefault(a => a.Id == user.UserRoleId);
                     var new_role = _roleManager.Roles.First(a => a.Id == input.Role);
-                    
+
                     if (old_role is not null)
                     {
                         await _userManager.RemoveClaimsAsync(user, await _roleManager.GetClaimsAsync(old_role));
@@ -111,17 +118,19 @@ namespace eSim.Admin.Controllers
                 }
             }
             BindRoleList();
-            BindAspNetUsersType();
 
             return View(model: input);
         }
         [Authorize(Policy = "Users:create")]
 
         [HttpGet]
-        public IActionResult AddUser()
+        public async Task<IActionResult> AddUser()
         {
-            BindRoleList();
-            BindAspNetUsersType();
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user is not null)
+                BindRoleList(user.Id);
+
             return View(model: new ManagerUserDTO());
         }
         [Authorize(Policy = "Users:create")]
@@ -131,43 +140,87 @@ namespace eSim.Admin.Controllers
         {
             var role = _roleManager.Roles.FirstOrDefault(a => a.Id == input.Role);
 
+            var loggedUser = await _userManager.GetUserAsync(User);
+
             ApplicationUser user = new ApplicationUser
             {
 
                 UserName = input.Username,
                 Email = input.Email,
                 UserRoleId = role?.Id ?? null,
-                UserType = Convert.ToInt32(input.UserType),
+
             };
+
+            #region Mapping appropriate user type
+            switch (loggedUser?.UserType)
+            {
+                case 1:
+                    user.UserType = (int)AspNetUsersTypeEnum.Superadmin;
+                    break;
+                case 2:
+                case 3:
+                    user.UserType = (int)AspNetUsersTypeEnum.Subadmin;
+                    break;
+                case 4:
+                case 5:
+                    user.UserType = (int)AspNetUsersTypeEnum.Subclient;
+                    break;
+                default:
+
+                    break;
+            }
+            #endregion
+
             var userCreationResult = await _userManager.CreateAsync(user, BusinessManager.DefaultPassword);
-            
-            foreach(var item in userCreationResult.Errors)
+            TempData["UserCreated"] = BusinessManager.UserCreated;
+
+            foreach (var item in userCreationResult.Errors)
             {
                 TempData["ValidationError"] = item.Description;
 
                 return View(model: input);
             }
 
-
-
-            if (userCreationResult.Succeeded)
+            if (!userCreationResult.Succeeded)
             {
-
-                if (role is not null)
-                {
-                    var roleClaims = await _roleManager.GetClaimsAsync(role);
-                    await _userManager.AddClaimsAsync(user, roleClaims);
-                }
-
-
-                return RedirectToAction(nameof(ManageUsers));
+                BindRoleList();
+                return View(model: input);
             }
 
+            #region Adding claims to a role
+            if (role != null)
+            {
+                var roleClaims = await _roleManager.GetClaimsAsync(role);
+                await _userManager.AddClaimsAsync(user, roleClaims);
+            }
+            #endregion
 
-            BindRoleList();
-            BindAspNetUsersType();
+            var model = new ClientUserDTO
+            {
+                Password = BusinessManager.DefaultPassword,
+                UserId = user.Id,
+            };
 
-            return View(model: input);
+            var token = await _email.EmailConfirmationToken(user.Id);
+          
+            if (token is null)
+            {
+                TempData["EmailNotSent"] = BusinessManager.EmailNotSent;
+
+                return RedirectToAction("ManageUsers");
+            }
+
+            model.Token = token;
+
+            #region Sending verification and password email to the user
+
+            var confirmationEmail = _email.SendConfirmationEmail(input.Email, model);
+            var passwordEmail = _email.SendPasswordEmail(input.Email, model);
+
+            TempData[confirmationEmail && passwordEmail ? "EmailReceived" : "EmailNotReceived"] = confirmationEmail && passwordEmail ? BusinessManager.EmailReceived : BusinessManager.EmailNotReceived;
+            #endregion
+
+            return RedirectToAction(nameof(ManageUsers));
         }
 
 
@@ -179,7 +232,7 @@ namespace eSim.Admin.Controllers
         {
             var user = await _userManager.FindByIdAsync(id);
 
-            user.LockoutEnabled = true; 
+            user.LockoutEnabled = true;
             user.LockoutEnd = DateTime.UtcNow.AddMonths(3600);
             await _userManager.UpdateAsync(user);
             return View();
@@ -191,13 +244,17 @@ namespace eSim.Admin.Controllers
         {
             return View();
         }
-        private void BindRoleList()
+        private void BindRoleList(string id = "")
         {
-            ViewBag.RolesList = _roleManager.Roles.Select(a => new SelectListItem { Value = a.Id, Text = a.Name }).ToList();
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                ViewBag.RolesList = _roleManager.Roles.Select(a => new SelectListItem { Value = a.Id, Text = a.Name }).ToList();
+            }
+            else
+            {
+                ViewBag.RolesList = _roleManager.Roles.Where(u => u.CreatedBy == id).Select(a => new SelectListItem { Value = a.Id, Text = a.Name }).ToList();
+            }
         }
-        private void BindAspNetUsersType()
-        {
-            ViewBag.UsersType = _account.GetUsersType().Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Type }).ToList();
-        }
+
     }
 }

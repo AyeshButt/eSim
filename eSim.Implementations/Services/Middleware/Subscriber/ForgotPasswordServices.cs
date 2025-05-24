@@ -56,7 +56,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             await _db.SaveChangesAsync();
 
    
-            var emailResult = await _emailService.SendEmail(new EmailDTO
+            var emailResult = _emailService.SendEmail(new EmailDTO
             {
                 To = user.Email,
                 Subject = "Your OTP for Password Reset",
@@ -126,7 +126,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             await _db.SaveChangesAsync();
 
          
-            var emailResult = await _emailService.SendEmail(new EmailDTO
+            var emailResult = _emailService.SendEmail(new EmailDTO
             {
                 To = user.Email,
                 Subject = "Password Changed Successfully",

@@ -49,9 +49,10 @@ builder.Services.
         options.Password.RequireDigit = false;
         options.Password.RequireUppercase = false;
         options.Password.RequireLowercase = false;
+        options.SignIn.RequireConfirmedEmail = true;
 
     }).
-    AddEntityFrameworkStores<ApplicationDbContext>();
+    AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {

@@ -1,4 +1,5 @@
-﻿using eSim.Common.StaticClasses;
+﻿using eSim.Common.Enums;
+using eSim.Common.StaticClasses;
 using eSim.EF.Context;
 using eSim.EF.Entities;
 using eSim.Infrastructure.DTOs.Client;
@@ -6,6 +7,7 @@ using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.Interfaces.Admin.Client;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -23,21 +25,41 @@ namespace eSim.Implementations.Services.Client
         private readonly ApplicationDbContext _db;
         private readonly ILogger<ClientService> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly IConfiguration _config;
 
-        public ClientService(ApplicationDbContext db, ILogger<ClientService> logger, UserManager<ApplicationUser> userManager)
+
+        public ClientService(ApplicationDbContext db, ILogger<ClientService> logger, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IConfiguration config)
         {
             _db = db;
             _logger = logger;
             _userManager = userManager;
+            _roleManager = roleManager;
+            _config = config;
         }
 
         public async Task<Result<ClientUserDTO>> CreateClientAsync(ClientDTO input)
         {
             Result<ClientUserDTO> result = new();
 
+            var roleId = _config.GetValue<string>("RoleConfiguration:roleid") ?? string.Empty;
+
+            var role = await _roleManager.FindByIdAsync(roleId);
+
+            if (role == null)
+            {
+                result.Success = false;
+                result.Message = "Role not found.";
+                return result;
+            }
+
+            #region client and user creation logic
+
             using var transaction = await _db.Database.BeginTransactionAsync();
+
             try
             {
+                #region client mapping
                 var client = new EF.Entities.Client()
                 {
                     Id = Guid.NewGuid(),
@@ -51,25 +73,44 @@ namespace eSim.Implementations.Services.Client
                     CreatedBy = input.CreatedBy,
                     ModifiedBy = input.ModifiedBy,
                 };
+                #endregion
 
+                #region Application User mapping
                 var clientUser = new ApplicationUser()
                 {
                     UserName = client.PrimaryEmail,
                     Email = client.PrimaryEmail,
-                    
-                    //need to map user type here
-                    //need to map user role id
+                    UserType = (int)AspNetUsersTypeEnum.Client,
+                    UserRoleId = roleId,
                 };
+                #endregion
 
+                #region Password generation and user creation
                 var generatePassword = BusinessManager.GenerateUniqueAlphanumericId(16);
 
                 var userCreationResult = await _userManager.CreateAsync(clientUser, generatePassword);
+
+                #endregion
 
                 if (!userCreationResult.Succeeded)
                 {
                     result.Success = false;
                     return result;
                 }
+
+                #region Adding user to the role - Add claims from role to user
+
+                await _userManager.AddToRoleAsync(clientUser, role.Name);
+
+                var roleClaims = await _roleManager.GetClaimsAsync(role);
+
+                if (roleClaims.Any())
+                {
+                    await _userManager.AddClaimsAsync(clientUser, roleClaims);
+                }
+
+                #endregion
+
 
                 await _db.Client.AddAsync(client);
                 await _db.SaveChangesAsync();
@@ -78,10 +119,12 @@ namespace eSim.Implementations.Services.Client
 
                 await transaction.CommitAsync();
 
+
                 var model = new ClientUserDTO()
                 {
                     Password = generatePassword,
                     UserId = clientUser.Id,
+                    User = clientUser
                 };
 
                 result.Data = model;
@@ -98,6 +141,7 @@ namespace eSim.Implementations.Services.Client
 
                 result.Success = false;
             }
+            #endregion
 
             return result;
         }
@@ -182,7 +226,7 @@ namespace eSim.Implementations.Services.Client
         public async Task<bool> IsEmailUniqueAsync(string email, Guid id)
         {
             email = email.Trim();
-            
+
             // New record
             if (id == Guid.Empty)
             {
