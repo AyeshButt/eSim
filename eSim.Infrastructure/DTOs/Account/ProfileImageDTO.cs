@@ -9,7 +9,7 @@ namespace eSim.Infrastructure.DTOs.Account
 {
     public class ProfileImageDTO
     {
-        [MaxLength(500)]
+
         public string? ProfileImage { get; set; }
     }
 }

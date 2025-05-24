@@ -114,7 +114,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
 
         #region ResetPassword
 
-        public async Task<Result<string>> ResetPasswordAsync(ResetPasswordDTO input)
+        public async Task<Result<string>> ResetPasswordAsync(SubscriberResetPasswordDTO input)
         {
             var result = new Result<string>();
 
@@ -198,7 +198,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             }
 
             // Step 4: Proceed with reset
-            var resetDto = new ResetPasswordDTO
+            var resetDto = new SubscriberResetPasswordDTO
             {
                 Email= input.Email,
                 NewPassword = input.NewPassword,

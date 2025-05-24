@@ -106,7 +106,7 @@ namespace eSim.Middleware.Controllers
 
         [AllowAnonymous]
         [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO model)
+        public async Task<IActionResult> ResetPassword([FromBody] SubscriberResetPasswordDTO model)
         {
             if (!ModelState.IsValid)
             {
@@ -162,23 +162,23 @@ namespace eSim.Middleware.Controllers
 
         [AllowAnonymous]
         [HttpPost("Upload")]
-        public async Task<IActionResult> UploadProfileImage([FromBody] FormFile file)
+        public async Task<IActionResult> UploadProfileImage(IFormFile image)
         {
             var s = Request.Form.Files;
 
-            if (file == null || file.Length == 0)
+            if (image == null || image.Length == 0)
             {
                 return BadRequest(new
                 {
                     Success = false,
                     Message = "No image file provided."
-                    
+
                 });
             }
 
             var dto = new ProfileImageDTO();
 
-            var result = await _subscriber.UploadProfileImageAsync(file, dto);
+            var result = await _subscriber.UploadProfileImageAsync(image, dto);
 
             if (!result.Success)
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
