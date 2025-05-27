@@ -7,7 +7,10 @@ using eSim.Infrastructure.Interfaces.Admin.Email;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Net;
 using System.Security.Claims;
+using System.Text;
 
 namespace eSim.Admin.Controllers
 {
@@ -16,13 +19,12 @@ namespace eSim.Admin.Controllers
         private readonly IClient _client;
         private readonly IEmailService _email;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IConfiguration _config;
-        public ClientController(IClient client, IEmailService email, UserManager<ApplicationUser> userManager, IConfiguration config)
+
+        public ClientController(IClient client, IEmailService email, UserManager<ApplicationUser> userManager)
         {
             _client = client;
             _email = email;
             _userManager = userManager;
-            _config = config;
         }
 
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
@@ -59,34 +61,42 @@ namespace eSim.Admin.Controllers
             if (!client.Success)
             {
                 TempData["ClientError"] = client.Message;
+
                 return RedirectToAction("CreateClient");
 
             }
 
             TempData["ClientCreated"] = BusinessManager.ClientCreated;
 
-            //client verification email
-
-            var verificationSuccess = SendVerificationEmail(input.PrimaryEmail, type: "verification", input: client.Data);
-
-            // client password email
-
-            if (verificationSuccess)
+            if (client.Data is null)
             {
-                var passwordSuccess = SendVerificationEmail(input.PrimaryEmail,input:client.Data);
+                TempData["EmailNotSent"] = BusinessManager.EmailNotSent;
 
-                if (passwordSuccess)
-                {
-                    TempData["PasswordEmailReceieved"] = BusinessManager.PasswordEmailReceieved;
-                }
+                return RedirectToAction("Index");
             }
-            else
+
+            var token = await _email.EmailConfirmationToken(client.Data.UserId);
+
+            if (token is null)
             {
-                TempData["EmailNotReceived"] = BusinessManager.EmailNotReceived;
+                TempData["EmailNotSent"] = BusinessManager.EmailNotSent;
+
+                return RedirectToAction("Index");
             }
+
+            client.Data.Token = token;
+
+            #region Sending verification and password email to the user after client creation
+
+            var confirmationEmail = _email.SendConfirmationEmail(input.PrimaryEmail, client.Data);
+
+            var passwordEmail = _email.SendPasswordEmail(input.PrimaryEmail, client.Data);
+
+            TempData[confirmationEmail && passwordEmail ? "EmailReceived" : "EmailNotReceived"] = confirmationEmail && passwordEmail ? BusinessManager.EmailReceived : BusinessManager.EmailNotReceived;
+
+            #endregion
 
             return RedirectToAction("Index");
-
         }
 
 
@@ -193,72 +203,43 @@ namespace eSim.Admin.Controllers
             return Json(isUnique);
         }
 
+        [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> VerifyEmail(string userId)
+        public async Task<IActionResult> EmailConfirmation(string userId, string token)
         {
-            var user = await _userManager.FindByIdAsync(userId);
+            string decodedToken;
 
-            if (user == null)
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token) ||
+                await _userManager.FindByIdAsync(userId) is not ApplicationUser user)
             {
-                TempData["InvalidUser"] = BusinessManager.InvalidUser;
+                return RedirectToAction("Error", "Account");
+            }
+
+            if (user.EmailConfirmed)
+            {
+                TempData["EmailAlreadyConfirmed"] = BusinessManager.AlreadyVerified;
 
                 return View();
             }
 
-            if (!user.EmailConfirmed)
+            try
             {
-                user.EmailConfirmed = true;
-                var result = await _userManager.UpdateAsync(user);
-
-                if (!result.Succeeded)
-                {
-                    TempData["VerificationFailed"] = BusinessManager.VerificationFailed;
-
-                    return View();
-                }
+                decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
             }
-            else
+            catch
             {
-                TempData["AlreadyVerified"] = BusinessManager.AlreadyVerified;
-
+                return RedirectToAction("Error", "Account");
             }
 
+            var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
+
+            if (result.Succeeded)
+            {
+                return View();
+            }
+
+            TempData["VerificationFailed"] = BusinessManager.VerificationFailed;
             return View();
-        }
-        private bool SendVerificationEmail(string primaryEmail, string type = "", ClientUserDTO? input = null)
-        {
-            var baseUrl = _config.GetValue<string>("VerificationEmail:url") ?? string.Empty;
-
-            EmailDTO email = new EmailDTO()
-            {
-                To = primaryEmail
-            };
-
-             
-            if (input != null && !string.IsNullOrEmpty(baseUrl))
-            {
-                if (type == "verification")
-                {
-                    //verification configuration
-
-                    email.Subject = BusinessManager.Verification_EmailSubject;
-                    email.Body = BusinessManager.Verification_EmailBody(input.UserId, baseUrl);
-
-                }
-                else
-                {
-                    //password configuration
-
-                    email.Subject = BusinessManager.Password_EmailSubject;
-                    email.Body = input.Password;
-
-                }
-
-                var result = _email.SendEmail(email);
-                return result.Success;
-            }
-
-            return false;
         }
     }
 }

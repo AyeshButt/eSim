@@ -21,20 +21,15 @@ namespace eSim.Middleware.Controllers
         [HttpGet("check-email")]
         public async Task<IActionResult> CheckEmailExists([FromQuery] string email)
         {
-            if (string.IsNullOrEmpty(email))
-            {
-                return BadRequest("Email is required.");
-            }
+            var result = await _subscriber.EmailExists(email);
 
-            var exists = await _subscriber.EmailExists(email);
+            // HTTP 400 if failed
+            if (!result.Success)
+                return BadRequest(result);
 
-            if (exists)
-            {
-                return Ok("Email already exists.");
-            }
-
-            return Ok("Email is available.");
+            return Ok(result);
         }
+
         #region Subscriber
         [AllowAnonymous]
         [HttpPost]
@@ -83,8 +78,8 @@ namespace eSim.Middleware.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("verify-otp")]
-        public async Task<IActionResult> VerifyOtp([FromQuery] string otp)
+        [HttpPost("verify-otp")]
+        public async Task<IActionResult> VerifyOtp([FromBody] string otp)
         {
             if (string.IsNullOrEmpty(otp))
             {
@@ -106,7 +101,7 @@ namespace eSim.Middleware.Controllers
 
         [AllowAnonymous]
         [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO model)
+        public async Task<IActionResult> ResetPassword([FromBody] SubscriberResetPasswordDTO model)
         {
             if (!ModelState.IsValid)
             {
@@ -127,7 +122,7 @@ namespace eSim.Middleware.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPut("change-password")]
+        [HttpPatch("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO input)
         {
             if (!ModelState.IsValid)
@@ -153,32 +148,34 @@ namespace eSim.Middleware.Controllers
         public async Task<IActionResult> UpdateSubscriber(Guid id, [FromBody] UpdateSubscriberDTO input)
         {
             var result = await _subscriber.UpdateSubscriberAsync(id, input);
-            if (result.Success)
-                return Ok(result.Data);
 
-            return BadRequest(result.Data);
+            if (result.Success)
+                return Ok(result);  
+
+            return BadRequest(result);  
         }
+
 
 
         [AllowAnonymous]
         [HttpPost("Upload")]
-        public async Task<IActionResult> UploadProfileImage([FromBody] FormFile file)
+        public async Task<IActionResult> UploadProfileImage(IFormFile image)
         {
             var s = Request.Form.Files;
 
-            if (file == null || file.Length == 0)
+            if (image == null || image.Length == 0)
             {
                 return BadRequest(new
                 {
                     Success = false,
                     Message = "No image file provided."
-                    
+
                 });
             }
 
             var dto = new ProfileImageDTO();
 
-            var result = await _subscriber.UploadProfileImageAsync(file, dto);
+            var result = await _subscriber.UploadProfileImageAsync(image, dto);
 
             if (!result.Success)
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
