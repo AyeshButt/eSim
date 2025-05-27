@@ -159,21 +159,21 @@ namespace eSim.Middleware.Controllers
 
         [AllowAnonymous]
         [HttpPost("Upload")]
-        public async Task<IActionResult> UploadProfileImage(IFormFile image)
+        public async Task<IActionResult> UploadProfileImage(IFormFile image, [FromForm] Guid subscriberId)
         {
-            var s = Request.Form.Files;
-
             if (image == null || image.Length == 0)
             {
                 return BadRequest(new
                 {
                     Success = false,
                     Message = "No image file provided."
-
                 });
             }
 
-            var dto = new ProfileImageDTO();
+            var dto = new ProfileImageDTO
+            {
+                SubscriberId = subscriberId
+            };
 
             var result = await _subscriber.UploadProfileImageAsync(image, dto);
 

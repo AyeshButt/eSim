@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using eSim.EF.Context;
 using eSim.EF.Entities;
+using eSim.Common.StaticClasses;
 using eSim.Infrastructure.DTOs.Account;
 using eSim.Infrastructure.DTOs.Email;
 using eSim.Infrastructure.DTOs.Global;
@@ -125,8 +126,8 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 result.Message = "User not found.";
                 return result;
             }
-
-            user.Hash = ComputeSha256Hash(input.NewPassword);
+           
+           user.Hash = PasswordHasher.HashPassword(input.NewPassword);
             user.ModifiedAt = DateTime.UtcNow;
             await _db.SaveChangesAsync();
 
@@ -150,17 +151,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
         }
 
 
-        private string ComputeSha256Hash(string rawData)
-        {
-            using (SHA256 sha256Hash = SHA256.Create())
-            {
-                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
-                    builder.Append(bytes[i].ToString("x2"));
-                return builder.ToString();
-            }
-        }
+      
         #endregion
 
         #region changePassowrd
@@ -179,7 +170,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             }
 
             // Step 2: Verify old password
-            var oldHash = ComputeSha256Hash(input.OldPassword);
+            var oldHash = PasswordHasher.HashPassword(input.OldPassword);
             if (user.Hash != oldHash)
             {
                 result.Success = false;

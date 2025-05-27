@@ -9,7 +9,7 @@ namespace eSim.Infrastructure.DTOs.Account
 {
     public class ProfileImageDTO
     {
-
+        public Guid SubscriberId { get; set; }
         public string? ProfileImage { get; set; }
     }
 }
