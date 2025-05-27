@@ -32,21 +32,7 @@ namespace eSim.Middleware.Controllers
             return Ok(new { access_token = token });
         }
 
-        //[Authorize]
-        [HttpGet("secure")]
-        public IActionResult Secure()
-        {
-            return Ok($"Hello {User.Identity?.Name}, you are authenticated.");
-        }
-        // No JWT required
-        [AllowAnonymous]
-        [HttpGet("public")]
-        public IActionResult Public()
-        {
-            return Ok("This is a public endpoint.");
-        }
-
-      
+        
 
     }
 

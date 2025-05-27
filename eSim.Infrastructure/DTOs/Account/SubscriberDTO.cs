@@ -41,12 +41,14 @@ namespace eSim.Infrastructure.DTOs.Account
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
             if (value == null || string.IsNullOrWhiteSpace(value.ToString()))
-                return ValidationResult.Success; // Let [Required] handle null checks
+                return ValidationResult.Success;
 
             var email = value.ToString();
-            var subscriberService = validationContext.GetRequiredService<ISubscriberService>(); // Your service that checks emails
+            var subscriberService = validationContext.GetRequiredService<ISubscriberService>();
 
-            if (subscriberService.EmailExists(email).GetAwaiter().GetResult()) // Sync call for validation
+            var result = subscriberService.EmailExists(email).GetAwaiter().GetResult(); 
+
+            if (result.Message == "Email already exists.") 
             {
                 return new ValidationResult("Email already exists.");
             }
@@ -54,5 +56,6 @@ namespace eSim.Infrastructure.DTOs.Account
             return ValidationResult.Success;
         }
     }
+
 
 }
