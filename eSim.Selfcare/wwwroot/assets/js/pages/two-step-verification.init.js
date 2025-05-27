@@ -14,7 +14,7 @@ function getInputElement(index) {
 function moveToNext(index, event) {
     const eventCode = event.which || event.keyCode;
     if (getInputElement(index).value.length === 1) {
-        if (index !== 4) {
+        if (index !== 6) {
             getInputElement(index + 1).focus();
         } else {
             getInputElement(index).blur();

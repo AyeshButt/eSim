@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.Interfaces.ConsumeApi;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
@@ -53,9 +54,9 @@ namespace eSim.Common.StaticClasses
         #endregion
 
         #region Post Auth Api 
-        public async Task<T?> AuthPost<T, I>(string url, T? input)
+        public async Task<Result<T?>> AuthPost<T, I>(string url, T? input)
         {
-            T? response = default;
+            Result<T?> response = default;
 
             if (input == null)
             {
@@ -64,16 +65,25 @@ namespace eSim.Common.StaticClasses
 
             try
             {
-                var request = await _http.PostAsJsonAsync(url, input);
-                if (request.IsSuccessStatusCode)
-                { 
-                    response = JsonConvert.DeserializeObject<T>(await request.Content.ReadAsStringAsync());
+                var jsonResponse  = await _http.PostAsJsonAsync(url, input);
+
+                var request = JsonConvert.DeserializeObject<Result<T>>(await jsonResponse.Content.ReadAsStringAsync());
+
+                if (jsonResponse.IsSuccessStatusCode)
+                {
+                    if(response != null)
+
+                        response.Data = request.Data;
+                        response.Message = request.Message;
                 }
+
+                response.Success = request.Success;
+                response.Message = request.Message; 
 
             }
             catch (Exception e)
             {
-                return default(T?);
+                return default(Result<T?>);
             }
             return response;
         }

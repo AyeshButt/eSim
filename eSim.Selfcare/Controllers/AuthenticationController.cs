@@ -122,7 +122,7 @@ namespace eSim.Selfcare.Controllers
             {
                 var response = await _auth.Create(input);
 
-                if (response != null) 
+                if (response.Success) 
                 {
                     TempData["ToastMessage"] =response.Message;
                     TempData["ToastType"] = response.Success;
@@ -168,9 +168,47 @@ namespace eSim.Selfcare.Controllers
 
                 if (response.Success) 
                 {
+                    TempData["Email"] = input.Email;
                     TempData["ToastMessage"] = response.Message;
                     TempData["ToastType"] = response.Success;
-                    return RedirectToAction("SignIn");
+                    return RedirectToAction("TwoStepVerification");
+                }
+                
+                 ViewBag.Error = response.Message;
+            }
+            return View();
+        }
+
+        #endregion
+
+
+        #region TwoStep Verification
+
+        [HttpGet]
+        public IActionResult TwoStepVerification()
+        {
+            if (TempData["Email"] != null)
+            {
+                string email = TempData["Email"].ToString();
+                TempData.Keep("Email");
+                return View();
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> TwoStepVerification(otpDTO input)
+        {
+            if (ModelState.IsValid)
+            {
+
+                var OTP = input.FullOtp;
+                var response = await _auth.OTPVarification(OTP);
+
+
+                if (response.Success)
+                {
+                    return RedirectToAction("PasswordChange");
                 }
             }
             return View();
@@ -178,19 +216,23 @@ namespace eSim.Selfcare.Controllers
 
         #endregion
 
-        [ActionName("PasswordChangeBasic")]
-        public IActionResult PasswordChangeBasic()
+        #region Change Password 
+
+        [HttpGet]
+        public IActionResult PasswordChange()
         {
             return View();
         }
 
-        [ActionName("PasswordChangeCover")]
-        public IActionResult PasswordChangeCover()
+
+        [HttpPost]
+        public IActionResult PasswordChange(ResetPasswordDTO input)
         {
             return View();
         }
 
-        
+        #endregion
+
 
         [ActionName("PasswordResetCover")]
         public IActionResult PasswordResetCover()
