@@ -192,15 +192,27 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 using var stream = new FileStream(filePath, FileMode.Create);
                 await file.CopyToAsync(stream);
 
+                // Save path to DTO
                 dto.ProfileImage = $"/uploads/{fileName}";
 
-                return new Result<string?> { Success = true,  Message = "Image uploaded." };
+                // Save to DB
+                var subscriber = await _db.Subscribers.FindAsync(dto.SubscriberId);
+                if (subscriber == null)
+                    return new Result<string?> { Success = false, Message = "Subscriber not found." };
+
+                subscriber.ProfileImage = dto.ProfileImage;
+                subscriber.ModifiedAt = DateTime.UtcNow;
+
+                await _db.SaveChangesAsync();
+
+                return new Result<string?> { Success = true, Message = "Image uploaded and saved to database." };
             }
             catch (Exception)
             {
                 return new Result<string?> { Success = false, Message = "Error uploading image." };
             }
         }
+
 
 
     }
