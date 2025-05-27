@@ -20,6 +20,8 @@ using eSim.Implementations.Services.Middleware.Subscriber;
 using eSim.Implementations.Services.Email;
 using eSim.Infrastructure.Interfaces.Admin.Email;
 using eSim.Infrastructure.DTOs.Email;
+using eSim.EF.Entities;
+using Microsoft.AspNetCore.Identity;
 
 
 
@@ -92,6 +94,10 @@ builder.Services.AddSwaggerGen(options =>
 
 
 });
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
 //services registration
 builder.Services.AddHttpClient();
