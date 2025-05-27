@@ -20,11 +20,26 @@ using eSim.Implementations.Services.Middleware.Subscriber;
 using eSim.Implementations.Services.Email;
 using eSim.Infrastructure.Interfaces.Admin.Email;
 using eSim.Infrastructure.DTOs.Email;
+using eSim.EF.Entities;
+using Microsoft.AspNetCore.Identity;
 
 
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.
+    AddIdentity<ApplicationUser, ApplicationRole>(options =>
+    {
+        /// password options and other here!
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequiredLength = 3;
+        options.Password.RequireDigit = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireLowercase = false;
+        options.SignIn.RequireConfirmedEmail = true;
+
+    }).
+    AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
 // Retrieve connection string from appsettings.json
 var connectionString = builder.Configuration.GetConnectionString("AppDbConnection");
