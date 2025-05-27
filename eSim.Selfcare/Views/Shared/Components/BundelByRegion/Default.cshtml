@@ -1,0 +1,81 @@
+﻿<div class="card-header">
+    <h4 class="card-title mb-0">Top Bundles Purchased by Region</h4>
+</div>
+
+<div class="card-body">
+    <!-- Spinner -->
+    <div id="loader-bundel-cost" class="text-center">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading chart...</p>
+    </div>
+
+    <!-- Chart Container -->
+    <div id="chart-doughnut" style="display:none; width:100%;" class="e-charts"
+         data-colors='["--vz-primary", "--vz-success", "--vz-warning", "--vz-danger", "--vz-info"]'>
+    </div>
+</div>
+
+
+
+<script>
+    setTimeout(function () {
+        var loader = document.getElementById("loader-bundel-cost");
+        var chartContainer = document.getElementById("chart-doughnut");
+
+        loader.style.display = "none";
+        chartContainer.style.display = "block";
+
+        if (typeof echarts !== 'undefined') {
+            var myChart = echarts.init(chartContainer);
+
+            var option = {
+                tooltip: { trigger: 'item' },
+                legend: { top: '5%', left: 'center' },
+                series: [{
+                    name: 'Top Bundles',
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    avoidLabelOverlap: false,
+                    itemStyle: {
+                        borderRadius: 10,
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    },
+                    label: { show: false, position: 'center' },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: '18',
+                            fontWeight: 'bold'
+                        }
+                    },
+                    labelLine: { show: false },
+                    data: [
+                        { value: 1048, name: 'Asia' },
+                        { value: 735, name: 'Europe' },
+                        { value: 580, name: 'America' },
+                        { value: 484, name: 'Africa' },
+                        { value: 300, name: 'Other' }
+                    ]
+                }]
+            };
+
+            myChart.setOption(option);
+
+            // This is important
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+
+            // Ensure the chart resizes properly once visible
+            setTimeout(function () {
+                myChart.resize();
+            }, 100);
+        } else {
+            console.error("ECharts library not loaded!");
+        }
+    }, 1000);
+</script>
+
