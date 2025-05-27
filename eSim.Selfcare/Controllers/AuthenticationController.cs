@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Threading.Tasks;
+using Azure;
 using eSim.Common.StaticClasses;
 using eSim.Infrastructure.DTOs.Account;
 using eSim.Infrastructure.DTOs.Selfcare.Authentication;
@@ -122,7 +123,7 @@ namespace eSim.Selfcare.Controllers
             {
                 var response = await _auth.Create(input);
 
-                if (response != null) 
+                if (response.Success) 
                 {
                     TempData["ToastMessage"] =response.Message;
                     TempData["ToastType"] = response.Success;
@@ -168,6 +169,93 @@ namespace eSim.Selfcare.Controllers
 
                 if (response.Success) 
                 {
+                    TempData["Email"] = input.Email;
+                    TempData["ToastMessage"] = response.Message;
+                    TempData["ToastType"] = response.Success;
+                    return RedirectToAction("TwoStepVerification");
+                }
+                else
+                {
+                    TempData["ToastMessage"] = response.Message;
+                    TempData["ToastType"] = response.Success;
+                }
+               
+            }
+            return View();
+        }
+
+        #endregion
+
+
+        #region TwoStep Verification
+
+        [HttpGet]
+        public IActionResult TwoStepVerification()
+        {
+            if (TempData["Email"] != null)
+            {
+                string email = TempData["Email"].ToString();
+                TempData.Keep("Email");
+                return View();
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> TwoStepVerification(otpDTO input)
+        {
+            if (ModelState.IsValid)
+            {
+              
+                var OTP = input.FullOtp;
+                var response = await _auth.OTPVarification(OTP);
+
+                if (response.Success)
+                {
+                    var email = TempData["Email"]?.ToString();
+                    TempData["Email"] = email;
+
+                    TempData["ToastMessage"] = response.Message;
+                    TempData["ToastType"] = response.Success;
+                    return RedirectToAction("PasswordChange");
+                }
+
+                TempData["ToastMessage"] = response.Message;
+                TempData["ToastType"] = response.Success;
+            }
+            return View();
+        }
+
+        #endregion
+
+        #region Change Password 
+
+        [HttpGet]
+        public IActionResult PasswordChange()
+        {
+            if (TempData["Email"] != null)
+            {
+
+                string email = TempData["Email"].ToString();
+
+                //Console.WriteLine(email);
+                ViewBag.Email = email;
+                return View();
+            }
+            return View();
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> PasswordChange(SubscriberResetPasswordDTO input)
+        {
+
+            if (ModelState.IsValid) 
+            {
+                var response = await _auth.NewPassword(input);
+
+                if (response.Success) 
+                {
                     TempData["ToastMessage"] = response.Message;
                     TempData["ToastType"] = response.Success;
                     return RedirectToAction("SignIn");
@@ -178,19 +266,6 @@ namespace eSim.Selfcare.Controllers
 
         #endregion
 
-        [ActionName("PasswordChangeBasic")]
-        public IActionResult PasswordChangeBasic()
-        {
-            return View();
-        }
-
-        [ActionName("PasswordChangeCover")]
-        public IActionResult PasswordChangeCover()
-        {
-            return View();
-        }
-
-        
 
         [ActionName("PasswordResetCover")]
         public IActionResult PasswordResetCover()
