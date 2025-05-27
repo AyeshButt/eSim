@@ -21,11 +21,11 @@ namespace eSim.Middleware.Controllers
 
 
         #region Generate Ticket
-       
+       // [AllowAnonymous]
         [HttpGet]
         public IActionResult Get()
         {
-            /// still need improvement / like filters options
+        
             return Ok(_ticketServices.Tickets());
 
         }
