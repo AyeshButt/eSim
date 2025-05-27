@@ -12,7 +12,7 @@ namespace eSim.Infrastructure.Interfaces.Middleware
 {
     public interface ISubscriberService
     {
-        Task<bool> EmailExists(string email);
+        Task<Result<string>> EmailExists(string email);
         Task<Result<string>> CreateSubscriber(SubscriberRequestDTO input);
 
         Task<Result<string>> UpdateSubscriberAsync(Guid id, UpdateSubscriberDTO input);

@@ -61,7 +61,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "JWT API", Version = "v1" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Esim API", Version = "v1" });
 
     // Add JWT Bearer Token Authentication
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
