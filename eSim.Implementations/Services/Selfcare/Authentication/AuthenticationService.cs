@@ -136,7 +136,7 @@ namespace eSim.Implementations.Services.Selfcare.Authentication
                 else
                 {
                     result.Success = false;
-                    result.Message = result.Message;
+                    result.Message = request.Message;
                 }
 
             }

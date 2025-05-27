@@ -174,8 +174,12 @@ namespace eSim.Selfcare.Controllers
                     TempData["ToastType"] = response.Success;
                     return RedirectToAction("TwoStepVerification");
                 }
-                
-                 ViewBag.Error = response.Message;
+                else
+                {
+                    TempData["ToastMessage"] = response.Message;
+                    TempData["ToastType"] = response.Success;
+                }
+               
             }
             return View();
         }
