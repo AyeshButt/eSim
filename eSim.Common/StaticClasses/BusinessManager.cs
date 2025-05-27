@@ -18,6 +18,7 @@ namespace eSim.Common.StaticClasses
         public static string Subscriber = "Subscriber";
         public static string forgotPass = "Subscriber/forgot-password";
         public static string OTP = "Subscriber/verify-otp";
+        public static string resetPass = "Subscriber/reset-password";
 
         public static string LoginSubcriberClaim = "sub-key";
 

@@ -167,7 +167,7 @@ namespace eSim.Implementations.Services.Selfcare.Authentication
                 else
                 {
                     result.Success = request.Success;
-                    result.Message=result.Message;
+                    result.Message=request.Message;
                 }
 
             }
@@ -182,6 +182,33 @@ namespace eSim.Implementations.Services.Selfcare.Authentication
 
         #endregion
 
+        #region
         
+        public async Task<Result<string?>> NewPassword(SubscriberResetPasswordDTO input)
+        {
+            Result<string?> result = new();
+            var url = BusinessManager.MdwBaseURL + BusinessManager.resetPass;
+            try
+            {
+                var request = await _consumeApi.AuthPost<SubscriberResetPasswordDTO, string>(url, input);
+
+                if (request.Success) 
+                {
+                    result.Success = request.Success;
+                }
+                else
+                {
+                    result.Success = request.Success;
+                    result.Message = request.Message;
+                }
+            }
+            catch (Exception ex) 
+            {
+                result.Success = false;
+                result.Message = "something went Wrong";
+            }
+            return result;
+        }
+        #endregion
     }
 }

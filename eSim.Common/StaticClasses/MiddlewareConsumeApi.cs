@@ -56,12 +56,8 @@ namespace eSim.Common.StaticClasses
         #region Post Auth Api 
         public async Task<Result<T?>> AuthPost<T, I>(string url, T? input)
         {
-            Result<T?> response = default;
+            Result<T?> response = new();
 
-            if (input == null)
-            {
-                return response;
-            }
 
             try
             {
@@ -71,19 +67,29 @@ namespace eSim.Common.StaticClasses
 
                 if (jsonResponse.IsSuccessStatusCode)
                 {
-                    if(response != null)
 
+                    if(request.Data != null)
+                    {
                         response.Data = request.Data;
                         response.Message = request.Message;
+                    }
+                    else
+                    {
+                        response.Message = request.Message;
+                    }
+
+                }
+                else
+                {
+                    response.Success = request.Success;
+                    response.Message = request.Message;
                 }
 
-                response.Success = request.Success;
-                response.Message = request.Message; 
-
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return default(Result<T?>);
+                response.Message = "Exception occurred: " + ex.Message;
+                response.Success = false;
             }
             return response;
         }

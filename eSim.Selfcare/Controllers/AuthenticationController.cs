@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Threading.Tasks;
+using Azure;
 using eSim.Common.StaticClasses;
 using eSim.Infrastructure.DTOs.Account;
 using eSim.Infrastructure.DTOs.Selfcare.Authentication;
@@ -201,15 +202,22 @@ namespace eSim.Selfcare.Controllers
         {
             if (ModelState.IsValid)
             {
-
+              
                 var OTP = input.FullOtp;
                 var response = await _auth.OTPVarification(OTP);
 
-
                 if (response.Success)
                 {
+                    var email = TempData["Email"]?.ToString();
+                    TempData["Email"] = email;
+
+                    TempData["ToastMessage"] = response.Message;
+                    TempData["ToastType"] = response.Success;
                     return RedirectToAction("PasswordChange");
                 }
+
+                TempData["ToastMessage"] = response.Message;
+                TempData["ToastType"] = response.Success;
             }
             return View();
         }
@@ -221,13 +229,34 @@ namespace eSim.Selfcare.Controllers
         [HttpGet]
         public IActionResult PasswordChange()
         {
+            if (TempData["Email"] != null)
+            {
+
+                string email = TempData["Email"].ToString();
+
+                //Console.WriteLine(email);
+                ViewBag.Email = email;
+                return View();
+            }
             return View();
         }
 
 
         [HttpPost]
-        public IActionResult PasswordChange(ResetPasswordDTO input)
+        public async Task<IActionResult> PasswordChange(SubscriberResetPasswordDTO input)
         {
+
+            if (ModelState.IsValid) 
+            {
+                var response = await _auth.NewPassword(input);
+
+                if (response.Success) 
+                {
+                    TempData["ToastMessage"] = response.Message;
+                    TempData["ToastType"] = response.Success;
+                    return RedirectToAction("SignIn");
+                }
+            }
             return View();
         }
 
