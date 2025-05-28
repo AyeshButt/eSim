@@ -364,3 +364,5 @@ FodyWeavers.xsd
 /eSim.Admin/appsettings.json
 /eSim.Admin/appsettings.json
 /.gitignore
+/eSim.Admin/appsettings.json
+/eSim.Middleware/appsettings.Development.json
