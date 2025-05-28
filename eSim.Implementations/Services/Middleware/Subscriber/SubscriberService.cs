@@ -118,6 +118,45 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
         }
 
 
+        public async Task<Result<string>> GetSubscriber(Guid id)
+        {
+            var transaction = await _db.Database.BeginTransactionAsync();
+            try
+            {
+                var subscriber = await _db.Subscribers.FirstOrDefaultAsync(x => x.Id == id);
+
+                if (subscriber is null)
+                {
+                    return new Result<string>
+                    {
+                        Success = false,
+                        Data = "Subscriber not found"
+                    };
+                }
+
+                await transaction.CommitAsync();
+
+                var info = $"Name: {subscriber.FirstName} {subscriber.LastName}, Email: {subscriber.Email}";
+
+                return new Result<string>
+                {
+                    Success = true,
+                    Data = info
+                };
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+
+                return new Result<string>
+                {
+                    Success = false,
+                    Data = $"Error retrieving subscriber: {ex.Message}"
+                };
+            }
+        }
+
+
         public async Task<Result<string>> UpdateSubscriberAsync(Guid id, UpdateSubscriberDTO input)
         {
             var transaction = await _db.Database.BeginTransactionAsync();

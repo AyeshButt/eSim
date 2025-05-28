@@ -20,6 +20,8 @@ using eSim.Implementations.Services.Middleware.Subscriber;
 using eSim.Implementations.Services.Email;
 using eSim.Infrastructure.Interfaces.Admin.Email;
 using eSim.Infrastructure.DTOs.Email;
+using eSim.EF.Entities;
+using Microsoft.AspNetCore.Identity;
 
 
 
@@ -39,6 +41,10 @@ if (string.IsNullOrWhiteSpace(connectionString))
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailConfiguration"));
 
@@ -74,8 +80,8 @@ builder.Services.AddSwaggerGen(options =>
 
     });
 
-    // Add security requirement so that JWT is used for all endpoints
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+// Add security requirement so that JWT is used for all endpoints
+options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
@@ -89,14 +95,10 @@ builder.Services.AddSwaggerGen(options =>
             new string[] { }
         }
     });
-
-
 });
 
-//services registration
 builder.Services.AddHttpClient();
 builder.Services.AddTransient<IConsumeApi, ConsumeAPI>();
-builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IBundleService, BundleService>();
 builder.Services.AddTransient<ITicketServices, TicketService>();
 builder.Services.AddTransient<ISubscriberService, SubscriberService>();
@@ -156,5 +158,3 @@ app.MapControllers();
 app.Run();
 
 
-
-/////

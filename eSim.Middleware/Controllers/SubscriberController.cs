@@ -148,6 +148,25 @@ namespace eSim.Middleware.Controllers
             return Ok(result);
         }
 
+
+
+        [AllowAnonymous]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            var result = await _subscriber.GetSubscriber(id);
+
+            if (result == null)
+                return StatusCode(500, "An unexpected error occurred.");
+
+            if (result.Success)
+                return Ok(result);
+
+            return BadRequest(result.Message);
+        }
+
+
+
         [AllowAnonymous]
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateSubscriber(Guid id, [FromBody] UpdateSubscriberDTO input)
@@ -158,6 +177,8 @@ namespace eSim.Middleware.Controllers
 
             return BadRequest(result.Data);
         }
+
+
 
 
         [AllowAnonymous]

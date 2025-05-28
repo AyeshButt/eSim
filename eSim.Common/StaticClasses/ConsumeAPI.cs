@@ -17,7 +17,7 @@ namespace eSim.Common.StaticClasses
 
         public ConsumeAPI( HttpClient httpClient)
         {
-            _httpClient = httpClient;
+            _httpClient = new HttpClient();
             _apiKey = "5iiPSVJSr0LUtbJRLxHyxOVNg-kyYZ4UngIGktEs";
         }
 
