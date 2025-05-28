@@ -20,6 +20,10 @@ namespace eSim.Infrastructure.Interfaces.Selfcare.Authentication
 
         public Task<Result<string?>> ForgotPassword(ForgotPasswordDTO input);
 
+        public Task<Result<string?>> OTPVarification(string input);
+
+        public Task<Result<string?>> NewPassword(SubscriberResetPasswordDTO input);
+
         public Task<string?> Email(string Email);
 
     }

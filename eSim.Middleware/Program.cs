@@ -27,6 +27,19 @@ using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.
+    AddIdentity<ApplicationUser, ApplicationRole>(options =>
+    {
+        /// password options and other here!
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequiredLength = 3;
+        options.Password.RequireDigit = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireLowercase = false;
+        options.SignIn.RequireConfirmedEmail = true;
+
+    }).
+    AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
 // Retrieve connection string from appsettings.json
 var connectionString = builder.Configuration.GetConnectionString("AppDbConnection");
@@ -65,7 +78,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "JWT API", Version = "v1" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Esim API", Version = "v1" });
 
     // Add JWT Bearer Token Authentication
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -97,6 +110,11 @@ options.AddSecurityRequirement(new OpenApiSecurityRequirement
     });
 });
 
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
+//services registration
 builder.Services.AddHttpClient();
 builder.Services.AddTransient<IConsumeApi, ConsumeAPI>();
 builder.Services.AddTransient<IBundleService, BundleService>();

@@ -18,7 +18,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace eSim.Implementations.Services.Middleware.Subscriber
 {
-    public class SubscriberService: ISubscriberService
+    public class SubscriberService : ISubscriberService
     {
         private readonly ApplicationDbContext _db;
         private readonly IEmailService _emailService;
@@ -32,9 +32,22 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
 
 
 
-        public Task<bool> EmailExists(string email)
+        public async Task<Result<string>> EmailExists(string email)
         {
-            return _db.Subscribers.AnyAsync(x => x.Email == email);
+            var result = new Result<string>();
+
+            if (string.IsNullOrEmpty(email))
+            {
+                result.Success = false;
+                result.Message = "Email is required.";
+                return result;
+            }
+
+            var exists = await _db.Subscribers.AnyAsync(x => x.Email == email);
+
+            result.Success = true;
+            result.Message = exists ? "Email already exists." : "Email is available.";
+            return result;
         }
 
 
@@ -42,7 +55,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
         {
             var result = new Result<string>();
 
-            // Transaction start karo
+
             await using var transaction = await _db.Database.BeginTransactionAsync();
 
             try
@@ -162,10 +175,15 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             var transaction = await _db.Database.BeginTransactionAsync();
             try
             {
+                var result = new Result<string>();
                 var subscriber = await _db.Subscribers.FirstOrDefaultAsync(x => x.Id == id);
 
                 if (subscriber is null)
-                    return new Result<string> { Success = false, Data = "Subscriber not found" };
+                {
+                    result.Success = false;
+                    result.Message = "Subscriber not found";
+                    return result;
+                }
 
                 subscriber.FirstName = input.FirstName;
                 subscriber.LastName = input.LastName;
@@ -175,7 +193,9 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 await _db.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                return new Result<string> { Success = true, Data = "Subscriber updated successfully" };
+                result.Success = true;
+                result.Message = "Subscriber updated successfully";
+                return result;
             }
             catch (Exception ex)
             {
@@ -183,6 +203,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 return new Result<string> { Success = false, Data = ex.Message };
             }
         }
+
 
         public async Task<Result<string?>> UploadProfileImageAsync(IFormFile file, ProfileImageDTO dto)
         {
@@ -210,9 +231,20 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 using var stream = new FileStream(filePath, FileMode.Create);
                 await file.CopyToAsync(stream);
 
+                // Save path to DTO
                 dto.ProfileImage = $"/uploads/{fileName}";
 
-                return new Result<string?> { Success = true, Data = dto.ProfileImage, Message = "Image uploaded." };
+                // Save to DB
+                var subscriber = await _db.Subscribers.FindAsync(dto.SubscriberId);
+                if (subscriber == null)
+                    return new Result<string?> { Success = false, Message = "Subscriber not found." };
+
+                subscriber.ProfileImage = dto.ProfileImage;
+                subscriber.ModifiedAt = DateTime.UtcNow;
+
+                await _db.SaveChangesAsync();
+
+                return new Result<string?> { Success = true, Message = "Image uploaded and saved to database." };
             }
             catch (Exception)
             {
@@ -221,7 +253,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
         }
 
 
+
     }
 }
 
-    

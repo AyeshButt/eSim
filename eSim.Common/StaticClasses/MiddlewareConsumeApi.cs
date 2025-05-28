@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.Interfaces.ConsumeApi;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
@@ -53,27 +54,42 @@ namespace eSim.Common.StaticClasses
         #endregion
 
         #region Post Auth Api 
-        public async Task<T?> AuthPost<T, I>(string url, T? input)
+        public async Task<Result<T?>> AuthPost<T, I>(string url, T? input)
         {
-            T? response = default;
+            Result<T?> response = new();
 
-            if (input == null)
-            {
-                return response;
-            }
 
             try
             {
-                var request = await _http.PostAsJsonAsync(url, input);
-                if (request.IsSuccessStatusCode)
-                { 
-                    response = JsonConvert.DeserializeObject<T>(await request.Content.ReadAsStringAsync());
+                var jsonResponse  = await _http.PostAsJsonAsync(url, input);
+
+                var request = JsonConvert.DeserializeObject<Result<T>>(await jsonResponse.Content.ReadAsStringAsync());
+
+                if (jsonResponse.IsSuccessStatusCode)
+                {
+
+                    if(request.Data != null)
+                    {
+                        response.Data = request.Data;
+                        response.Message = request.Message;
+                    }
+                    else
+                    {
+                        response.Message = request.Message;
+                    }
+
+                }
+                else
+                {
+                    response.Success = request.Success;
+                    response.Message = request.Message;
                 }
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return default(T?);
+                response.Message = "Exception occurred: " + ex.Message;
+                response.Success = false;
             }
             return response;
         }

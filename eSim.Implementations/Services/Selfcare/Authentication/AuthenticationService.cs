@@ -23,6 +23,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Runtime.InteropServices.JavaScript;
 using eSim.Infrastructure.DTOs.Account;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace eSim.Implementations.Services.Selfcare.Authentication
 {
@@ -31,6 +32,8 @@ namespace eSim.Implementations.Services.Selfcare.Authentication
         private readonly HttpClient _httpClient = httpClient.CreateClient();
         private readonly IMiddlewareConsumeApi _consumeApi = consumeApi;
 
+
+        #region signIn 
         public async Task<string?> AuthenticateAsync(SignIn model)
         {
             var url = BusinessManager.MdwBaseURL + BusinessManager.MidlewareLogin;
@@ -53,7 +56,9 @@ namespace eSim.Implementations.Services.Selfcare.Authentication
 
         }
 
+        #endregion
 
+        #region Email Varification
 
         public async Task<string?> Email(string Email)
         {
@@ -74,6 +79,10 @@ namespace eSim.Implementations.Services.Selfcare.Authentication
         }
 
 
+        #endregion
+
+        #region Subscriber registration
+
         public async Task<Result<string?>> Create(SubscriberViewModel input)
         {
              Result<string?> reult = new();
@@ -83,9 +92,15 @@ namespace eSim.Implementations.Services.Selfcare.Authentication
             {
                 var resp = await _consumeApi.AuthPost<SubscriberViewModel, string>(url, input);
 
-                if (resp != null)
+                if (resp.Success)
                 {
-                    reult.Message = "Registered Succesfull";
+                    reult.Message = resp.Message;
+                }
+
+                else
+                {
+                    reult.Success = false;
+                    reult.Message = resp.Message;
                 }
 
             }
@@ -99,6 +114,10 @@ namespace eSim.Implementations.Services.Selfcare.Authentication
 
         }
 
+        #endregion
+
+        #region Forgot Password
+
         public async Task<Result<string?>> ForgotPassword(ForgotPasswordDTO input)
         {
             Result<string?> result = new();
@@ -109,9 +128,15 @@ namespace eSim.Implementations.Services.Selfcare.Authentication
             {
                 var request = await _consumeApi.AuthPost<ForgotPasswordDTO, string>(url, input);
 
-                if (request != null)
+                if (request.Success)
                 {
-                    result.Message = "Otp Sent to your Email";
+                    result.Message = request.Message;
+                }
+
+                else
+                {
+                    result.Success = false;
+                    result.Message = request.Message;
                 }
 
             }
@@ -123,5 +148,67 @@ namespace eSim.Implementations.Services.Selfcare.Authentication
             return result;
         }
 
+        #endregion
+
+        #region otp varification
+
+        public async Task<Result<string?>> OTPVarification(string input)
+        {
+            Result<string?> result = new();
+            var url = BusinessManager.MdwBaseURL + BusinessManager.OTP;
+            try
+            {
+                var request = await _consumeApi.AuthPost<string, string>(url, input);
+
+                if(request.Success)
+                {
+                    result.Message = request.Message;
+                }
+                else
+                {
+                    result.Success = request.Success;
+                    result.Message=request.Message;
+                }
+
+            }
+            catch (Exception ex) 
+            { 
+                result.Success = false;
+                result.Message = "something went wrong";
+            }
+
+            return result;
+        }
+
+        #endregion
+
+        #region
+        
+        public async Task<Result<string?>> NewPassword(SubscriberResetPasswordDTO input)
+        {
+            Result<string?> result = new();
+            var url = BusinessManager.MdwBaseURL + BusinessManager.resetPass;
+            try
+            {
+                var request = await _consumeApi.AuthPost<SubscriberResetPasswordDTO, string>(url, input);
+
+                if (request.Success) 
+                {
+                    result.Success = request.Success;
+                }
+                else
+                {
+                    result.Success = request.Success;
+                    result.Message = request.Message;
+                }
+            }
+            catch (Exception ex) 
+            {
+                result.Success = false;
+                result.Message = "something went Wrong";
+            }
+            return result;
+        }
+        #endregion
     }
 }
