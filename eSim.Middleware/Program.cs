@@ -1,45 +1,42 @@
 ﻿
-using eSim.Infrastructure.Interfaces.Middleware;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.OpenApi.Models;
 using System.Text;
-using Microsoft.AspNetCore.Authorization;
-using eSim.Implementations.Services.Auth;
-using eSim.Implementations.Services.Middleware;
-using eSim.EF.Context;
-using Microsoft.EntityFrameworkCore;
-using eSim.Infrastructure.Interfaces.ConsumeApi;
-
-using eSim.Implementations.Services.Middleware.Bundle;
 using eSim.Common.StaticClasses;
-using eSim.Implementations.Services.Middleware.Ticket;
-using eSim.Infrastructure.Interfaces.Middleware.Ticket;
-using eSim.Implementations.Services.Middleware.Subscriber;
-using eSim.Implementations.Services.Email;
-using eSim.Infrastructure.Interfaces.Admin.Email;
-using eSim.Infrastructure.DTOs.Email;
+using eSim.EF.Context;
 using eSim.EF.Entities;
+using eSim.Implementations.Services.Email;
+using eSim.Implementations.Services.Middleware.Bundle;
+using eSim.Implementations.Services.Middleware.Subscriber;
+using eSim.Implementations.Services.Middleware.Ticket;
+using eSim.Infrastructure.DTOs.Email;
+using eSim.Infrastructure.Interfaces.Admin.Email;
+using eSim.Infrastructure.Interfaces.ConsumeApi;
+using eSim.Infrastructure.Interfaces.Middleware;
+using eSim.Infrastructure.Interfaces.Middleware.Ticket;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.
-    AddIdentity<ApplicationUser, ApplicationRole>(options =>
-    {
-        /// password options and other here!
-        options.Password.RequireNonAlphanumeric = false;
-        options.Password.RequiredLength = 3;
-        options.Password.RequireDigit = false;
-        options.Password.RequireUppercase = false;
-        options.Password.RequireLowercase = false;
-        options.SignIn.RequireConfirmedEmail = true;
+//builder.Services.
+//    AddIdentity<ApplicationUser, ApplicationRole>(options =>
+//    {
+//        /// password options and other here!
+//        options.Password.RequireNonAlphanumeric = false;
+//        options.Password.RequiredLength = 3;
+//        options.Password.RequireDigit = false;
+//        options.Password.RequireUppercase = false;
+//        options.Password.RequireLowercase = false;
+//        options.SignIn.RequireConfirmedEmail = true;
 
-    }).
-    AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+//    }).
+//    AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
 // Retrieve connection string from appsettings.json
 var connectionString = builder.Configuration.GetConnectionString("AppDbConnection");
@@ -93,8 +90,8 @@ builder.Services.AddSwaggerGen(options =>
 
     });
 
-// Add security requirement so that JWT is used for all endpoints
-options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    // Add security requirement so that JWT is used for all endpoints
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
