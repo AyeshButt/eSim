@@ -95,41 +95,6 @@ namespace eSim.Implementations.Services.Email
             return result;
         }
 
-        public EmailDTO? Configure_Verification_PasswordEmail(string primaryEmail, string token, string type = "", ClientUserDTO? input = null)
-        {
-            var baseUrl = _config.GetValue<string>("VerificationEmail:url") ?? string.Empty;
-
-            EmailDTO email = new EmailDTO()
-            {
-                To = primaryEmail
-            };
-
-
-            if (input != null && !string.IsNullOrEmpty(baseUrl))
-            {
-                if (type == "verification")
-                {
-                    //verification configuration
-
-                    email.Subject = BusinessManager.Verification_EmailSubject;
-                    email.Body = BusinessManager.Verification_EmailBody(input.UserId, baseUrl, token);
-
-                }
-                else
-                {
-                    //password configuration
-
-                    email.Subject = BusinessManager.Password_EmailSubject;
-                    email.Body = input.Password;
-
-                }
-
-                return email;
-            }
-
-            return null;
-        }
-
         public bool SendConfirmationEmail(string primaryEmail, ClientUserDTO input)
         {
             var baseurl = GetBaseUrl();
