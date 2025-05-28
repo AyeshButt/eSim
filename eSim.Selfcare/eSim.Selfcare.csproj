@@ -26,4 +26,8 @@
     <ProjectReference Include="..\eSim.Infrastructure\eSim.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Subscriber\" />
+  </ItemGroup>
+
 </Project>
