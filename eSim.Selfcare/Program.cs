@@ -1,9 +1,11 @@
 using eSim.Common.StaticClasses;
+using eSim.Implementations.Services.Selfcare;
 using eSim.Implementations.Services.Selfcare.Authentication;
 using eSim.Implementations.Services.Selfcare.Reference;
 using eSim.Implementations.Services.Selfcare.Ticket;
 using eSim.Infrastructure.Interfaces.ConsumeApi;
 using eSim.Infrastructure.Interfaces.Selfcare.Authentication;
+using eSim.Infrastructure.Interfaces.Selfcare.Bundles;
 using eSim.Infrastructure.Interfaces.Selfcare.Refrence;
 using eSim.Infrastructure.Interfaces.Selfcare.Ticket;
 using Microsoft.AspNetCore.Authentication;
@@ -18,6 +20,7 @@ builder.Services.AddTransient<IMiddlewareConsumeApi, MiddlewareConsumeApi>();
 builder.Services.AddTransient<eSim.Infrastructure.Interfaces.Selfcare.Authentication.IAuthenticationService, eSim.Implementations.Services.Selfcare.Authentication.AuthenticationService>();
 builder.Services.AddTransient<ITicketService, TicketService>();
 builder.Services.AddTransient<ICountyService, CountryService>();
+builder.Services.AddTransient<IBundleService, BundleService>();
 builder.Services.AddControllersWithViews();
 
 

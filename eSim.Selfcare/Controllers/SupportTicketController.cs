@@ -65,6 +65,7 @@ namespace eSim.Selfcare.Controllers
             if (data.Success) 
             {
                 model.Types = data.Data;
+                return View(model); 
             }
 
             return View(model);

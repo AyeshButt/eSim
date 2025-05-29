@@ -21,7 +21,7 @@ namespace eSim.Middleware.Controllers
 
 
         #region Generate Ticket
-       // [AllowAnonymous]
+       [AllowAnonymous]
         [HttpGet]
         public IActionResult Get()
         {
@@ -65,7 +65,7 @@ namespace eSim.Middleware.Controllers
 
 
         #region Ticket Type
-
+        [AllowAnonymous]
         [HttpGet]
         [Route("Types")]
         public IActionResult GET()

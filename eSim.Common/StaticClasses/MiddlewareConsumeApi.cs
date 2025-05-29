@@ -40,13 +40,26 @@ namespace eSim.Common.StaticClasses
 
                 var request = await _http.GetAsync(url);
 
-                response = JsonConvert.DeserializeObject<Result<T?>>(await request.Content.ReadAsStringAsync());
+                var content = await request.Content.ReadAsStringAsync();
+
+                
+                if (request.IsSuccessStatusCode) 
+                {
+                    response = JsonConvert.DeserializeObject<Result<T?>>(content);
+                }
+
+                else if (string.IsNullOrWhiteSpace(content))
+                {
+                    return new Result<T?> { Message = "Empty response from server", Success = false };
+                }
+
 
             }
             catch (Exception ex)
             {
                 return new Result<T?>() { Message = "Unable to fetch", Success = false };
             }
+
             return response;
         }
 
