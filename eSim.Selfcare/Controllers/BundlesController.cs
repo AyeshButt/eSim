@@ -28,5 +28,12 @@ namespace eSim.Selfcare.Controllers
             }
             return View(bundle);
         }
+
+        //[HttpPost]
+
+        //public async Task<IActionResult> StandardEsimBundles()
+        //{
+
+        //}
     }
 }

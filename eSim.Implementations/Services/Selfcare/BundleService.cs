@@ -17,9 +17,14 @@ namespace eSim.Implementations.Services.Selfcare
 
         public async Task<Result<List<Bundle>>> GetBundles()
         {
+            RegionDTO dto = new()
+            {
+                Region = "Asia"
+            };
             var Url = BusinessManager.MdwBaseURL + BusinessManager.BundelRegion;
-
-            var response = await _consumeApi.Get<List<Bundle>>(Url);
+            
+ 
+            var response = await _consumeApi.Post< List<Bundle>, RegionDTO>(Url, dto);
 
             return response;
         }
