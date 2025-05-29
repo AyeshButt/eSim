@@ -21,6 +21,7 @@ namespace eSim.Middleware.Controllers
             
         }
         [AllowAnonymous]
+
         [HttpPost("login")]
         public IActionResult Login([FromBody] AuthDTO model)
         {

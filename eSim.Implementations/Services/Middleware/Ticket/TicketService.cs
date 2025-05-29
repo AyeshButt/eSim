@@ -51,7 +51,7 @@ namespace eSim.Implementations.Services.Middleware.Ticket
 
                 return new Result<string?>
                 {
-                    Data = ticket.TRN
+              Data=null
                 };
             }
             catch (Exception ex)
@@ -63,6 +63,52 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                 };
             }
         }
+
+        public async Task<Result<TicketDTO?>> GetTicketDetailAsync(string trn)
+        {
+            try
+            {
+                var ticket = await _Db.Ticket
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(t => t.TRN == trn);
+
+                if (ticket == null)
+                    return new Result<TicketDTO?> { Success = false, Message = "Ticket not found." };
+
+                var ticketType = await _Db.TicketType
+                    .AsNoTracking()
+                    .Where(t => t.Id == ticket.TicketType)
+                    .Select(t => t.Type)
+                    .FirstOrDefaultAsync();
+
+                var attachments = await _Db.TicketAttachments
+                    .Where(a => a.TicketId == ticket.Id.ToString())
+                    .Select(a => a.Attachment)
+                    .ToListAsync();
+
+                var detail = new TicketDTO
+                {
+                    TRN = ticket.TRN,
+                    Subject = ticket.Subject,
+                    Description = ticket.Description,
+                    TicketType = ticket.TicketType,
+                    Status = ticket.Status,
+                    CreatedAt = ticket.CreatedAt,
+                    Attachments = attachments
+                };
+
+                return new Result<TicketDTO?> { Success=true,Message= "Ticket detail retrieved successfully." };
+            }
+            catch (Exception)
+            {
+                return new Result<TicketDTO?>
+                {
+                    Success = false,
+                    Message = "Error fetching ticket detail."
+                };
+            }
+        }
+
         #endregion
 
         #region GetTicketType
@@ -72,7 +118,7 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                 Select(a => new TicketTypeResponseDTO() { Id = a.Id, Value = a.Type }).ToList();
 
 
-            return new Result<List<TicketTypeResponseDTO>>() { Data = list };
+            return new Result<List<TicketTypeResponseDTO>>() {Data=null};
         }
         #endregion
 
@@ -94,15 +140,17 @@ namespace eSim.Implementations.Services.Middleware.Ticket
         #endregion
 
         #region TicketAttachment
+
         public async Task<Result<string?>> UploadAttachmentAsync(TicketAttachmentDTO dto)
         {
             try
             {
-                dto.AttachmentType = 2;
+                int attachmentType = 2;               
+                Guid? activityId = null;              
+
                 var ticket = await _Db.Ticket.FirstOrDefaultAsync(x => x.TRN == dto.TRN);
                 if (ticket == null)
                     return new Result<string?> { Success = false, Message = "Ticket not found." };
- 
 
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
                 if (!Directory.Exists(uploadsFolder))
@@ -111,22 +159,18 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                 var fileName = $"{Guid.NewGuid()}_{dto.File.FileName}";
                 var filePath = Path.Combine(uploadsFolder, fileName);
 
-
-
-
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await dto.File.CopyToAsync(stream);
                 }
 
-           
                 var attachment = new TicketAttachments
                 {
                     Id = Guid.NewGuid(),
                     TicketId = ticket.Id.ToString(),
                     Attachment = $"/uploads/{fileName}",
-                    AttachmentType = dto.AttachmentType,
-                    ActivityId = dto.ActivityId
+                    AttachmentType = attachmentType,
+                    ActivityId = activityId
                 };
 
                 _Db.TicketAttachments.Add(attachment);
@@ -134,11 +178,12 @@ namespace eSim.Implementations.Services.Middleware.Ticket
 
                 return new Result<string?>
                 {
-                    Data = attachment.Attachment,
-                    Message = "Attachment uploaded successfully."
+    
+                    Message = "Attachment uploaded successfully.",
+                    Success = true
                 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new Result<string?>
                 {
@@ -147,6 +192,7 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                 };
             }
         }
+
         #endregion
     }
 }

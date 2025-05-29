@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace eSim.Middleware.Controllers
 {
-    [Route("[controller]")]
+    [Route("[Controller]")]
     [ApiController]
     public class TicketController : ControllerBase
     {
@@ -21,7 +21,7 @@ namespace eSim.Middleware.Controllers
 
 
         #region Generate Ticket
-       // [AllowAnonymous]
+      // [AllowAnonymous]
         [HttpGet]
         public IActionResult Get()
         {
@@ -34,7 +34,7 @@ namespace eSim.Middleware.Controllers
 
 
         #region Generate Ticket
-        [AllowAnonymous]
+       // [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> POST([FromBody] TicketRequestDTO ticketDto)
         {
@@ -65,7 +65,7 @@ namespace eSim.Middleware.Controllers
 
 
         #region Ticket Type
-
+       // [AllowAnonymous]
         [HttpGet]
         [Route("Types")]
         public IActionResult GET()
@@ -75,7 +75,7 @@ namespace eSim.Middleware.Controllers
 
         #endregion
         #region TicketAttachment
-        [AllowAnonymous]
+       // [AllowAnonymous]
         [HttpPost("UploadAttachment")]
         public async Task<IActionResult> UploadAttachment([FromForm] TicketAttachmentDTO dto)
         {
@@ -97,6 +97,20 @@ namespace eSim.Middleware.Controllers
         }
 
         #endregion
+        #region Get Ticket Detail
+      //  [AllowAnonymous]
+        [HttpGet("Detail")]
+        public async Task<IActionResult> GetTicketDetail(string trn)
+        {
+            var result = await _ticketServices.GetTicketDetailAsync(trn);
+
+            if (result.Success)
+                return Ok(result);
+            else
+                return NotFound(result);
+        }
+        #endregion
+
 
 
     }

@@ -17,8 +17,8 @@ using eSim.Common.StaticClasses;
 using eSim.Implementations.Services.Middleware.Ticket;
 using eSim.Infrastructure.Interfaces.Middleware.Ticket;
 using eSim.Implementations.Services.Middleware.Subscriber;
-using eSim.Implementations.Services.Email;
-using eSim.Infrastructure.Interfaces.Admin.Email;
+//using eSim.Implementations.Services.Email;
+//using eSim.Infrastructure.Interfaces.Admin.Email;
 using eSim.Infrastructure.DTOs.Email;
 using eSim.EF.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -57,7 +57,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailConfiguration"));
 
-
+builder.Services.AddRouting(options =>options.LowercaseUrls=true);
 builder.Services.AddControllers(config =>
 {
     var policy = new AuthorizationPolicyBuilder()
@@ -108,9 +108,9 @@ builder.Services.AddSwaggerGen(options =>
 
 });
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
+//builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+//    .AddEntityFrameworkStores<ApplicationDbContext>()
+//    .AddDefaultTokenProviders();
 
 //services registration
 builder.Services.AddHttpClient();
@@ -119,7 +119,7 @@ builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IBundleService, BundleService>();
 builder.Services.AddTransient<ITicketServices, TicketService>();
 builder.Services.AddTransient<ISubscriberService, SubscriberService>();
-builder.Services.AddTransient<IEmailService, EmailService>();
+//builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddTransient<IForgotPassword, ForgotPasswordServices>();
 
 
@@ -151,20 +151,33 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 var app = builder.Build();
-
+app.UseStaticFiles();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
+    app.Use(async (context, next) =>
     {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "JWT API v1");
-        options.OAuthClientId("swagger-ui");
-        options.OAuthAppName("JWT API - Swagger");
-        options.OAuthUsePkce();
-        options.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
-
+        if (context.Request.Path.StartsWithSegments("/swagger/v1/swagger.json"))
+        {
+            context.Response.Headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0";
+            context.Response.Headers["Pragma"] = "no-cache";
+        }
+        await next();
     });
+
+    app.UseSwagger();
+    //app.UseSwaggerUI(options =>
+    //{
+    //    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Esim Api");
+
+
+
+    //});
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint($"/swagger/v1/swagger.json?v={DateTime.UtcNow.Ticks}", "Esim API");
+    });
+
 }
 app.UseHttpsRedirection();
 
