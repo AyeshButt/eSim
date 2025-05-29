@@ -28,12 +28,33 @@ namespace eSim.Selfcare.Controllers
             }
             return View(bundle);
         }
-
-        //[HttpPost]
-
-        //public async Task<IActionResult> StandardEsimBundles()
-        //{
-
-        //}
+        public IActionResult EsimBundles()
+        {
+            return View();
+        }
+        public IActionResult FixedBundles()
+        {
+            return View();
+        }
+        public IActionResult LongDurationBundles()
+        {
+            return View();
+        }
+        public IActionResult UnlimitedEssentialBundles()
+        {
+            return View();
+        }
+        public IActionResult UnlimitedLiteBundles()
+        {
+            return View();
+        }
+        public IActionResult UnlimitedPlusBundles()
+        {
+            return View();
+        }
+        public IActionResult OrderHistory()
+        {
+            return View();
+        }
     }
 }

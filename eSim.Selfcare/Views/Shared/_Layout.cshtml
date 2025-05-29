@@ -165,7 +165,7 @@
 
 
     <!--Custom Datatable-->
-
+@* 
     <script>
         $(document).ready(function() {
             // Initialize all tables with class 'datatable-scroll'
@@ -185,7 +185,38 @@
                 }
             });
         });
+    </script> *@
+    <script>
+        $(document).ready(function () {
+            // Calculate desired height dynamically
+            let tableHeight = Math.max(200, window.innerHeight * 0.35) + 'px'; // Minimum 200px, or 35% of screen height
+
+            $('.datatable-scroll').DataTable({
+                createdRow: function (row, data, index) {
+                    $('td', row).eq(6).css('text-align', 'center'); // Center 7th column
+                },
+                scrollY: tableHeight,
+                scrollCollapse: true,
+                paging: true,
+                responsive: true,
+                language: {
+                    paginate: {
+                        previous: '<i class="mdi mdi-chevron-left"></i>',
+                        next: '<i class="mdi mdi-chevron-right"></i>'
+                    }
+                }
+            });
+
+            // Optional: update table height on window resize
+            $(window).on('resize', function () {
+                let newHeight = Math.max(200, window.innerHeight * 0.35) + 'px';
+                let table = $('.datatable-scroll').DataTable();
+                table.settings()[0].oScroll.sY = newHeight;
+                table.draw(false);
+            });
+        });
     </script>
+
 
 
    
