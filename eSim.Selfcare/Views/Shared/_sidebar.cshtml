@@ -42,19 +42,52 @@
 
                 <!--Buy Bundles-->
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="#sidebarAuth" data-bs-toggle="collapse" role="button"
-                       aria-expanded="false" aria-controls="sidebarAuth">
+                    <a class="nav-link menu-link" href="#sidebarBundles" data-bs-toggle="collapse" role="button"
+                       aria-expanded="false" aria-controls="sidebarBundles">
                         <i class="ri-account-circle-line"></i> <span data-key="t-bundles">Buy Bundles</span>
                     </a>
-                    <div class="collapse menu-dropdown" id="sidebarAuth">
+                    <div class="collapse menu-dropdown" id="sidebarBundles">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a class="nav-link menu-link" href="@Url.Action("StandardEsimBundles", "Bundles")">
-                                    <span data-key="t-Standered">Standered eSIM Bundles</span>
+                                <a class="nav-link menu-link" href="@Url.Action("HajjPromoBundles", "Bundles")">
+                                    <span data-key="t-HajjPromo">Hajj Promo</span>
                                 </a>
                             </li>
-                           
-                           
+                            <li class="nav-item">
+                                <a class="nav-link menu-link" href="@Url.Action("StandardEsimBundles", "Bundles")">
+                                    <span data-key="t-Bundle-eSIM">Standard eSIM Bundles</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link menu-link" href="@Url.Action("FixedBundles", "Bundles")">
+                                    <span data-key="t-Bundle-Fixed">Stanard Fixed</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link menu-link" href="@Url.Action("LongDurationBundles", "Bundles")">
+                                    <span data-key="t-Bundle-LongDuration">Standard Long Duration</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link menu-link" href="@Url.Action("UnlimitedEssentialBundles", "Bundles")">
+                                    <span data-key="t-Bundle-UnlimitedEssential">Standard Unlimited Essential</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link menu-link" href="@Url.Action("UnlimitedLiteBundles", "Bundles")">
+                                    <span data-key="t-Bundle-UnlimitedLite">Standard Unlimited Lite</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link menu-link" href="@Url.Action("UnlimitedPlusBundles", "Bundles")">
+                                    <span data-key="t-Bundle-UnlimitedPlus">Standard Unlimited Plus</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link menu-link" href="@Url.Action("OrderHistory", "Bundles")">
+                                    <span data-key="t-Bundle-OrderHistory">Order History</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </li>
