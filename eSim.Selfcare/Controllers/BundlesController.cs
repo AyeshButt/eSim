@@ -1,20 +1,32 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using eSim.Infrastructure.Interfaces.Selfcare.Bundles;
+using Microsoft.AspNetCore.Mvc;
 
 namespace eSim.Selfcare.Controllers
 {
     public class BundlesController : Controller
     {
+        private readonly IBundleService _bundelService;
+
+        public BundlesController( IBundleService bundelService)
+        {
+            _bundelService = bundelService;
+        }
         public IActionResult Index()
         {
             return View();
         }
-        public IActionResult HajjPromoBundles()
+
+        [HttpGet]
+        public async Task<IActionResult> StandardEsimBundles()
         {
-            return View();
-        }
-        public IActionResult StandardEsimBundles()
-        {
-            return View();
+            var bundle = await _bundelService.GetBundles();
+
+            if (bundle.Success) 
+            { 
+                return View(bundle.Data);
+            }
+            return View(bundle);
         }
         public IActionResult EsimBundles()
         {

@@ -43,9 +43,8 @@ namespace eSim.Implementations.Services.Selfcare.Authentication
             {
 
                 var JsonReq = await response.Content.ReadAsStringAsync();
-                var JsonResp = JsonConvert.DeserializeObject<LoginResponse>(JsonReq);
 
-                //var Jsonstring = JsonSerializer.Deserialize<LoginResponse>(JsonReq);
+                var JsonResp = JsonConvert.DeserializeObject<LoginResponse>(JsonReq);
 
                 var token = JsonResp.access_token;
 
@@ -60,22 +59,16 @@ namespace eSim.Implementations.Services.Selfcare.Authentication
 
         #region Email Varification
 
-        public async Task<string?> Email(string Email)
+        public async Task<Result<string?>> Email(string Email)
         {
             var url = BusinessManager.MdwBaseURL + BusinessManager.CheckEmail;
 
             var fullUrl = $"{url}?email={HttpUtility.UrlEncode(Email)}";
 
-            var resp = await _httpClient.GetAsync(fullUrl);
+            var resp = await _consumeApi.Get<string>(fullUrl);
 
-            if (resp.IsSuccessStatusCode)
-            { 
-                var result = await resp.Content.ReadAsStringAsync();
-                return result;
-            }
+            return resp;
 
-            return null;
-           
         }
 
 
@@ -85,32 +78,12 @@ namespace eSim.Implementations.Services.Selfcare.Authentication
 
         public async Task<Result<string?>> Create(SubscriberViewModel input)
         {
-             Result<string?> reult = new();
             var url = BusinessManager.MdwBaseURL + BusinessManager.Subscriber;
 
-            try
-            {
-                var resp = await _consumeApi.AuthPost<SubscriberViewModel, string>(url, input);
 
-                if (resp.Success)
-                {
-                    reult.Message = resp.Message;
-                }
+            var resp = await _consumeApi.Post<string, SubscriberViewModel>(url, input);
 
-                else
-                {
-                    reult.Success = false;
-                    reult.Message = resp.Message;
-                }
-
-            }
-            catch (Exception ex) 
-            {
-                reult.Success=false;
-                reult.Message = "Something Went Wrong";
-            }
-
-            return reult;
+            return resp;
 
         }
 
@@ -120,32 +93,12 @@ namespace eSim.Implementations.Services.Selfcare.Authentication
 
         public async Task<Result<string?>> ForgotPassword(ForgotPasswordDTO input)
         {
-            Result<string?> result = new();
 
             var url = BusinessManager.MdwBaseURL + BusinessManager.forgotPass;
 
-            try
-            {
-                var request = await _consumeApi.AuthPost<ForgotPasswordDTO, string>(url, input);
+            var request = await _consumeApi.Post<string, ForgotPasswordDTO>(url, input);
 
-                if (request.Success)
-                {
-                    result.Message = request.Message;
-                }
-
-                else
-                {
-                    result.Success = false;
-                    result.Message = request.Message;
-                }
-
-            }
-            catch (Exception ex) { 
-                result.Success=false;
-                result.Message = "Something Went Wrong";
-            }
-
-            return result;
+            return request;
         }
 
         #endregion
@@ -154,60 +107,24 @@ namespace eSim.Implementations.Services.Selfcare.Authentication
 
         public async Task<Result<string?>> OTPVarification(string input)
         {
-            Result<string?> result = new();
             var url = BusinessManager.MdwBaseURL + BusinessManager.OTP;
-            try
-            {
-                var request = await _consumeApi.AuthPost<string, string>(url, input);
 
-                if(request.Success)
-                {
-                    result.Message = request.Message;
-                }
-                else
-                {
-                    result.Success = request.Success;
-                    result.Message=request.Message;
-                }
+            var request = await _consumeApi.Post<string, string>(url, input);
 
-            }
-            catch (Exception ex) 
-            { 
-                result.Success = false;
-                result.Message = "something went wrong";
-            }
-
-            return result;
+            return request;
         }
 
         #endregion
 
-        #region
-        
+        #region new password
+
         public async Task<Result<string?>> NewPassword(SubscriberResetPasswordDTO input)
         {
-            Result<string?> result = new();
             var url = BusinessManager.MdwBaseURL + BusinessManager.resetPass;
-            try
-            {
-                var request = await _consumeApi.AuthPost<SubscriberResetPasswordDTO, string>(url, input);
 
-                if (request.Success) 
-                {
-                    result.Success = request.Success;
-                }
-                else
-                {
-                    result.Success = request.Success;
-                    result.Message = request.Message;
-                }
-            }
-            catch (Exception ex) 
-            {
-                result.Success = false;
-                result.Message = "something went Wrong";
-            }
-            return result;
+            var request = await _consumeApi.Post<string, SubscriberResetPasswordDTO>(url, input);
+
+            return request;
         }
         #endregion
     }

@@ -1,7 +1,8 @@
 ﻿using System.Threading.Tasks;
 using eSim.Infrastructure.DTOs.Global;
-using eSim.Infrastructure.DTOs.Ticket;
 using eSim.Infrastructure.Interfaces.Selfcare.Ticket;
+using eSim.Infrastructure.DTOs.Ticket;
+using eSim.Infrastructure.DTOs.Selfcare.Ticket;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,19 +24,26 @@ namespace eSim.Selfcare.Controllers
         {
             var data = await _ts.Get();
 
-            //search on the base of TRN
-            if (!string.IsNullOrWhiteSpace(search))
+            if (data.Success)
             {
-                data.Data = data.Data.Where(x => x.TRN.Contains(search, StringComparison.OrdinalIgnoreCase)).ToList();
+                //search on the base of TRN
+                if (!string.IsNullOrWhiteSpace(search))
+                {
+                    data.Data = data.Data.Where(x => x.TRN.Contains(search, StringComparison.OrdinalIgnoreCase)).ToList();
+                    return View(data);
+                }
+
+                //search on the bases of status
+                //if (!string.IsNullOrWhiteSpace(status) && status != "all")
+                //{
+                //    data.Data = data.Data.Where(x=> x.)
+                //}
                 return View(data);
             }
-
-            //search on the bases of status
-            //if (!string.IsNullOrWhiteSpace(status) && status != "all")
-            //{
-            //    data.Data = data.Data.Where(x=> x.)
-            //}
-            return View(data);
+            else
+            {
+                return View(data);
+            }   
         }
 
         #endregion
@@ -50,15 +58,23 @@ namespace eSim.Selfcare.Controllers
         [HttpGet]
         public async Task<IActionResult> OpenNewTicket()
         {
-            var model = new TicketRequestDTO();
+            TicketRequestViewModel model = new();
+
             var data = await _ts.GetTicketType();
-            ViewBag.Types = data.Data;
+
+            if (data.Success) 
+            {
+                model.Types = data.Data;
+                return View(model); 
+            }
+
             return View(model);
+          
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> OpenNewTicket(TicketRequestDTO model) 
+        public async Task<IActionResult> OpenNewTicket(TicketRequestViewModel model) 
         {
             if (ModelState.IsValid)
             {
@@ -67,20 +83,19 @@ namespace eSim.Selfcare.Controllers
                 if (resp.Success)
                 {
                     TempData["ToastMessage"] = resp.Message + " " + "Ticket Has been genrated";
-                    TempData["ToastType"] = "Success";
+                    TempData["ToastType"] = resp.Success;
                     return RedirectToAction("List");
                 }
                 else
                 {
-                    ViewBag.ToastMessage = resp.Message;
-                    ViewBag.ToastType = "error";
+                    TempData["ToastMessage"] = resp.Message;
+                    TempData["ToastType"] = resp.Success;
                     return View();
                 }
             }
             else
             {
-                var data = new Result<TicketRequestDTO>() { Success = false, Message = "Check you input data" };
-                return View(data);
+                return View();
             }
         }
 

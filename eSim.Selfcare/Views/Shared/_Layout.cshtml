@@ -140,13 +140,12 @@
 
     <script>
         function ToastNotification(message,type) {
-            var backgroundColor = "linear-gradient(to right, #00b09b, #96c93d)";
-            if(type === "error"){
-                        backgroundColor = "linear-gradient(to right, #ff416c, #ff4b2b)";
+            if(type === true){
+                 var backgroundColor = "linear-gradient(to right, #00b09b, #96c93d)";
 
             }
-            else if(type === "warning"){
-                        backgroundColor = "linear-gradient(to right, #ff416c, #ff4b2b)";
+            else if(type === false){
+                 backgroundColor = "linear-gradient(to right, #ff416c, #ff4b2b)";
             }
 
             Toastify({

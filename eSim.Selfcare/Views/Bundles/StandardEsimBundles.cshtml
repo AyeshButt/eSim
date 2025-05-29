@@ -1,4 +1,9 @@
-﻿@{
+﻿@using eSim.Infrastructure.DTOs.Global
+@using eSim.Infrastructure.DTOs.Middleware.Bundle
+
+@model Result<List<Bundle>>
+
+@{
     ViewBag.pTitle = "Standard eSIM Bundles";
     ViewBag.pageTitle = "Buy Bundles";
 }
@@ -14,7 +19,7 @@
             <div class="card-body">
                 <div>
                     <div>
-                       
+
 
                         <div class="row">
                             <div class="col-lg-3 col-md-6">
@@ -22,7 +27,7 @@
                                     <label for="choices-single-default" class="form-label text-muted">Filter By Region</label>
                                     @*   <p class="text-muted">Set <code>data-choices</code> attribute to set a default single select.</p> *@
                                     <select class="form-control" data-choices name="choices-single-default"
-                                            id="choices-single-default">
+                                    id="choices-single-default">
                                         <option value="">Select Region</option>
                                         <option value="Choice 1">Choice 1</option>
                                         <option value="Choice 2">Choice 2</option>
@@ -35,7 +40,7 @@
                                     <label for="choices-single-default" class="form-label text-muted">Filter By Country</label>
                                     @*                                   <p class="text-muted">Set <code>data-choices</code> attribute to set a default single select.</p> *@
                                     <select class="form-control" data-choices name="choices-single-default"
-                                            id="choices-single-default">
+                                    id="choices-single-default">
                                         <option value="">Select Country</option>
                                         <option value="Choice 1">Choice 1</option>
                                         <option value="Choice 2">Choice 2</option>
@@ -48,7 +53,7 @@
                                     <label for="choices-single-default" class="form-label text-muted">Filter By State</label>
                                     @*                                   <p class="text-muted">Set <code>data-choices</code> attribute to set a default single select.</p> *@
                                     <select class="form-control" data-choices name="choices-single-default"
-                                            id="choices-single-default">
+                                    id="choices-single-default">
                                         <option value="">Select State</option>
                                         <option value="Choice 1">Choice 1</option>
                                         <option value="Choice 2">Choice 2</option>
@@ -61,7 +66,7 @@
                                     <label for="choices-single-default" class="form-label text-muted">Filter By Plane</label>
                                     @*                                   <p class="text-muted">Set <code>data-choices</code> attribute to set a default single select.</p> *@
                                     <select class="form-control" data-choices name="choices-single-default"
-                                            id="choices-single-default">
+                                    id="choices-single-default">
                                         <option value="">Select Plane</option>
                                         <option value="Choice 1">Choice 1</option>
                                         <option value="Choice 2">Choice 2</option>
@@ -100,230 +105,26 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>eSIM. 1GB 7Days. Africa. <br />Unthrorrled</td>
-                            <td>Africa</td>
-                            <td>1GB</td>
-                            <td></td>
-                            <td></td>
-                            <td>7 days</td>
-                            <td>X</td>
-                            <td>Yes (14 Countries)</td>
-                            <td>$10</td>
-                            <td><button class="btn btn-sm btn-soft-info">+</button></td>
-                        </tr>
-                        <tr>
-                            <td>eSIM. 1GB 7Days. Africa. <br />Unthrorrled</td>
-                            <td>Africa</td>
-                            <td>1GB</td>
-                            <td></td>
-                            <td></td>
-                            <td>7 days</td>
-                            <td>X</td>
-                            <td>Yes (14 Countries)</td>
-                            <td>$10</td>
-                            <td><button class="btn btn-sm btn-soft-info">+</button></td>
-                        </tr>
-                         <tr>
-                            <td>eSIM. 1GB 7Days. Africa. <br />Unthrorrled</td>
-                            <td>Africa</td>
-                            <td>1GB</td>
-                            <td></td>
-                            <td></td>
-                            <td>7 days</td>
-                            <td>X</td>
-                            <td>Yes (14 Countries)</td>
-                            <td>$10</td>
-                            <td><button class="btn btn-sm btn-soft-info">+</button></td>
-                        </tr>
-                        <tr>
-                            <td>eSIM. 1GB 7Days. Africa. <br />Unthrorrled</td>
-                            <td>Africa</td>
-                            <td>1GB</td>
-                            <td></td>
-                            <td></td>
-                            <td>7 days</td>
-                            <td>X</td>
-                            <td>Yes (14 Countries)</td>
-                            <td>$10</td>
-                            <td><button class="btn btn-sm btn-soft-info">+</button></td>
-                        </tr>
-                         <tr>
-                            <td>eSIM. 1GB 7Days. Africa. <br />Unthrorrled</td>
-                            <td>Africa</td>
-                            <td>1GB</td>
-                            <td></td>
-                            <td></td>
-                            <td>7 days</td>
-                            <td>X</td>
-                            <td>Yes (14 Countries)</td>
-                            <td>$10</td>
-                            <td><button class="btn btn-sm btn-soft-info">+</button></td>
-                        </tr>
-                        <tr>
-                            <td>eSIM. 1GB 7Days. Africa. <br />Unthrorrled</td>
-                            <td>Africa</td>
-                            <td>1GB</td>
-                            <td></td>
-                            <td></td>
-                            <td>7 days</td>
-                            <td>X</td>
-                            <td>Yes (14 Countries)</td>
-                            <td>$10</td>
-                            <td><button class="btn btn-sm btn-soft-info">+</button></td>
-                        </tr> <tr>
-                            <td>eSIM. 1GB 7Days. Africa. <br />Unthrorrled</td>
-                            <td>Africa</td>
-                            <td>1GB</td>
-                            <td></td>
-                            <td></td>
-                            <td>7 days</td>
-                            <td>X</td>
-                            <td>Yes (14 Countries)</td>
-                            <td>$10</td>
-                            <td><button class="btn btn-sm btn-soft-info">+</button></td>
-                        </tr>
-                         <tr>
-                            <td>eSIM. 1GB 7Days. Africa. <br />Unthrorrled</td>
-                            <td>Africa</td>
-                            <td>1GB</td>
-                            <td></td>
-                            <td></td>
-                            <td>7 days</td>
-                            <td>X</td>
-                            <td>Yes (14 Countries)</td>
-                            <td>$10</td>
-                            <td><button class="btn btn-sm btn-soft-info">+</button></td>
-                        </tr>
-                        <tr>
-                            <td>eSIM. 1GB 7Days. Africa. <br />Unthrorrled</td>
-                            <td>Africa</td>
-                            <td>1GB</td>
-                            <td></td>
-                            <td></td>
-                            <td>7 days</td>
-                            <td>X</td>
-                            <td>Yes (14 Countries)</td>
-                            <td>$10</td>
-                            <td><button class="btn btn-sm btn-soft-info">+</button></td>
-                        </tr> <tr>
-                            <td>eSIM. 1GB 7Days. Africa. <br />Unthrorrled</td>
-                            <td>Africa</td>
-                            <td>1GB</td>
-                            <td></td>
-                            <td></td>
-                            <td>7 days</td>
-                            <td>X</td>
-                            <td>Yes (14 Countries)</td>
-                            <td>$10</td>
-                            <td><button class="btn btn-sm btn-soft-info">+</button></td>
-                        </tr>
-                         <tr>
-                            <td>eSIM. 1GB 7Days. Africa. <br />Unthrorrled</td>
-                            <td>Africa</td>
-                            <td>1GB</td>
-                            <td></td>
-                            <td></td>
-                            <td>7 days</td>
-                            <td>X</td>
-                            <td>Yes (14 Countries)</td>
-                            <td>$10</td>
-                            <td><button class="btn btn-sm btn-soft-info">+</button></td>
-                        </tr>
-                         <tr>
-                            <td>eSIM. 1GB 7Days. Africa. <br />Unthrorrled</td>
-                            <td>Africa</td>
-                            <td>1GB</td>
-                            <td></td>
-                            <td></td>
-                            <td>7 days</td>
-                            <td>X</td>
-                            <td>Yes (14 Countries)</td>
-                            <td>$10</td>
-                            <td><button class="btn btn-sm btn-soft-info">+</button></td>
-                        </tr> <tr>
-                            <td>eSIM. 1GB 7Days. Africa. <br />Unthrorrled</td>
-                            <td>Africa</td>
-                            <td>1GB</td>
-                            <td></td>
-                            <td></td>
-                            <td>7 days</td>
-                            <td>X</td>
-                            <td>Yes (14 Countries)</td>
-                            <td>$10</td>
-                            <td><button class="btn btn-sm btn-soft-info">+</button></td>
-                        </tr>
-                        <tr>
-                            <td>eSIM. 1GB 7Days. Africa. <br />Unthrorrled</td>
-                            <td>Africa</td>
-                            <td>1GB</td>
-                            <td></td>
-                            <td></td>
-                            <td>7 days</td>
-                            <td>X</td>
-                            <td>Yes (14 Countries)</td>
-                            <td>$10</td>
-                            <td><button class="btn btn-sm btn-soft-info">+</button></td>
-                        </tr> <tr>
-                            <td>eSIM. 1GB 7Days. Africa. <br />Unthrorrled</td>
-                            <td>Africa</td>
-                            <td>1GB</td>
-                            <td></td>
-                            <td></td>
-                            <td>7 days</td>
-                            <td>X</td>
-                            <td>Yes (14 Countries)</td>
-                            <td>$10</td>
-                            <td><button class="btn btn-sm btn-soft-info">+</button></td>
-                        </tr>
-                         <tr>
-                            <td>eSIM. 1GB 7Days. Africa. <br />Unthrorrled</td>
-                            <td>Africa</td>
-                            <td>1GB</td>
-                            <td></td>
-                            <td></td>
-                            <td>7 days</td>
-                            <td>X</td>
-                            <td>Yes (14 Countries)</td>
-                            <td>$10</td>
-                            <td><button class="btn btn-sm btn-soft-info">+</button></td>
-                        </tr>
-                        <tr>
-                            <td>eSIM. 1GB 7Days. Africa. <br />Unthrorrled</td>
-                            <td>Africa</td>
-                            <td>1GB</td>
-                            <td></td>
-                            <td></td>
-                            <td>7 days</td>
-                            <td>X</td>
-                            <td>Yes (14 Countries)</td>
-                            <td>$10</td>
-                            <td><button class="btn btn-sm btn-soft-info">+</button></td>
-                        </tr>
-                        <tr>
-                            <td>eSIM. 1GB 7Days. Africa. <br />Unthrorrled</td>
-                            <td>Africa</td>
-                            <td>1GB</td>
-                            <td></td>
-                            <td></td>
-                            <td>7 days</td>
-                            <td>X</td>
-                            <td>Yes (14 Countries)</td>
-                            <td>$10</td>
-                            <td><button class="btn btn-sm btn-soft-info">+</button></td>
-                        </tr>
-                        <tr>
-                            <td>eSIM. 1GB 7Days. Africa. <br />Unthrorrled</td>
-                            <td>Africa</td>
-                            <td>1GB</td>
-                            <td></td>
-                            <td></td>
-                            <td>7 days</td>
-                            <td>X</td>
-                            <td>Yes (14 Countries)</td>
-                            <td>$10</td>
-                            <td><button class="btn btn-sm btn-soft-info">+</button></td>
-                        </tr>
+                        @if(Model != null)
+                        {
+                            @foreach(var item in Model.Data)
+                            {
+                                <tr>
+                                    <td>@item.name</td>
+                                    <td>@item.countries</td>
+                                    <td>@item.dataAmount</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>@item.duration</td>
+                                    <td>@item.roamingEnabled</td>
+                                    <td>Yes (14 Countries)</td>
+                                    <td>@item.price</td>
+                                    <td><button class="btn btn-sm btn-soft-info">+</button></td>
+                                </tr>
+                            }
+                        }
+                        
+                        
                     </tbody>
                 </table>
             </div>

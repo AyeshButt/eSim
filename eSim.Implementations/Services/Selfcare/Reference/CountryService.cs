@@ -27,7 +27,7 @@ namespace eSim.Implementations.Services.Selfcare.Reference
         {
 
             var Url = BusinessManager.MdwBaseURL + BusinessManager.Countries; 
-            var resp = await _consumeApi.Get<Result<List<CountriesDTO>>>(Url);
+            var resp = await _consumeApi.Get<List<CountriesDTO>>(Url);
 
             if (resp.Success)
             {

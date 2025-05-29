@@ -48,11 +48,11 @@ namespace eSim.Selfcare.Controllers
             }
             
             var token = await _auth.AuthenticateAsync(model);
+    
 
             if (!string.IsNullOrEmpty(token))
             {
                 HttpContext.Session.SetString("Token", token);
-
 
                 //creating claim 
 
@@ -84,7 +84,7 @@ namespace eSim.Selfcare.Controllers
         [HttpGet]
         [AllowAnonymous]
 
-        public async Task<IActionResult> SignUp(string email)
+        public async Task<IActionResult> SignUp()
         {
             var country =await  _countryService.Countries();
 
@@ -102,9 +102,10 @@ namespace eSim.Selfcare.Controllers
         [AcceptVerbs("Get", "Post")]
         public async Task<IActionResult> CheckEmail(string email) 
         {
-            var req = await _auth.Email(email);
+            var request = await _auth.Email(email);
+            var resp = request.Data;   
             
-            if (!string.IsNullOrEmpty(req) && req.Contains("Email already exists."))
+            if (!string.IsNullOrEmpty(resp) && resp.Contains("Email already exists."))
             {
                 return Json(false);
             }
