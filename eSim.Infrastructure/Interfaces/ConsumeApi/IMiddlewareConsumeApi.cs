@@ -9,9 +9,7 @@ namespace eSim.Infrastructure.Interfaces.ConsumeApi
 {
     public interface IMiddlewareConsumeApi
     {
-        Task<T?> Get<T>(string url);
-        Task<Result<T?>> AuthPost<T, I>(string url, T data);
-        Task<T?> PostApi<T, I>(string url, I data);
-        Task<T?> PutApi<T, I>(string url, I data);
+        Task<Result<T?>> Get<T>(string url);
+        Task<Result<T?>> Post<T, I>(string url, I? data);
     }
 }

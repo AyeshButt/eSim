@@ -24,7 +24,7 @@ namespace eSim.Infrastructure.Interfaces.Selfcare.Authentication
 
         public Task<Result<string?>> NewPassword(SubscriberResetPasswordDTO input);
 
-        public Task<string?> Email(string Email);
+        public Task<Result<string?>> Email(string Email);
 
     }
 }

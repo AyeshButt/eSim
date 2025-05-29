@@ -9,7 +9,9 @@ using System.Threading.Tasks;
 using eSim.Common.StaticClasses;
 using eSim.EF.Context;
 using eSim.Infrastructure.DTOs.Global;
+using eSim.Infrastructure.DTOs.Selfcare.Ticket;
 using eSim.Infrastructure.DTOs.Ticket;
+using eSim.Infrastructure.Interfaces.ConsumeApi;
 using eSim.Infrastructure.Interfaces.Selfcare.Ticket;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
@@ -21,36 +23,26 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
     {
         private readonly HttpClient _http;
         private readonly IHttpContextAccessor _httpContext;
+        private readonly IMiddlewareConsumeApi _consumeApi;
 
-        public TicketService(HttpClient http , IHttpContextAccessor httpContext)
+        public TicketService(HttpClient http, IHttpContextAccessor httpContext, IMiddlewareConsumeApi consumeApi)
         {
-            
+
             _http = http;
             _httpContext = httpContext;
+            _consumeApi = consumeApi;
         }
 
         #region GetTicket List 
         public async Task<Result<List<TicketsResponseDTO>>> Get()
         {
-            string URL = BusinessManager.MdwBaseURL + "Ticket";
 
-            //var token = User.FindFirst("Token")?.Value;
-            var token = _httpContext.HttpContext?.User?.FindFirst("Token")?.Value;
+            string URL = BusinessManager.MdwBaseURL + BusinessManager.Ticekt;
 
-            //var token = _httpContext.HttpContext?.Session.GetString("Token");
+            var data = await _consumeApi.Get<List<TicketsResponseDTO>>(URL);
 
-            _http.DefaultRequestHeaders.Authorization   = new AuthenticationHeaderValue("Bearer", token);
+            return data;
 
-            var resp = await _http.GetAsync(URL);
-
-            if (resp.IsSuccessStatusCode) 
-            {
-                var result = JsonConvert.DeserializeObject<Result<List<TicketsResponseDTO>>>(await resp.Content.ReadAsStringAsync());
-
-                return result;
-            }
-
-            return new Result<List<TicketsResponseDTO>>() { Success = false, Message = "Faild to fetch data" };
         }
 
         #endregion
@@ -59,20 +51,14 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
         #region Get Ticket Type
         public async Task<Result<List<TicketTypeResponseDTO>>> GetTicketType()
         {
-            string URL = BusinessManager.MdwBaseURL + "Ticket/Types";
-            //var token = _httpContext.HttpContext?.Session.GetString("Token");
-            var token = _httpContext.HttpContext?.User?.FindFirst("Token")?.Value;
 
+            string URL = BusinessManager.MdwBaseURL + BusinessManager.TicketType;
 
-            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+           
+            var response = await _consumeApi.Get<List<TicketTypeResponseDTO>>(URL);
 
-            var req = await _http.GetAsync(URL);
-            if (req.IsSuccessStatusCode) 
-            { 
-                var result = JsonConvert.DeserializeObject<Result<List<TicketTypeResponseDTO>>>(await req.Content.ReadAsStringAsync());
-                return result;
-            }
-            return new Result<List<TicketTypeResponseDTO>>() { Success = false, Message = "Faild to fetch data" };
+            return response;
+            
         }
 
         #endregion
@@ -80,25 +66,30 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
 
 
         #region create Ticket
-        public async Task<Result<string>> Create(TicketRequestDTO dto)
+        public async Task<Result<string>> Create(TicketRequestViewModel model)
         {
             string URL = BusinessManager.MdwBaseURL + "Ticket";
-            //var token = _httpContext.HttpContext?.Session.GetString("Token");
             var token = _httpContext.HttpContext?.User?.FindFirst("Token")?.Value;
 
 
             try
             {
+                TicketRequestDTO dto = new()
+                {
+                    TicketType = model.TicketType,
+                    Subject = model.Subject,
+                    Description = model.Description
+                };
+
                 _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var req = await _http.PostAsJsonAsync(URL, dto);
                 var json = await req.Content.ReadAsStringAsync();
-                Console.WriteLine(json);
                 var resp = JsonConvert.DeserializeObject<Result<string>>(json);
                 return resp;
             }
-            catch (Exception ex) 
-            {  
+            catch (Exception ex)
+            {
                 return new Result<string>() { Success = false, Message = "Failed to Open New Ticket" };
             }
 

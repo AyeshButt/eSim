@@ -19,11 +19,18 @@ namespace eSim.Common.StaticClasses
         private readonly IHttpContextAccessor _httpContext = httpContext;
 
 
-        #region Get Request 
+        #region Get Request
+        
+        /// <summary>
+        /// Get Api Consumption for any type of get requests
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="url"></param>
+        /// <returns></returns>
 
-        public async Task<T?> Get<T>(string url)
+        public async Task<Result<T?>> Get<T>(string url)
         {
-            T? response = default;
+            Result<T?> response = default;
 
             try
             {
@@ -33,76 +40,52 @@ namespace eSim.Common.StaticClasses
 
                 var request = await _http.GetAsync(url);
 
-
-                if (request.IsSuccessStatusCode) 
-                {
-                    var content = await request.Content.ReadAsStringAsync();
-
-                    response = JsonConvert.DeserializeObject<T>(content);
-                }
-
-                
+                response = JsonConvert.DeserializeObject<Result<T?>>(await request.Content.ReadAsStringAsync());
 
             }
             catch (Exception ex)
             {
-                return default(T?);
+                return new Result<T?>() { Message = "Unable to fetch", Success = false };
             }
             return response;
         }
+
 
         #endregion
 
         #region Post Auth Api 
-        public async Task<Result<T?>> AuthPost<T, I>(string url, T? input)
+
+        /// <summary>
+        /// Generic post api call for only auth ost request!
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="I"></typeparam>
+        /// <param name="url"></param>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<Result<T?>> Post<T, I>(string url, I input)
         {
             Result<T?> response = new();
 
-
             try
             {
+                var token = _httpContext.HttpContext?.User?.FindFirst("Token")?.Value;
+
+                _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
                 var jsonResponse  = await _http.PostAsJsonAsync(url, input);
 
-                var request = JsonConvert.DeserializeObject<Result<T>>(await jsonResponse.Content.ReadAsStringAsync());
-
-                if (jsonResponse.IsSuccessStatusCode)
-                {
-
-                    if(request.Data != null)
-                    {
-                        response.Data = request.Data;
-                        response.Message = request.Message;
-                    }
-                    else
-                    {
-                        response.Message = request.Message;
-                    }
-
-                }
-                else
-                {
-                    response.Success = request.Success;
-                    response.Message = request.Message;
-                }
+                response = JsonConvert.DeserializeObject<Result<T>>(await jsonResponse.Content.ReadAsStringAsync());
 
             }
             catch (Exception ex)
             {
-                response.Message = "Exception occurred: " + ex.Message;
-                response.Success = false;
+                return new Result<T?>() { Message = "Unable to Create", Success = false };
             }
+
             return response;
         }
         #endregion
 
-        public Task<T?> PostApi<T, I>(string url, I data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<T?> PutApi<T, I>(string url, I data)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

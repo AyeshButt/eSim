@@ -1,12 +1,12 @@
-﻿@using eSim.Infrastructure.DTOs.Ticket
-@model TicketRequestDTO
+﻿@using eSim.Infrastructure.DTOs.Selfcare.Ticket
+@model TicketRequestViewModel
+
 @{
     ViewBag.Title = "Support";
     ViewBag.pTitle = "Open New Ticket";
     ViewBag.pageTitle = "Support";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    var ticketTypes = ViewBag.Types as List<TicketTypeResponseDTO>;
 }
 
 <div class="row">
@@ -23,11 +23,19 @@
 
                             <div class="col-md-12">
                                 <select asp-for="TicketType" class="form-select mb-3" aria-label="Default select example">
-                                    <option value= "" selected>--Select Type-- </option>
-                                    @foreach(var item in ticketTypes){
+                                    @if(Model.Types != null && Model.Types.Any())
+                                    {
+                                        <option value="" selected>--Select Type-- </option>
+                                        @foreach (var item in Model.Types)
+                                        {
 
-                                        <option value=@item.Id>@item.Value</option>
+                                            <option value=@item.Id>@item.Value</option>
 
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <option disabled selected>No ticket types available</option>
                                     }
                                 </select>
                                 <span asp-validation-for="TicketType" class="text-danger"></span>
@@ -85,13 +93,13 @@
     }
 
 
-    // document.addEventListener('DOMContentLoaded', function () {
-    //         const message = '@TempData["ToastMessage"]';
-    //         const type = '@TempData["ToastType"]';
+    document.addEventListener('DOMContentLoaded', function () {
+            const message = '@TempData["ToastMessage"]';
+            const type = '@TempData["ToastType"]';
 
-    //         if (message && message!== null) {
-    //             ToastNotification(message, type || "success");
-    //         }
-    //     });
+            if (message && message!== null) {
+                ToastNotification(message, type || true);
+            }
+        });
 
 </script>
