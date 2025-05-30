@@ -1,12 +1,12 @@
 ﻿@using eSim.Infrastructure.DTOs.Global
 @using eSim.Infrastructure.DTOs.Middleware.Bundle
 
-@model Result<List<GetBundleCatalogueResponse>>
+@model Result<GetBundleCatalogueResponse>
 
-@{
-    ViewBag.pTitle = "Standard eSIM Bundles";
-    ViewBag.pageTitle = "Buy Bundles";
-}
+@* @{ *@
+@*     ViewBag.pTitle = "Standard eSIM Bundles"; *@
+@*     ViewBag.pageTitle = "Buy Bundles"; *@
+@* } *@
 
 
 <div class="row">
@@ -107,24 +107,36 @@
                     <tbody>
                         @if(Model != null)
                         {
-                            @foreach(var item in Model.Data)
+                            @foreach (var item in Model.Data.bundles)
                             {
-                                @* <tr>
+                                <tr>
                                     <td>@item.name</td>
-                                    <td>@item.countries</td>
+                                    <td>@item.countries?.FirstOrDefault()?.name</td>
+                                    @* @foreach(var country in item.countries){
+                                        <td>@country.name</td>
+                                    } *@
                                     <td>@item.dataAmount</td>
                                     <td></td>
                                     <td></td>
                                     <td>@item.duration</td>
-                                    <td>@item.roamingEnabled</td>
-                                    <td>Yes (14 Countries)</td>
+                                    <td> X </td>
+                                    <td class="text-start">
+
+                                        @if (item.roamingEnabled?.Count() > 0)
+                                        {
+                                            <text>Yes (@item.roamingEnabled?.Count() Countries)</text>
+                                        }
+                                        else
+                                        {
+                                            <text>No</text>
+                                        }
+                                    </td>
                                     <td>@item.price</td>
                                     <td><button class="btn btn-sm btn-soft-info">+</button></td>
-                                </tr> *@
+                                    </tr>
                             }
                         }
-                        
-                        
+                   
                     </tbody>
                 </table>
             </div>
