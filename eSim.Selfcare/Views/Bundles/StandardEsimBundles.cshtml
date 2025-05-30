@@ -1,7 +1,7 @@
 ﻿@using eSim.Infrastructure.DTOs.Global
 @using eSim.Infrastructure.DTOs.Middleware.Bundle
 
-@model Result<List<Bundle>>
+@model Result<List<GetBundleCatalogueResponse>>
 
 @{
     ViewBag.pTitle = "Standard eSIM Bundles";
@@ -109,7 +109,7 @@
                         {
                             @foreach(var item in Model.Data)
                             {
-                                <tr>
+                                @* <tr>
                                     <td>@item.name</td>
                                     <td>@item.countries</td>
                                     <td>@item.dataAmount</td>
@@ -120,7 +120,7 @@
                                     <td>Yes (14 Countries)</td>
                                     <td>@item.price</td>
                                     <td><button class="btn btn-sm btn-soft-info">+</button></td>
-                                </tr>
+                                </tr> *@
                             }
                         }
                         
