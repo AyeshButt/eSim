@@ -10,7 +10,7 @@ using eSim.Common.StaticClasses;
 using eSim.Infrastructure.DTOs.Account;
 using eSim.Infrastructure.DTOs.Email;
 using eSim.Infrastructure.DTOs.Global;
-using eSim.Infrastructure.Interfaces.Admin.Email;
+//using eSim.Infrastructure.Interfaces.Admin.Email;
 using eSim.Infrastructure.Interfaces.Middleware;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,11 +21,11 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
     public class ForgotPasswordServices : IForgotPassword
     {
         private readonly ApplicationDbContext _db;
-        private readonly IEmailService _emailService;
-        public ForgotPasswordServices(ApplicationDbContext db, IEmailService emailService)
+  //      private readonly IEmailService _emailService;
+        public ForgotPasswordServices(ApplicationDbContext db /*IEmailService emailService*/)
         {
             _db = db;
-            _emailService = emailService;
+            //_emailService = emailService;
         }
         #region ForgotPassword
         public async Task<Result<string>> ForgotPasswordAsync(ForgotPasswordDTO input)
@@ -57,20 +57,20 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             _db.OTPVerification.Add(otpRecord);
             await _db.SaveChangesAsync();
 
-            var emailResult =  _emailService.SendEmail(new EmailDTO
-            {
-                To = user.Email,
-                Subject = "Your OTP for Password Reset",
-                Body = $"Your OTP is: {otp}."
-            });
+            //var emailResult =  _emailService.SendEmail(new EmailDTO
+            //{
+            //    To = user.Email,
+            //    Subject = "Your OTP for Password Reset",
+            //    Body = $"Your OTP is: {otp}."
+            //});
 
-            if (!emailResult.Success)
-            {
-                result.Success = false;
-                result.Message = "Failed to send OTP email.";
-                result.Data = emailResult.Data;
-                return result;
-            }
+            //if (!emailResult.Success)
+            //{
+            //    result.Success = false;
+            //    result.Message = "Failed to send OTP email.";
+            //    result.Data = emailResult.Data;
+            //    return result;
+            //}
 
             result.Success = true;
             result.Message = "OTP sent to your email.";
@@ -131,19 +131,19 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             user.ModifiedAt = DateTime.UtcNow;
             await _db.SaveChangesAsync();
 
-            var emailResult =  _emailService.SendEmail(new EmailDTO
-            {
-                To = user.Email,
-                Subject = "Password Changed Successfully",
-                Body = "Your password has been changed successfully."
-            });
+            //var emailResult =  _emailService.SendEmail(new EmailDTO
+            //{
+            //    To = user.Email,
+            //    Subject = "Password Changed Successfully",
+            //    Body = "Your password has been changed successfully."
+            //});
 
-            if (!emailResult.Success)
-            {
-                result.Success = false;
-                result.Message = "Password changed but failed to send confirmation email.";
-                return result;
-            }
+            //if (!emailResult.Success)
+            //{
+            //    result.Success = false;
+            //    result.Message = "Password changed but failed to send confirmation email.";
+            //    return result;
+            //}
 
             result.Success = true;
             result.Message = "Password changed successfully.";
