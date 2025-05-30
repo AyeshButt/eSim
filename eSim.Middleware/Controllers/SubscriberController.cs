@@ -2,7 +2,7 @@
 using eSim.Infrastructure.DTOs.Account;
 using eSim.Infrastructure.DTOs.Email;
 using eSim.Infrastructure.DTOs.Global;
-using eSim.Infrastructure.Interfaces.Admin.Email;
+//using eSim.Infrastructure.Interfaces.Admin.Email;
 using eSim.Infrastructure.Interfaces.Middleware;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -12,10 +12,10 @@ namespace eSim.Middleware.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class SubscriberController(ISubscriberService subscriber,IEmailService email,IForgotPassword password) : ControllerBase
+    public class SubscriberController(ISubscriberService subscriber/*IEmailService email*/,IForgotPassword password) : ControllerBase
     {
         private readonly ISubscriberService _subscriber = subscriber;
-        private readonly IEmailService _emailService = email;
+       // private readonly IEmailService _emailService = email;
         private readonly IForgotPassword _password = password;
         [AllowAnonymous]
         [HttpGet("check-email")]

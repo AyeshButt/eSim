@@ -9,7 +9,7 @@ using eSim.EF.Entities;
 using eSim.Infrastructure.DTOs.Account;
 using eSim.Infrastructure.DTOs.Email;
 using eSim.Infrastructure.DTOs.Global;
-using eSim.Infrastructure.Interfaces.Admin.Email;
+//using eSim.Infrastructure.Interfaces.Admin.Email;
 using eSim.Infrastructure.Interfaces.Middleware;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -21,13 +21,13 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
     public class SubscriberService : ISubscriberService
     {
         private readonly ApplicationDbContext _db;
-        private readonly IEmailService _emailService;
+      //  private readonly IEmailService _emailService;
 
         // Constructor
-        public SubscriberService(ApplicationDbContext db, IEmailService email)
+        public SubscriberService(ApplicationDbContext db /*IEmailService email*/)
         {
             _db = db;
-            _emailService = email;
+           // _emailService = email;
         }
 
 
@@ -94,16 +94,16 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                     Body = $"Hi {input.FirstName},\n\nYou are successfully signed up on our platform.\n\nThanks,\neSim Team"
                 };
 
-                var emailResult = _emailService.SendEmail(email);
+                //var emailResult = _emailService.SendEmail(email);
 
-                if (!emailResult.Success)
-                {
-                    // Email fail hone par bhi transaction commit kar do, lekin warning bhej do
-                    await transaction.CommitAsync();
-                    result.Success = true;
-                    result.Message = "User created, but email sending failed.";
-                    return result;
-                }
+                //if (!emailResult.Success)
+                //{
+                //    // Email fail hone par bhi transaction commit kar do, lekin warning bhej do
+                //    await transaction.CommitAsync();
+                //    result.Success = true;
+                //    result.Message = "User created, but email sending failed.";
+                //    return result;
+                //}
 
                 // Sab kuch theek ho to commit karo transaction
                 await transaction.CommitAsync();
