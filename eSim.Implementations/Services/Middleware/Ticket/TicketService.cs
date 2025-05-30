@@ -122,7 +122,7 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                 Select(a => new TicketTypeResponseDTO() { Id = a.Id, Value = a.Type }).ToList();
 
 
-            return new Result<List<TicketTypeResponseDTO>>() {Data=list  };
+            return new Result<List<TicketTypeResponseDTO>>() {Data=null  };
         }
         #endregion
 

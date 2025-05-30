@@ -28,68 +28,76 @@ namespace eSim.Implementations.Services.Middleware.Bundle
             _db = db;
         }
         #region GetBundleDetail
-        public async Task<Result<GetBundleCatalogueDetailDTO.GetBundleCatalogueDetail>> GetBundleDetailAsync(string name)
+       public async Task<Result<GetBundleCatalogueDetail>> GetBundleDetailAsync(string name)
+{
+    var result = new Result<GetBundleCatalogueDetail>();
+    string url = $"{BusinessManager.BaseURL}/catalogue/bundle/{name}";
+
+    try
+    {
+        var response = await _consumeApi.GetApi<GetBundleCatalogueDetail>(url);
+
+        if (response == null)
         {
-            var result = new Result<GetBundleCatalogueDetail>();
-            string url = $"{BusinessManager.BaseURL}/catalogue/bundle/{name}";
-            try
-            {
-
-                var response = await _consumeApi.GetApi<GetBundleCatalogueDetail>(url);
-
-                if (response == null)
-                {
-                    result.Success = false;
-                    result.Data = null;
-                    return result;
-                }
-
-                result.Success = true;
-                result.Data = response;
-            }
-            catch (Exception) {
-                result.Success = false;
-                result.Data = null;
-            }
+            result.Success = false;
+            result.Message = "No bundle found.";
             return result;
         }
+
+        result.Success = true;
+        result.Data = response;
+        result.Message = "Bundle fetched successfully.";
+    }
+    catch (Exception ex)
+    {
+        result.Success = false;
+        result.Message = $"Error: {ex.Message}";
+    }
+
+    return result;
+}
+
+
         #endregion
         #region GetBundles
-        public async Task<Result<GetBundleCatalogueResponse>> GetBundlesAsync( string region)
+        public async Task<Result<GetBundleCatalogueResponse>> GetBundlesAsync(string region)
         {
             var result = new Result<GetBundleCatalogueResponse>();
 
-            string url = $"{BusinessManager.BaseURL}/catalogue?page=2&perPage=50&direction=desc&orderBy=speed&region={region}";
-
             try
             {
+                region = string.IsNullOrEmpty(region) ? "Asia" : region;
+
+                string url = $"{BusinessManager.BaseURL}/catalogue?page=2&perPage=50&direction=desc&orderBy=speed&region={region}";
+
                 var response = await _consumeApi.GetApi<GetBundleCatalogueResponse>(url);
 
-                if (response == null)
+                if (response == null || response.bundles == null || !response.bundles.Any())
                 {
                     result.Success = false;
-                    result.Data = null;
-                    result.Message = string.Empty;
+                    result.Message = "No bundles found for the specified region.";
                     return result;
                 }
 
                 result.Success = true;
                 result.Data = response;
+                result.Message = "Bundles fetched successfully.";
                
+
             }
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Data = null;
-                result.Message=ex.Message;
+                result.Message = ex.Message;
             }
 
             return result;
         }
 
-       
+
+
         #endregion
-        
+
         public Result<List<CountriesDTO>> GetCountries()
         {
             var listOfCountry = _db.Countries.Select(a=> new CountriesDTO { CountryName = a.CountryName, Iso2 = a.Iso2, Iso3 = a.Iso3 }).ToList();
