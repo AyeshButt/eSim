@@ -97,6 +97,15 @@ namespace eSim.Middleware.Controllers
 
         #endregion
 
+        [HttpGet("detail")]
+        public async Task<IActionResult> GetTicketDetail(string trn)
+        {
+            var result = await _ticketServices.GetTicketDetailAsync(trn);
 
+            if (result.Success)
+                return Ok(result);
+
+            return NotFound(result);
+        }
     }
 }
