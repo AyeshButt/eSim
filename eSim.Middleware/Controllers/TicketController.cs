@@ -21,7 +21,7 @@ namespace eSim.Middleware.Controllers
 
 
         #region Generate Ticket
-       //[AllowAnonymous]
+      
         [HttpGet]
         public IActionResult Get()
         {
@@ -34,7 +34,7 @@ namespace eSim.Middleware.Controllers
 
 
         #region Generate Ticket
-        [AllowAnonymous]
+       
         [HttpPost]
         public async Task<IActionResult> POST([FromBody] TicketRequestDTO ticketDto)
         {
@@ -97,6 +97,15 @@ namespace eSim.Middleware.Controllers
 
         #endregion
 
+        [HttpGet("detail")]
+        public async Task<IActionResult> GetTicketDetail(string trn)
+        {
+            var result = await _ticketServices.GetTicketDetailAsync(trn);
 
+            if (result.Success)
+                return Ok(result);
+
+            return NotFound(result);
+        }
     }
 }
