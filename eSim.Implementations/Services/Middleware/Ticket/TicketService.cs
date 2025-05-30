@@ -100,7 +100,11 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                     Attachments = attachments
                 };
 
-                return new Result<TicketDTO?> { Success = true, Message = "Ticket detail retrieved successfully." };
+                return new Result<TicketDTO?> {
+                    Success = true,
+                    Message = "Ticket detail retrieved successfully." ,
+                  Data=detail
+                };
             }
             catch (Exception)
             {
@@ -122,7 +126,7 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                 Select(a => new TicketTypeResponseDTO() { Id = a.Id, Value = a.Type }).ToList();
 
 
-            return new Result<List<TicketTypeResponseDTO>>() {Data=null  };
+            return new Result<List<TicketTypeResponseDTO>>() {Data=list  };
         }
         #endregion
 
