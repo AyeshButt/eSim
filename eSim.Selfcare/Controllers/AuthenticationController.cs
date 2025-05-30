@@ -105,7 +105,7 @@ namespace eSim.Selfcare.Controllers
             var request = await _auth.Email(email);
             var resp = request.Data;   
             
-            if (!string.IsNullOrEmpty(resp) && resp.Contains("Email already exists."))
+            if (!string.IsNullOrEmpty(request.Message) && request.Message.Contains("Email already exists."))
             {
                 return Json(false);
             }

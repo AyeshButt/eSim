@@ -10,7 +10,7 @@ namespace eSim.Infrastructure.Interfaces.Selfcare.Bundles
 {
     public interface IBundleService
     {
+        public Task<Result<GetBundleCatalogueResponse>> GetBundles();
 
-        public Task<Result<List<Bundle>>> GetBundles();
     }
 }
