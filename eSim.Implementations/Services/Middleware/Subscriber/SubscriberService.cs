@@ -9,6 +9,8 @@ using eSim.EF.Entities;
 using eSim.Infrastructure.DTOs.Account;
 using eSim.Infrastructure.DTOs.Email;
 using eSim.Infrastructure.DTOs.Global;
+using eSim.Infrastructure.DTOs.Subscribers;
+
 //using eSim.Infrastructure.Interfaces.Admin.Email;
 using eSim.Infrastructure.Interfaces.Middleware;
 using Microsoft.AspNetCore.Http;
@@ -21,13 +23,13 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
     public class SubscriberService : ISubscriberService
     {
         private readonly ApplicationDbContext _db;
-      //  private readonly IEmailService _emailService;
+        //  private readonly IEmailService _emailService;
 
         // Constructor
         public SubscriberService(ApplicationDbContext db /*IEmailService email*/)
         {
             _db = db;
-           // _emailService = email;
+            // _emailService = email;
         }
 
 
@@ -213,8 +215,49 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             }
         }
 
+        public async Task<IQueryable<SubscriberDTO>> GetClient_SubscribersListAsync(string id)
+        {
+            Guid parsedClientId = Guid.Parse(id);
+
+            var client_subscriber_list = (from s in _db.Subscribers
+                                          join c in _db.Client on s.ClientId equals c.Id
+                                          where s.ClientId == parsedClientId
+                                          select new SubscriberDTO()
+                                          {
+                                              Id = s.Id,
+                                              FirstName = s.FirstName,
+                                              LastName = s.LastName,
+                                              Email = s.Email,
+                                              Hash = s.Hash,
+                                              Active = s.Active,
+                                              ClientId = s.ClientId,
+                                              CreatedAt = s.CreatedAt,
+                                              ModifiedAt = s.ModifiedAt,
+                                          }
+                                  );
 
 
+            return await Task.FromResult(client_subscriber_list);
+        }
+
+        public async Task<IQueryable<SubscriberDTO>> GetSubscribersListAsync()
+        {
+            var model = _db.Subscribers.AsNoTracking().Select(u => new SubscriberDTO()
+            {
+
+                Id = u.Id,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Email = u.Email,
+                Hash = u.Hash,
+                Active = u.Active,
+                ClientId = u.ClientId,
+                CreatedAt = u.CreatedAt,
+                ModifiedAt = u.ModifiedAt,
+            });
+
+            return await Task.FromResult(model);
+        }
     }
 }
 

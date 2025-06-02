@@ -1,4 +1,4 @@
-﻿dotnet ef migrations add "Added Identity related models" -s ../eSim.Admin -p ../eSim.EF
+﻿dotnet ef migrations add "AddedUserIdInClients" -s ../eSim.Admin -p ../eSim.EF
 
 
 dotnet ef database update -s .\eSim.Admin -p .\eSim.EF

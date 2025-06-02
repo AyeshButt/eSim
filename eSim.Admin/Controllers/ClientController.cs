@@ -49,6 +49,9 @@ namespace eSim.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateClient(ClientDTO input)
         {
+            string token = string.Empty;
+            string encodedToken = string.Empty;
+
             if (!ModelState.IsValid)
             {
                 return RedirectToAction("CreateClient");
@@ -75,16 +78,21 @@ namespace eSim.Admin.Controllers
                 return RedirectToAction("Index");
             }
 
-            var token = await _email.EmailConfirmationToken(client.Data.UserId);
+            //changes
 
-            if (token is null)
+            var findUser = await _userManager.FindByIdAsync(client.Data.UserId);
+            
+            if (findUser is null)
             {
                 TempData["EmailNotSent"] = BusinessManager.EmailNotSent;
-
                 return RedirectToAction("Index");
+
             }
 
-            client.Data.Token = token;
+            token = await _userManager.GenerateEmailConfirmationTokenAsync(findUser);
+            encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+
+            client.Data.Token = encodedToken;
 
             #region Sending verification and password email to the user after client creation
 
