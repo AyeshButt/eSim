@@ -33,6 +33,8 @@ namespace eSim.EF.Entities
         [MaxLength(500)]
         public string PrimaryEmail { get; set; }
 
+        public string? UserId { get; set; } = null!;
+
 
 
     }

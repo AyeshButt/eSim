@@ -45,6 +45,7 @@ namespace eSim.Implementations.Services.Client
             var roleId = _config.GetValue<string>("RoleConfiguration:roleid") ?? string.Empty;
 
             var role = await _roleManager.FindByIdAsync(roleId);
+            //var role = await _db.Roles.FindAsync(roleId);
 
             if (role == null)
             {
@@ -78,10 +79,12 @@ namespace eSim.Implementations.Services.Client
                 #region Application User mapping
                 var clientUser = new ApplicationUser()
                 {
+                    Id = client.Id.ToString(),
                     UserName = client.PrimaryEmail,
                     Email = client.PrimaryEmail,
                     UserType = (int)AspNetUsersTypeEnum.Client,
                     UserRoleId = roleId,
+                    ParentId = input.CreatedBy,
                 };
                 #endregion
 
@@ -141,6 +144,7 @@ namespace eSim.Implementations.Services.Client
 
                 result.Success = false;
             }
+
             #endregion
 
             return result;
