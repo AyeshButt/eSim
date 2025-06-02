@@ -24,7 +24,7 @@ namespace eSim.Selfcare.Controllers
 
             if (bundle.Success) 
             { 
-                return View(bundle.Data);
+                return View(bundle);
             }
             return View(bundle);
         }

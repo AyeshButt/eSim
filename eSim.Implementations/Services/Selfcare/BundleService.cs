@@ -15,7 +15,7 @@ namespace eSim.Implementations.Services.Selfcare
     {
         private readonly IMiddlewareConsumeApi _consumeApi = consumeApi;
 
-        public async Task<Result<List<Bundle>>> GetBundles()
+        public async Task<Result<GetBundleCatalogueResponse>> GetBundles()
         {
             RegionDTO dto = new()
             {
@@ -24,7 +24,7 @@ namespace eSim.Implementations.Services.Selfcare
             var Url = BusinessManager.MdwBaseURL + BusinessManager.BundelRegion;
             
  
-            var response = await _consumeApi.Post< List<Bundle>, RegionDTO>(Url, dto);
+            var response = await _consumeApi.Post<GetBundleCatalogueResponse, RegionDTO>(Url, dto);
 
             return response;
         }

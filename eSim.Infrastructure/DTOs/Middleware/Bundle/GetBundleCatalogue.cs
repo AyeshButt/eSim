@@ -9,6 +9,14 @@ namespace eSim.Infrastructure.DTOs.Middleware.Bundle
         
     public class Bundle
     {
+        public Bundle()
+        {
+            countries = new List<Country>();
+            speed = new List<string>();
+            roamingEnabled = new List<RoamingEnabled>();
+            groups = new List<string>();
+        }
+
         public string name { get; set; }
         public string description { get; set; }
         public List<Country> countries { get; set; }
@@ -40,6 +48,10 @@ namespace eSim.Infrastructure.DTOs.Middleware.Bundle
 
     public class GetBundleCatalogueResponse
     {
+        public GetBundleCatalogueResponse()
+        {
+            bundles = new List<Bundle>();
+        }
         public List<Bundle> bundles { get; set; }
         public int pageCount { get; set; }
         public int rows { get; set; }
