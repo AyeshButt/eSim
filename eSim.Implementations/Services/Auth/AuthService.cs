@@ -34,7 +34,7 @@ namespace eSim.Implementations.Services.Auth
         {
 
 
-            Subscribers? subscriber = _db.Subscribers.FirstOrDefault(a => a.Active && a.Email == input.Username);
+            Subscribers? subscriber = _db.Subscribers.FirstOrDefault(a => a.Active && a.Email == input.Email);
 
             if (subscriber is null)
                 return null;
