@@ -23,6 +23,45 @@ namespace eSim.Implementations.Services.Middleware.Ticket
         {
             _Db = Db;
         }
+
+        public async  Task<Result<TicketActivitiesDTO>> AddCommentAsync(TicketActivitiesDTO dto)
+        {
+            try
+            {
+                var comment = new TicketActivities
+                {
+                    Id = Guid.NewGuid(),
+                    TicketId = dto.TicketId,
+                    Comment = dto.Comment,
+                    CommentType = dto.CommentType,
+                    IsVisibleToCustomer = dto.IsVisibleToCustomer,
+                    ActivityBy = dto.ActivityBy,
+                    ActivityAt = DateTime.UtcNow
+                };
+
+                _Db.TicketActivities.Add(comment);
+                await  _Db.SaveChangesAsync();
+
+                return new Result<TicketActivitiesDTO>
+                {
+                    Success = true,
+                    Message = "Comment added successfully",
+                    Data = null
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Result<TicketActivitiesDTO>
+                {
+                    Success = false,
+                    Message = $"Error adding comment: {ex.Message}",
+                    Data = null
+                };
+            }
+        }
+        
+
+
         #region CreateTicket
         public async Task<Result<string?>> CreateTicketAsync(TicketRequestDTO ticketDto)
         {
@@ -52,7 +91,8 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                 return new Result<string?>
                 {
                     Success = true,
-                    Message = "Ticket Created Successfully"
+                    Message = "Ticket Created Successfully",
+                    Data=ticket.TRN
 
                 };
             }

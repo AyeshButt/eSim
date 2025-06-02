@@ -96,6 +96,8 @@ namespace eSim.Middleware.Controllers
         }
 
         #endregion
+        #region TicketDetail
+
 
         [HttpGet("detail")]
         public async Task<IActionResult> GetTicketDetail(string trn)
@@ -107,5 +109,25 @@ namespace eSim.Middleware.Controllers
 
             return NotFound(result);
         }
+        #endregion
+        [HttpPost("comment")]
+        public async Task<IActionResult> AddComment([FromBody] TicketActivitiesDTO dto)
+        {
+            dto.CommentType = 1;
+          
+
+            var result = await _ticketServices.AddCommentAsync(dto);
+
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+
+
     }
 }
