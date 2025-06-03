@@ -1,0 +1,113 @@
+﻿@model List<eSim.Infrastructure.DTOs.Subscribers.SubscriberDTO>
+
+@{
+    ViewData["Title"] = "Subscriber List";
+
+    var notifications = new List<(string Key, string Type)>
+    {
+        ("ClientCreated", "success"),
+    };
+}
+
+    <div class="row">
+        <div class="col-xl-12">
+            <a asp-action="CreateClient" asp-controller="Client" class="float-end my-3 btn rounded-pill btn-secondary waves-effect waves-light">Create</a>
+        </div>
+    </div>
+
+
+
+@if (Model.Any())
+{
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-header align-items-center d-flex">
+                    <h4 class="card-title mb-0 flex-grow-1">Subscriber List</h4>
+
+                </div><!-- end card header -->
+
+                <div class="card-body">
+                    <div class="live-preview">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-nowrap align-middle mb-0">
+                                <thead>
+
+
+                                    <tr>
+
+                                        <th scope="col">Active</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input client-toggle-switch"
+                                                               type="checkbox"
+                                                               id="switch-@item.Id"
+                                                               data-url="@Url.Action("DisableClient", "Client", new { id = item.Id })"
+                                                               data-client-id="@item.Id"
+                                                        @(item.Active ? "checked" : "") />
+                                                    </div>
+
+                                                
+                                            </td>
+                                            <td>@(item.FirstName + " " + item.LastName)</td>
+                                            <td>@item.Email</td>
+                                            <td>
+                                               
+                                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="edit" class="mx-2" asp-action="UpdateClient" asp-controller="Subscriber" asp-route-id="@item.Id"><i class="ri-pencil-fill fs-5"></i></a>
+                                                
+                                              
+
+                                            </td>
+
+                                        </tr>
+
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div><!-- end card-body -->
+            </div><!-- end card -->
+        </div>
+        <!-- end col -->
+    </div>
+    <!-- end row -->
+}
+else
+{
+    <!-- Danger Alert -->
+    <div class="alert alert-danger text-center alert-dismissible fade show" role="alert">
+        <strong> No subscriber available</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+}
+
+
+@section scripts {
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        @foreach (var (key, type) in notifications)
+        {
+            if (TempData[key] != null)
+            {
+                <text>ToastNotification("@TempData[key]", "@type");</text>
+            }
+        }
+        });
+    </script>
+
+}
+

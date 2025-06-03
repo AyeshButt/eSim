@@ -4,6 +4,7 @@ using eSim.EF.Entities;
 using eSim.Implementations.Services.Account;
 using eSim.Implementations.Services.Client;
 using eSim.Implementations.Services.Email;
+using eSim.Implementations.Services.Middleware.Subscriber;
 using eSim.Implementations.Services.SystemClaimRepo;
 using eSim.Implementations.Services.Ticket;
 using eSim.Infrastructure.DTOs.Email;
@@ -11,6 +12,7 @@ using eSim.Infrastructure.Interfaces.Admin.Account;
 using eSim.Infrastructure.Interfaces.Admin.Client;
 using eSim.Infrastructure.Interfaces.Admin.Email;
 using eSim.Infrastructure.Interfaces.Admin.Ticket;
+using eSim.Infrastructure.Interfaces.Middleware;
 using eSim.Infrastructure.Interfaces.SystemClaimRepo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -31,6 +33,7 @@ if (string.IsNullOrWhiteSpace(connectionstring))
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionstring));
+builder.Services.AddTransient<ISubscriberService, SubscriberService>();
 
 builder.Services.AddScoped<ISystemClaimService, SystemClaimService>();
 builder.Services.AddTransient<IAccountService, AccountService>();
