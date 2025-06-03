@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using eSim.Infrastructure.DTOs.Middleware.Bundle;
 using eSim.Infrastructure.Interfaces.Selfcare.Bundles;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,6 +28,17 @@ namespace eSim.Selfcare.Controllers
                 return View(bundle);
             }
             return View(bundle);
+        }
+
+
+        [HttpGet]
+        public async  Task<IActionResult> Detail(BundleNameDTO input)
+        {
+            var bundle = await _bundelService.BundleDetail(input);
+
+            Console.WriteLine("Bundle Detail" + bundle.Data);
+
+            return PartialView("_BundleDetailPartial", bundle.Data);
         }
         public IActionResult EsimBundles()
         {
