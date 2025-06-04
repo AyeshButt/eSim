@@ -22,6 +22,8 @@ using eSim.Implementations.Services.Middleware.Subscriber;
 using eSim.Infrastructure.DTOs.Email;
 using eSim.EF.Entities;
 using Microsoft.AspNetCore.Identity;
+using eSim.Infrastructure.Interfaces.Middleware.Esim;
+using eSim.Implementations.Services.Esim;
 
 
 
@@ -121,6 +123,7 @@ builder.Services.AddTransient<IBundleService, BundleService>();
 builder.Services.AddTransient<ITicketServices, TicketService>();
 builder.Services.AddTransient<ISubscriberService, SubscriberService>();
 builder.Services.AddTransient<IForgotPassword, ForgotPasswordServices>();
+builder.Services.AddTransient<IEsimService, EsimService>();
 
 
 
