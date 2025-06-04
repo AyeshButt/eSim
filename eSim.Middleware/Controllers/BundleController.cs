@@ -37,8 +37,8 @@ namespace eSim.Middleware.Controllers
 
 
         [AllowAnonymous]
-        [HttpPost("GetByName")]
-        public async Task<IActionResult> GetBundleDetails([FromBody] BundleNameDTO NameDTO)
+        [HttpGet("GetByName")]
+        public async Task<IActionResult> GetBundleDetails([FromQuery] string name)
         {
             if (string.IsNullOrWhiteSpace(NameDTO.Name))
                 return BadRequest("Name is required.");
