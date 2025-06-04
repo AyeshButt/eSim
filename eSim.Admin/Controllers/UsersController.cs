@@ -138,6 +138,9 @@ namespace eSim.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> AddUser(ManagerUserDTO input)
         {
+            string token = string.Empty;
+            string encodedToken = string.Empty;
+
             var role = _roleManager.Roles.FirstOrDefault(a => a.Id == input.Role);
 
             var loggedUser = await _userManager.GetUserAsync(User);
@@ -148,7 +151,7 @@ namespace eSim.Admin.Controllers
                 UserName = input.Username,
                 Email = input.Email,
                 UserRoleId = role?.Id ?? null,
-
+                ParentId = loggedUser?.Id,
             };
 
             #region Mapping appropriate user type
@@ -200,17 +203,20 @@ namespace eSim.Admin.Controllers
                 Password = BusinessManager.DefaultPassword,
                 UserId = user.Id,
             };
-
-            var token = await _email.EmailConfirmationToken(user.Id);
-          
-            if (token is null)
+            ///
+            var findUser = await _userManager.FindByIdAsync(user.Id);
+                
+            if (findUser is null)
             {
                 TempData["EmailNotSent"] = BusinessManager.EmailNotSent;
 
                 return RedirectToAction("ManageUsers");
             }
-
-            model.Token = token;
+           
+            token = await _userManager.GenerateEmailConfirmationTokenAsync(findUser);
+            encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+            
+            model.Token = encodedToken;
 
             #region Sending verification and password email to the user
 

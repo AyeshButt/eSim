@@ -22,12 +22,11 @@ namespace eSim.Middleware.Controllers
         [HttpPost("GetByRegion")]
         public async Task<IActionResult> GetBundles([FromBody] RegionDTO request)
         {
-            if (request == null) return BadRequest("Request body is missing.");
-
-            var result = await _bundleService.GetBundlesAsync(request.Region);
+            
+            var result = await _bundleService.GetBundlesAsync(request);
 
             if (!result.Success)
-                return NotFound(new { message = result.Message });
+                return NotFound( result );
 
             return Ok(result);
         }
@@ -37,19 +36,19 @@ namespace eSim.Middleware.Controllers
 
 
         [AllowAnonymous]
-        [HttpGet("GetByName")]
+        [HttpPost("GetByName")]
         public async Task<IActionResult> GetBundleDetails([FromQuery] string name)
         {
-            if (string.IsNullOrWhiteSpace(NameDTO.Name))
-                return BadRequest("Name is required.");
 
-            var result = await _bundleService.GetBundleDetailAsync(NameDTO.Name);
+
+            var result = await _bundleService.GetBundleDetailAsync(name);
 
             if (!result.Success || result.Data == null)
-                return NotFound(new { message = result.Message });
+                return NotFound(result);
 
-            return Ok(result );
+            return Ok(result);
         }
+
 
 
 
