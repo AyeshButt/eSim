@@ -89,7 +89,7 @@
                 <h5 class="card-title mb-0 d-inline">All Bundles</h5><p class="text-muted d-inline ms-2">Select a Bundle for info</p>
             </div>
             <div class="card-body">
-                <table class="datatable-scroll table table-bordered dt-responsive nowrap align-middle mdl-data-table" style="width:100%">
+                <table class="datatable-scroll table-hover table table-bordered dt-responsive nowrap align-middle mdl-data-table" style="width:100%">
                     <thead>
                         <tr>
                             <th>Bundle</th>
@@ -109,16 +109,19 @@
                         {
                             @foreach (var item in Model.Data.bundles)
                             {
-                                <tr>
+                                <tr class="View-Bundle" data-name="@item.name" data-bs-toggle="modal" data-bs-target=".bs-example-modal-center">
                                     <td>@item.name</td>
                                     <td>@item.countries?.FirstOrDefault()?.name</td>
-                                    @* @foreach(var country in item.countries){
-                                        <td>@country.name</td>
-                                    } *@
-                                    <td>@item.dataAmount</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td>@item.duration</td>
+                                    <td class="text-center">
+                                        @if(item.dataAmount != 0)
+                                        {
+                                            var GB = Math.Round((double)item.dataAmount / 1024);
+                                            @($"{GB} GB")
+                                        }
+                                    </td>
+                                    <td class="text-center">-</td>
+                                    <td class="text-center">-</td>
+                                    <td class="text-center">@item.duration Days</td>
                                     <td> X </td>
                                     <td class="text-start">
 
@@ -131,7 +134,7 @@
                                             <text>No</text>
                                         }
                                     </td>
-                                    <td>@item.price</td>
+                                    <td>$@item.price</td>
                                     <td><button class="btn btn-sm btn-soft-info">+</button></td>
                                     </tr>
                             }
@@ -144,22 +147,54 @@
     </div><!--end col-->
 </div><!--end row-->
 
+<div class="modal modal-lg fade bs-example-modal-center" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <div id="bundleDetailLoader" class="text-center my-4" style="display:none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading bundle details...</p>
+
+                </div>
+                <div id="bundleDetailModalBody"></div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 
 @section scripts {
         <script>
-        // $(document).ready(function() {
-        //     $('#scrollvertical').DataTable({
-        //             createdRow: function(row, data, index) {
-        //     $('td', row).eq(6).css('text-align', 'center'); // Center 4th column
-        // },
-        //         scrollY: '35vh',
-        //         scrollCollapse: true,
-        //         paging: true,
-        //         responsive: true,
-        //         dom: 'lrtip',
-        //     });
-        // });
-       
+            $(document).on('click', '.View-Bundle', function()
+            {
+                var bundleName = $(this).data('name');
+
+                     $('.bs-example-modal-center').modal('show');
+
+                    // Show loader and clear any previous data
+                $('#bundleDetailLoader').show();
+                    $('#bundleDetailModalBody').html('');
+
+                $.ajax({
+                    url: '@Url.Action("Detail", "Bundles")',
+                    type: 'GET',
+                    data: { name: bundleName },
+
+                     data: { name: bundleName },
+                    success: function (html) {
+                        $('#bundleDetailLoader').hide();
+                        $('#bundleDetailModalBody').html(html); // inject partial view
+                        $('.bs-example-modal-center').modal('show'); // open modal
+                    },
+
+                     error: function () {
+                        $('#bundleDetailLoader').hide();
+                        $('#bundleDetailModalBody').html('<p class="text-danger">Failed to load bundle details.</p>');
+                    }
+                });
+            });   
     </script>
     <!-- prismjs plugin -->
     <script src="~/assets/libs/prismjs/prism.js"></script>
