@@ -22,22 +22,27 @@ using eSim.Infrastructure.Interfaces.ConsumeApi;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Runtime.InteropServices.JavaScript;
-using eSim.Infrastructure.DTOs.Account;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace eSim.Implementations.Services.Selfcare.Authentication
 {
-    public class AuthenticationService(IHttpClientFactory httpClient, IMiddlewareConsumeApi consumeApi) : IAuthenticationService
+    public class AuthenticationService(IHttpClientFactory httpClient, IMiddlewareConsumeApi consumeApi, IHttpClientFactory httpClientFactory) : IAuthenticationService
     {
         private readonly HttpClient _httpClient = httpClient.CreateClient();
         private readonly IMiddlewareConsumeApi _consumeApi = consumeApi;
+        private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
 
 
         #region signIn 
         public async Task<string?> AuthenticateAsync(SignIn model)
         {
             var url = BusinessManager.MdwBaseURL + BusinessManager.MidlewareLogin;
+
+            var req = _httpClientFactory.CreateClient("ds");
+            var ss = await req.PostAsJsonAsync(url,model);
+
             var response = await _httpClient.PostAsJsonAsync(url, model);
+
 
             if (response.IsSuccessStatusCode) 
             {

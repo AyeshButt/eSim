@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using eSim.Common.StaticClasses;
 using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.DTOs.Middleware.Bundle;
@@ -22,7 +23,7 @@ namespace eSim.Implementations.Services.Selfcare
         {
             RegionDTO dto = new()
             {
-                Region = "Asia"
+                Region = "Europe"
             };
             var Url = BusinessManager.MdwBaseURL + BusinessManager.BundelRegion;
             
@@ -33,11 +34,14 @@ namespace eSim.Implementations.Services.Selfcare
         }
 
 
-        public async Task<Result<GetBundleCatalogueDetail>> BundleDetail(BundleNameDTO dto)
+        public async Task<Result<GetBundleCatalogueDetail>> BundleDetail(string dto)
         {
             var Url = BusinessManager.MdwBaseURL + BusinessManager.Bundeldetail;
 
-            var response = await _consumeApi.Post<GetBundleCatalogueDetail, BundleNameDTO>(Url, dto);
+            //var fullUrl = $"{Url}?name={HttpUtility.UrlEncode(dto)}";
+            var FullURl = $"{Url}?name={Uri.EscapeDataString(dto)}";
+
+            var response = await _consumeApi.Get<GetBundleCatalogueDetail>(FullURl);
 
             return response;
         }

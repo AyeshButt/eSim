@@ -150,8 +150,15 @@
 <div class="modal modal-lg fade bs-example-modal-center" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-body">
-               
+            <div class="modal-body p-0">
+                <div id="bundleDetailLoader" class="text-center my-4" style="display:none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading bundle details...</p>
+
+                </div>
+                <div id="bundleDetailModalBody"></div>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -164,16 +171,30 @@
             {
                 var bundleName = $(this).data('name');
 
+                     $('.bs-example-modal-center').modal('show');
+
+                    // Show loader and clear any previous data
+                $('#bundleDetailLoader').show();
+                    $('#bundleDetailModalBody').html('');
+
                 $.ajax({
                     url: '@Url.Action("Detail", "Bundles")',
                     type: 'GET',
                     data: { name: bundleName },
+
+                     data: { name: bundleName },
+                    success: function (html) {
+                        $('#bundleDetailLoader').hide();
+                        $('#bundleDetailModalBody').html(html); // inject partial view
+                        $('.bs-example-modal-center').modal('show'); // open modal
+                    },
+
+                     error: function () {
+                        $('#bundleDetailLoader').hide();
+                        $('#bundleDetailModalBody').html('<p class="text-danger">Failed to load bundle details.</p>');
+                    }
                 });
-            });
-
-
-
-       
+            });   
     </script>
     <!-- prismjs plugin -->
     <script src="~/assets/libs/prismjs/prism.js"></script>

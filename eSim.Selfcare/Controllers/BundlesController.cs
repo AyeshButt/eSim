@@ -32,11 +32,9 @@ namespace eSim.Selfcare.Controllers
 
 
         [HttpGet]
-        public async  Task<IActionResult> Detail(BundleNameDTO input)
+        public async  Task<IActionResult> Detail(string name)
         {
-            var bundle = await _bundelService.BundleDetail(input);
-
-            Console.WriteLine("Bundle Detail" + bundle.Data);
+            var bundle = await _bundelService.BundleDetail(name);
 
             return PartialView("_BundleDetailPartial", bundle.Data);
         }
