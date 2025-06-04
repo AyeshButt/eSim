@@ -38,6 +38,11 @@ namespace eSim.Selfcare.Controllers
 
             return PartialView("_BundleDetailPartial", bundle.Data);
         }
+
+        public IActionResult HajjPromoBundles()
+        {
+            return View();
+        }
         public IActionResult EsimBundles()
         {
             return View();
