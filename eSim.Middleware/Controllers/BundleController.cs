@@ -36,7 +36,7 @@ namespace eSim.Middleware.Controllers
 
 
         [AllowAnonymous]
-        [HttpPost("GetByName")]
+        [HttpGet("GetByName")]
         public async Task<IActionResult> GetBundleDetails([FromQuery] string name)
         {
 

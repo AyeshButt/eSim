@@ -11,7 +11,7 @@ using eSim.Infrastructure.Interfaces.ConsumeApi;
 using eSim.Infrastructure.Interfaces.Selfcare.Bundles;
 using static eSim.Infrastructure.DTOs.Middleware.Bundle.GetBundleCatalogueDetailDTO;
 
-namespace eSim.Implementations.Services.Selfcare
+namespace eSim.Implementations.Services.Selfcare.Bundle
 {
     public class BundleService(IMiddlewareConsumeApi consumeApi) : IBundleService
     {

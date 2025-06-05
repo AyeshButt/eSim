@@ -8,6 +8,10 @@ namespace eSim.Infrastructure.DTOs.Esim
 {
     public class EsimResponseDTO
     {
+        public EsimResponseDTO()
+        {
+            List<EsimDTO> Esims = new();        
+        }
         public List<EsimDTO> Esims { get; set; }
         public int PageCount { get; set; }
         public int PageSize { get; set; }
