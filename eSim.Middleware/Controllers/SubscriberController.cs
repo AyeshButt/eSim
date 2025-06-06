@@ -2,7 +2,7 @@
 using eSim.Infrastructure.DTOs.Account;
 using eSim.Infrastructure.DTOs.Email;
 using eSim.Infrastructure.DTOs.Global;
-//using eSim.Infrastructure.Interfaces.Admin.Email;
+using eSim.Infrastructure.Interfaces.Admin.Email;
 using eSim.Infrastructure.Interfaces.Middleware;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -12,38 +12,27 @@ namespace eSim.Middleware.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class SubscriberController(ISubscriberService subscriber/*IEmailService email*/,IForgotPassword password) : ControllerBase
+    public class SubscriberController(ISubscriberService subscriber, IForgotPassword password) : ControllerBase
     {
         private readonly ISubscriberService _subscriber = subscriber;
-       // private readonly IEmailService _emailService = email;
         private readonly IForgotPassword _password = password;
-        [AllowAnonymous]
-        [HttpGet("check-email")]
-        public async Task<IActionResult> CheckEmailExists([FromQuery] string email)
-        {
-            var result = await _subscriber.EmailExists(email);
 
-            // HTTP 400 if failed
+        [AllowAnonymous]
+        [HttpGet("email-exists")]
+        public async Task<IActionResult> CheckSubscriberEmailExists([FromQuery] string email)
+        {
+            var result = await _subscriber.SubscriberEmailExists(email);
             if (!result.Success)
                 return BadRequest(result);
 
             return Ok(result);
         }
 
-        #region Subscriber
+        #region Subscriber  
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] SubscriberRequestDTO input)
+        public async Task<IActionResult> Post([FromBody] SubscriberDTORequest input)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(new Result<string>
-                {
-                    Success = false,
-                    Message = "Invalid input data"
-                });
-            }
-
             var result = await _subscriber.CreateSubscriber(input);
 
             if (!result.Success)
@@ -51,74 +40,34 @@ namespace eSim.Middleware.Controllers
 
             return Ok(result);
         }
-         
+
         #endregion
         [AllowAnonymous]
         [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO model)
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTORequest input)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(new Result<string>
-                {
-                    Success = false,
-                    Message = "Invalid input.",
-                    Data = null
-                });
-            }
+            var result = await _password.ForgotPasswordAsync(input);
 
-            var result = await _password.ForgotPasswordAsync(model);
+            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
 
-            if (!result.Success)
-            {
-                return BadRequest(result); 
-            }
-
-            return Ok(result); 
         }
 
         [AllowAnonymous]
-        [HttpPost("verify-otp")]
-        public async Task<IActionResult> VerifyOtp([FromBody] string otp)
+        [HttpGet("verify-otp")]
+        public async Task<IActionResult> VerifyOTP([FromQuery] string otp)
         {
-            if (string.IsNullOrEmpty(otp))
-            {
-                return BadRequest(new Result<string>
-                {
-                    Success = false,
-                    Message = "OTP is required.",
-                   
-                });
-            }
+            var result = await _password.VerifyOTPAsync(otp);
 
-            var result = await _password.VerifyOtpAsync(otp);
-
-            if (!result.Success)
-                return BadRequest(result);
-
-            return Ok(result);
+            return result.Success ? Ok(result) : BadRequest(result);
         }
 
         [AllowAnonymous]
         [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPassword([FromBody] SubscriberResetPasswordDTO model)
+        public async Task<IActionResult> ResetPassword([FromBody] SubscriberResetPasswordDTORequest input)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(new Result<string>
-                {
-                    Success = false,
-                    Message = "Invalid input.",
-                    Data = null
-                });
-            }
+            var result = await _password.ResetPasswordAsync(input);
 
-            var result = await _password.ResetPasswordAsync(model);
-
-            if (!result.Success)
-                return BadRequest(result);
-
-            return Ok(result);
+            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
         }
 
         [AllowAnonymous]
@@ -150,9 +99,9 @@ namespace eSim.Middleware.Controllers
             var result = await _subscriber.UpdateSubscriberAsync(id, input);
 
             if (result.Success)
-                return Ok(result);  
+                return Ok(result);
 
-            return BadRequest(result);  
+            return BadRequest(result);
         }
 
 

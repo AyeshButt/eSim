@@ -13,10 +13,10 @@ namespace eSim.Infrastructure.Interfaces.Middleware
 {
     public interface ISubscriberService
     {
-        Task<Result<string>> EmailExists(string email);
-        Task<Result<string>> CreateSubscriber(SubscriberRequestDTO input);
+        Task<Result<string>> SubscriberEmailExists(string email);
+        Task<Result<string>> CreateSubscriber(SubscriberDTORequest input);
 
-        Task<Result<string>> UpdateSubscriberAsync(Guid id, UpdateSubscriberDTO input);
+        Task<Result<string>> UpdateSubscriberAsync(Guid id, UpdateSubscriberDTO request);
         Task<Result<string?>> UploadProfileImageAsync(IFormFile file, ProfileImageDTO dto);
 
 

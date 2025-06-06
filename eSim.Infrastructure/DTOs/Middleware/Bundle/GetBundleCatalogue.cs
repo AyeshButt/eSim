@@ -48,6 +48,7 @@ namespace eSim.Infrastructure.DTOs.Middleware.Bundle
 
     public class GetBundleCatalogueResponse
     {
+        //remove Get from the name and capitalize property names
         public GetBundleCatalogueResponse()
         {
             bundles = new List<Bundle>();

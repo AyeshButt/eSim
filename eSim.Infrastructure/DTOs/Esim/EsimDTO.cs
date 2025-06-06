@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace eSim.Infrastructure.DTOs.Esim
 {
-    public class EsimResponseDTO
+    public class GetListofyourEsimsResponseDTO
     {
         public List<EsimDTO> Esims { get; set; }
         public int PageCount { get; set; }

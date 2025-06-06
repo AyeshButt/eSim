@@ -11,6 +11,7 @@ namespace eSim.Infrastructure.DTOs.Middleware.Bundle
     {
         [Required(ErrorMessage = "Region is required.")]
         public string Region { get; set; }
+
        // [Required(ErrorMessage = "Countries are required.")]
         public string? Countries { get; set; }
 
@@ -18,14 +19,12 @@ namespace eSim.Infrastructure.DTOs.Middleware.Bundle
 
         public int PerPage { get; set; } = 10;
 
+        //move hard coded values to static class
+
         public string Direction { get; set; } = "desc";
 
+        //create enum of speed values
         public string OrderBy { get; set; } = "speed";
-
-
-
-
-
 
     }
 }

@@ -91,12 +91,12 @@ namespace eSim.Implementations.Services.Selfcare.Authentication
 
         #region Forgot Password
 
-        public async Task<Result<string?>> ForgotPassword(ForgotPasswordDTO input)
+        public async Task<Result<string?>> ForgotPassword(ForgotPasswordDTORequest input)
         {
 
             var url = BusinessManager.MdwBaseURL + BusinessManager.forgotPass;
 
-            var request = await _consumeApi.Post<string, ForgotPasswordDTO>(url, input);
+            var request = await _consumeApi.Post<string, ForgotPasswordDTORequest>(url, input);
 
             return request;
         }
@@ -118,11 +118,11 @@ namespace eSim.Implementations.Services.Selfcare.Authentication
 
         #region new password
 
-        public async Task<Result<string?>> NewPassword(SubscriberResetPasswordDTO input)
+        public async Task<Result<string?>> NewPassword(SubscriberResetPasswordDTORequest input)
         {
             var url = BusinessManager.MdwBaseURL + BusinessManager.resetPass;
 
-            var request = await _consumeApi.Post<string, SubscriberResetPasswordDTO>(url, input);
+            var request = await _consumeApi.Post<string, SubscriberResetPasswordDTORequest>(url, input);
 
             return request;
         }

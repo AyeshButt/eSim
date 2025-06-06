@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using eSim.Infrastructure.DTOs.BaseResponse;
 
 namespace eSim.Infrastructure.DTOs.Middleware.Bundle
 {
@@ -50,8 +51,8 @@ namespace eSim.Infrastructure.DTOs.Middleware.Bundle
                 public List<string> potentialSpeeds { get; set; }
             }
 
-            public class GetBundleCatalogueDetail
-            {
+            public class GetBundleCatalogueDetailsResponse : BaseResponseDTO
+        {
                 public string name { get; set; }
                 public string description { get; set; }
                 public List<Country> countries { get; set; }
@@ -67,5 +68,6 @@ namespace eSim.Infrastructure.DTOs.Middleware.Bundle
                 public List<Allowance> allowances { get; set; }
                 public string billingType { get; set; }
             }
+
         }
     }

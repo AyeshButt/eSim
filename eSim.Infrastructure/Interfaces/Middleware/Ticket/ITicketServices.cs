@@ -18,7 +18,7 @@ namespace eSim.Infrastructure.Interfaces.Middleware.Ticket
         Task<Result<TicketDTO?>> GetTicketDetailAsync(string trn);
         Result<List<TicketTypeResponseDTO>> GetTicketType();
 
-        Task<Result<TicketActivitiesDTO>> AddCommentAsync(TicketActivitiesDTO dto);
+        Task<Result<TicketCommentDTORequest>> AddCommentAsync(TicketCommentDTORequest dto,string userId);
 
     }
 }

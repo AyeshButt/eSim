@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
 using eSim.Common.StaticClasses;
@@ -24,42 +25,48 @@ namespace eSim.Implementations.Services.Middleware.Ticket
             _Db = Db;
         }
 
-        public async  Task<Result<TicketActivitiesDTO>> AddCommentAsync(TicketActivitiesDTO dto)
+        public async Task<Result<TicketCommentDTORequest>> AddCommentAsync(TicketCommentDTORequest input, string userId)
         {
+            var result = new Result<TicketCommentDTORequest>();
+
             try
             {
+                var ticket = await _Db.Ticket.FirstOrDefaultAsync(u => u.TRN == input.TRN);
+
+                if (ticket == null)
+                {
+                    result.Success = false;
+                    result.Message = string.Empty;
+
+                    return result;
+                }
+
                 var comment = new TicketActivities
                 {
                     Id = Guid.NewGuid(),
-                    TicketId = dto.TicketId,
-                    Comment = dto.Comment,
-                    CommentType = dto.CommentType,
-                    IsVisibleToCustomer = dto.IsVisibleToCustomer,
-                    ActivityBy = dto.ActivityBy,
-                    ActivityAt = DateTime.UtcNow
+                    TicketId = ticket.Id.ToString(),
+                    Comment = input.Comment,
+                    CommentType = input.CommentType,
+                    IsVisibleToCustomer = input.IsVisibleToCustomer,
+                    ActivityBy = userId,
+                    ActivityAt = BusinessManager.GetDateTimeNow()
                 };
 
-                _Db.TicketActivities.Add(comment);
-                await  _Db.SaveChangesAsync();
+                await _Db.TicketActivities.AddAsync(comment);
+                await _Db.SaveChangesAsync();
 
-                return new Result<TicketActivitiesDTO>
-                {
-                    Success = true,
-                    Message = "Comment added successfully",
-                    Data = null
-                };
+                result.Message = "Comment added successfully";
+
             }
             catch (Exception ex)
             {
-                return new Result<TicketActivitiesDTO>
-                {
-                    Success = false,
-                    Message = $"Error adding comment: {ex.Message}",
-                    Data = null
-                };
+                result.Success = false;
+                result.Message = $"Error adding comment: {ex.Message}";
+
             }
+            return result;
         }
-        
+
 
 
         #region CreateTicket
@@ -92,7 +99,7 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                 {
                     Success = true,
                     Message = "Ticket Created Successfully",
-                    Data=ticket.TRN
+                    Data = ticket.TRN
 
                 };
             }
@@ -140,10 +147,11 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                     Attachments = attachments
                 };
 
-                return new Result<TicketDTO?> {
+                return new Result<TicketDTO?>
+                {
                     Success = true,
-                    Message = "Ticket detail retrieved successfully." ,
-                  Data=detail
+                    Message = "Ticket detail retrieved successfully.",
+                    Data = detail
                 };
             }
             catch (Exception)
@@ -166,7 +174,7 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                 Select(a => new TicketTypeResponseDTO() { Id = a.Id, Value = a.Type }).ToList();
 
 
-            return new Result<List<TicketTypeResponseDTO>>() {Data=list  };
+            return new Result<List<TicketTypeResponseDTO>>() { Data = list };
         }
         #endregion
 
@@ -183,7 +191,7 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                 Type = types.FirstOrDefault(a => a.Id == a.Id).Type
             });
 
-            return new Result<IQueryable<TicketsResponseDTO>>() { Data = tickets.OrderByDescending(a=>a.CreatedAt) };
+            return new Result<IQueryable<TicketsResponseDTO>>() { Data = tickets.OrderByDescending(a => a.CreatedAt) };
         }
         #endregion
 
@@ -197,7 +205,7 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                 var ticket = await _Db.Ticket.FirstOrDefaultAsync(x => x.TRN == dto.TRN);
                 if (ticket == null)
                     return new Result<string?> { Success = false, Message = "Ticket not found." };
- 
+
 
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
                 if (!Directory.Exists(uploadsFolder))
@@ -214,7 +222,7 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                     await dto.File.CopyToAsync(stream);
                 }
 
-           
+
                 var attachment = new TicketAttachments
                 {
                     Id = Guid.NewGuid(),
