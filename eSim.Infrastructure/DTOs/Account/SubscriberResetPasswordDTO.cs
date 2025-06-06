@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace eSim.Infrastructure.DTOs.Account
 {
-    public class SubscriberResetPasswordDTO
+    public class SubscriberResetPasswordDTORequest
     {
+        [Required(ErrorMessage = "Password is required")]
+        [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Password is required")]

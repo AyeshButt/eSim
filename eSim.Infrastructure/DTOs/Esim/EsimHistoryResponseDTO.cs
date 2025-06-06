@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace eSim.Infrastructure.DTOs.Esim
 {
-    public class EsimHistoryResponseDTO
+    public class GetEsimHistoryResponseDTO
     {
         public List<EsimHistoryActionDTO> Actions { get; set; }
         public int Rows { get; set; }

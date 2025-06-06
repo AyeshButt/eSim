@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Json;
 using System.Text;
-using System.Text.Json.Serialization;
+
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using eSim.Infrastructure.Interfaces.ConsumeApi;
+using Raven.Client.Linq;
 
 namespace eSim.Common.StaticClasses
 {
@@ -15,7 +16,7 @@ namespace eSim.Common.StaticClasses
         private readonly HttpClient _httpClient;
         private readonly string _apiKey;
 
-        public ConsumeAPI( HttpClient httpClient)
+        public ConsumeAPI(HttpClient httpClient)
         {
             _httpClient = httpClient;
             _apiKey = "5iiPSVJSr0LUtbJRLxHyxOVNg-kyYZ4UngIGktEs";
@@ -24,7 +25,7 @@ namespace eSim.Common.StaticClasses
         //Consume Get Api by Bilal
         public async Task<T?> GetApi<T>(string Url)
         {
-            T? response = default;  
+            T? response = default;
 
             try
             {
@@ -32,8 +33,12 @@ namespace eSim.Common.StaticClasses
                 req.Headers.Add("x-api-Key", _apiKey);
 
                 var request = await _httpClient.SendAsync(req);
+                var statusCode = (int)request.StatusCode;
+
+                var jsonString = await request.Content.ReadAsStringAsync();
 
                 response = JsonConvert.DeserializeObject<T>(await request.Content.ReadAsStringAsync());
+
 
             }
             catch (Exception ex)
@@ -41,8 +46,8 @@ namespace eSim.Common.StaticClasses
                 return default(T?);
             }
             return response;
-     
-}
+
+        }
 
         //Consume Post Api
         public async Task<T?> PostApi<T, I>(string Url, I? input)
@@ -59,7 +64,7 @@ namespace eSim.Common.StaticClasses
                 var httpreq = new HttpRequestMessage(HttpMethod.Post, Url);
                 httpreq.Headers.Add("X-API-Key", _apiKey);
                 var request = await _httpClient.PostAsJsonAsync(Url, input);
-               
+
 
                 response = JsonConvert.DeserializeObject<T>(await request.Content.ReadAsStringAsync());
             }

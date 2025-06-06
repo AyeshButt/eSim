@@ -1,9 +1,14 @@
-﻿using eSim.Infrastructure.DTOs.Global;
+﻿using System.Security.Claims;
+using eSim.Common.Extensions;
+using eSim.Common.StaticClasses;
+using eSim.EF.Entities;
+using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.DTOs.Ticket;
 using eSim.Infrastructure.Interfaces.Middleware.Ticket;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -21,7 +26,7 @@ namespace eSim.Middleware.Controllers
 
 
         #region Generate Ticket
-      
+
         [HttpGet]
         public IActionResult Get()
         {
@@ -111,21 +116,18 @@ namespace eSim.Middleware.Controllers
         }
         #endregion
         [HttpPost("comment")]
-        public async Task<IActionResult> AddComment([FromBody] TicketActivitiesDTO dto)
+        public async Task<IActionResult> AddComment([FromBody] TicketCommentDTORequest input)
         {
-            dto.CommentType = 1;
-          
+            input.CommentType = 1;
 
-            var result = await _ticketServices.AddCommentAsync(dto);
+            var loggedUser = User.SubscriberId();
+           
+            if (loggedUser is null)
+                return StatusCode(StatusCodes.Status401Unauthorized, new Result<string> { Success = false ,Message = string.Empty});
 
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            else
-            {
-                return BadRequest(result);
-            }
+            var result = await _ticketServices.AddCommentAsync(input, loggedUser);
+
+            return result.Success ? Ok(result) : BadRequest(result);
         }
 
 

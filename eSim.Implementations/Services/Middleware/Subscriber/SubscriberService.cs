@@ -11,7 +11,7 @@ using eSim.Infrastructure.DTOs.Email;
 using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.DTOs.Subscribers;
 
-//using eSim.Infrastructure.Interfaces.Admin.Email;
+using eSim.Infrastructure.Interfaces.Admin.Email;
 using eSim.Infrastructure.Interfaces.Middleware;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -23,50 +23,46 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
     public class SubscriberService : ISubscriberService
     {
         private readonly ApplicationDbContext _db;
-        //  private readonly IEmailService _emailService;
+         private readonly IEmailService _emailService;
 
         // Constructor
-        public SubscriberService(ApplicationDbContext db /*IEmailService email*/)
+        public SubscriberService(ApplicationDbContext db ,IEmailService email)
         {
             _db = db;
-            // _emailService = email;
+             _emailService = email;
         }
 
-
-
-        public async Task<Result<string>> EmailExists(string email)
+        public async Task<Result<string>> SubscriberEmailExists(string email)
         {
             var result = new Result<string>();
 
             if (string.IsNullOrEmpty(email))
             {
                 result.Success = false;
-                result.Message = "Email is required.";
+                result.Message = BusinessManager.EmailRequired;
                 return result;
             }
 
             var exists = await _db.Subscribers.AnyAsync(x => x.Email == email);
 
             result.Success = true;
-            result.Message = exists ? "Email already exists." : "Email is available.";
+            result.Message = exists ? BusinessManager.EmailExist : BusinessManager.EmailAvailable;
             return result;
         }
-
-
-        public async Task<Result<string>> CreateSubscriber(SubscriberRequestDTO input)
+        public async Task<Result<string>> CreateSubscriber(SubscriberDTORequest input)
         {
             var result = new Result<string>();
 
-
             await using var transaction = await _db.Database.BeginTransactionAsync();
-
+            
             try
             {
                 var client = await _db.Client.FirstOrDefaultAsync(c => c.Name == input.MerchantId);
+            
                 if (client == null)
                 {
                     result.Success = false;
-                    result.Message = "Invalid Merchant Details";
+                    result.Message = BusinessManager.InvalidMerchant;
                     return result;
                 }
 
@@ -75,8 +71,8 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 var subscriber = new Subscribers
                 {
                     Active = true,
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
+                    CreatedAt =BusinessManager.GetDateTimeNow(),
+                    ModifiedAt = BusinessManager.GetDateTimeNow(),
                     FirstName = input.FirstName,
                     LastName = input.LastName,
                     Email = input.Email,
@@ -87,36 +83,26 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
 
                 await _db.Subscribers.AddAsync(subscriber);
                 await _db.SaveChangesAsync();
+                
 
-                // Email bhejna
+
                 var email = new EmailDTO
                 {
                     To = input.Email,
-                    Subject = "Welcome to eSim",
-                    Body = $"Hi {input.FirstName},\n\nYou are successfully signed up on our platform.\n\nThanks,\neSim Team"
+                    Subject = BusinessManager.SubscriberSubject,
+                    Body = BusinessManager.GetSubscriberBody(input.FirstName)
                 };
 
-                //var emailResult = _emailService.SendEmail(email);
-
-                //if (!emailResult.Success)
-                //{
-                //    // Email fail hone par bhi transaction commit kar do, lekin warning bhej do
-                //    await transaction.CommitAsync();
-                //    result.Success = true;
-                //    result.Message = "User created, but email sending failed.";
-                //    return result;
-                //}
-
-                // Sab kuch theek ho to commit karo transaction
-                await transaction.CommitAsync();
-
-                result.Success = true;
-                result.Message = "User created and email sent successfully.";
-                return result;
+                var emailResult = _emailService.SendEmail(email);
+                    await transaction.CommitAsync();
+                    result.Success = emailResult.Success;
+                    result.Message = emailResult.Success ? BusinessManager.EmailSendSuccessfully : BusinessManager.EmailNotSend;
+                    return result;
+                
             }
             catch (Exception ex)
             {
-                // Exception aane par rollback karo transaction
+              
                 try
                 {
                     await transaction.RollbackAsync();
@@ -127,13 +113,13 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 }
 
                 result.Success = false;
-                result.Message = "An error occurred: " + ex.Message;
+                result.Message = ex.Message;
                 return result;
             }
         }
+        
 
-
-        public async Task<Result<string>> UpdateSubscriberAsync(Guid id, UpdateSubscriberDTO input)
+        public async Task<Result<string>> UpdateSubscriberAsync(Guid id, UpdateSubscriberDTO request)
         {
             var transaction = await _db.Database.BeginTransactionAsync();
             try
@@ -144,26 +130,26 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 if (subscriber is null)
                 {
                     result.Success = false;
-                    result.Message = "Subscriber not found";
+                    result.Message = BusinessManager.SubscriberNotFound;
                     return result;
                 }
 
-                subscriber.FirstName = input.FirstName;
-                subscriber.LastName = input.LastName;
-                subscriber.Country = input.Country;
+                subscriber.FirstName = request.FirstName;
+                subscriber.LastName = request.LastName;
+                subscriber.Country = request.Country;
                 subscriber.ModifiedAt = BusinessManager.GetDateTimeNow();
 
                 await _db.SaveChangesAsync();
                 await transaction.CommitAsync();
 
                 result.Success = true;
-                result.Message = "Subscriber updated successfully";
+                result.Message = BusinessManager.Subscriberupdated;
                 return result;
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                return new Result<string> { Success = false, Data = ex.Message };
+                return new Result<string> { Success = false, Message = ex.Message };
             }
         }
 
@@ -197,7 +183,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 // Save path to DTO
                 dto.ProfileImage = $"/uploads/{fileName}";
 
-                // Save to DB
+                
                 var subscriber = await _db.Subscribers.FindAsync(dto.SubscriberId);
                 if (subscriber == null)
                     return new Result<string?> { Success = false, Message = "Subscriber not found." };

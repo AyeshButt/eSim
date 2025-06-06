@@ -21,7 +21,7 @@ namespace eSim.Implementations.Services.Middleware.Bundle
 
         private readonly ApplicationDbContext _db;
 
-        private readonly IConsumeApi   _consumeApi;
+        private readonly IConsumeApi _consumeApi;
 
         public BundleService(IConsumeApi consumeApi, ApplicationDbContext db)
         {
@@ -29,26 +29,25 @@ namespace eSim.Implementations.Services.Middleware.Bundle
             _db = db;
         }
         #region GetBundleDetail
-        public async Task<Result<GetBundleCatalogueDetail>> GetBundleDetailAsync(string name)
+        public async Task<Result<GetBundleCatalogueDetailsResponse>> GetBundleDetailsAsync(string name)
         {
-            var result = new Result<GetBundleCatalogueDetail>();
+            var result = new Result<GetBundleCatalogueDetailsResponse>();
 
             string url = $"{BusinessManager.BaseURL}/catalogue/bundle/{name}";
 
             try
             {
-                var response = await _consumeApi.GetApi<GetBundleCatalogueDetail>(url);
+                var response = await _consumeApi.GetApi<GetBundleCatalogueDetailsResponse>(url);
 
-                if (response == null || string.IsNullOrEmpty(response.name))
+                if (response == null || response.Message is not null)
                 {
                     result.Success = false;
-                    result.Message = "No bundle found.";
+                    result.Message = response?.Message ?? BusinessManager.BundleNotFound;
                     return result;
                 }
 
-                result.Success = true;
                 result.Data = response;
-                result.Message = "Bundle fetched successfully.";
+                result.Message = BusinessManager.BundleFetched;
             }
             catch (Exception ex)
             {
@@ -65,28 +64,23 @@ namespace eSim.Implementations.Services.Middleware.Bundle
         public async Task<Result<GetBundleCatalogueResponse>> GetBundlesAsync(RegionDTO request)
         {
             var result = new Result<GetBundleCatalogueResponse>();
-          
+            string url = $"{BusinessManager.BaseURL}/catalogue?page={request.Page}&perPage={request.PerPage}&direction={request.Direction}&orderBy={request.OrderBy}&region={request.Region}&countries={request.Countries}";
+
             try
             {
-                //region = string.IsNullOrEmpty(region) ? "Asia" : region;
-                //countries = string.IsNullOrEmpty(countries) ? "US" : countries;
-
-                string url = $"{BusinessManager.BaseURL}/catalogue?page={request.Page}&perPage={request.PerPage}&direction={request.Direction}&orderBy={request.OrderBy}&region={request.Region}&countries={request.Countries}";
-
-
                 var response = await _consumeApi.GetApi<GetBundleCatalogueResponse>(url);
 
-                if (response == null || response.bundles == null || !response.bundles.Any())
+                if (response == null || !response.bundles.Any())
                 {
                     result.Success = false;
-                    result.Message = "No bundles found for the specified region.";
+                    result.Message = BusinessManager.ReagionNotFound;
                     return result;
                 }
 
                 result.Success = true;
                 result.Data = response;
-                result.Message = "Bundles fetched successfully.";
-               
+                result.Message = BusinessManager.RegionBundelFetched;
+
 
             }
             catch (Exception ex)
@@ -104,15 +98,17 @@ namespace eSim.Implementations.Services.Middleware.Bundle
 
         public Result<List<CountriesDTO>> GetCountries()
         {
-            var listOfCountry = _db.Countries.Select(a=> new CountriesDTO { CountryName = a.CountryName, Iso2 = a.Iso2, Iso3 = a.Iso3 }).ToList();
+            var listOfCountry = _db.Countries.Select(a => new CountriesDTO { CountryName = a.CountryName, Iso2 = a.Iso2, Iso3 = a.Iso3 }).ToList();
 
 
-            return new Result<List<CountriesDTO>>() {
-            
+            return new Result<List<CountriesDTO>>()
+            {
+
                 Data = listOfCountry,
-            
+
             };
         }
+
     }
 }
 

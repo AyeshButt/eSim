@@ -9,21 +9,21 @@ namespace eSim.Middleware.Controllers
     [ApiController]
     public class BundleController : ControllerBase
     {
-        private readonly IBundleService _bundleService;
-         
-        public BundleController(IBundleService bundleService)
+
+
+        private readonly IBundleService _bundle;
+        public BundleController(IBundleService bundle)
         {
-            _bundleService = bundleService;
+            _bundle = bundle;
         }
         #region GetBundles
 
-
         [AllowAnonymous]
-        [HttpPost("GetByRegion")]
-        public async Task<IActionResult> GetBundles([FromBody] RegionDTO request)
-        {
-            
-            var result = await _bundleService.GetBundlesAsync(request);
+        [HttpPost("Bundles")] 
+ 
+        public async Task<IActionResult> GetBundlecatalogue([FromBody] RegionDTO request)
+        {            
+            var result = await _bundle.GetBundlesAsync(request);
 
             if (!result.Success)
                 return NotFound( result );
@@ -31,28 +31,20 @@ namespace eSim.Middleware.Controllers
             return Ok(result);
         }
 
-
         #endregion
-
-
+        #region GetBundleDetailsFromCatalogue
         [AllowAnonymous]
-        [HttpPost("GetByName")]
-        public async Task<IActionResult> GetBundleDetails([FromQuery] string name)
+        [HttpGet("{name}")]
+        public async Task<IActionResult> GetBundleDetailsFromCatalogue(string name)
         {
-
-
-            var result = await _bundleService.GetBundleDetailAsync(name);
+            var result = await _bundle.GetBundleDetailsAsync(name);
 
             if (!result.Success || result.Data == null)
                 return NotFound(result);
 
             return Ok(result);
         }
-
-
-
-
-
+        #endregion
 
     }
 }

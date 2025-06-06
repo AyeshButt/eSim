@@ -18,11 +18,11 @@ namespace eSim.Infrastructure.Interfaces.Selfcare.Authentication
 
         public Task<Result<string?>> Create(SubscriberViewModel input);
 
-        public Task<Result<string?>> ForgotPassword(ForgotPasswordDTO input);
+        public Task<Result<string?>> ForgotPassword(ForgotPasswordDTORequest input);
 
         public Task<Result<string?>> OTPVarification(string input);
 
-        public Task<Result<string?>> NewPassword(SubscriberResetPasswordDTO input);
+        public Task<Result<string?>> NewPassword(SubscriberResetPasswordDTORequest input);
 
         public Task<Result<string?>> Email(string Email);
 
