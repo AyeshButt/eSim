@@ -10,9 +10,9 @@ namespace eSim.Infrastructure.Interfaces.Middleware.Esim
 {
     public interface IEsimService
     {
-        Task<Result<EsimResponseDTO>> GetEsimsAsync();
-        Task<Result<EsimHistoryResponseDTO>> GetEsimHistoryAsync(string iccid);
-        Task<Result<BundleInventoryDTO>> GetEsimBundleInventoryAsync();
+        Task<Result<GetListofyourEsimsResponseDTO>> GetListofEsimsAsync();
+        Task<Result<GetEsimHistoryResponseDTO>> GetEsimHistoryAsync(string iccid);
+        Task<Result<GetBundleInventoryDTO>> GetEsimBundleInventoryAsync();
 
     }
 }

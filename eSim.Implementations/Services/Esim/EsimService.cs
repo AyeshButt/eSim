@@ -20,25 +20,25 @@ namespace eSim.Implementations.Services.Esim
             _consumeApi = consumeApi;
         }
         # region EsimBundleInventory
-        public async Task<Result<BundleInventoryDTO>> GetEsimBundleInventoryAsync()
+        public async Task<Result<GetBundleInventoryDTO>> GetEsimBundleInventoryAsync()
         {
-            var result = new Result<BundleInventoryDTO>();
+            var result = new Result<GetBundleInventoryDTO>();
             string url = $" {BusinessManager.BaseURL}/inventory";
 
             try
             {
-                var response = await _consumeApi.GetApi<BundleInventoryDTO>(url);
+                var response = await _consumeApi.GetApi<GetBundleInventoryDTO>(url);
 
-                if (response == null || response.bundles == null || !response.bundles.Any())
+                if (response == null  || !response.bundles.Any())
                 {
                     result.Success = false;
-                    result.Message = "No eSIM data found.";
+                    result.Message = BusinessManager.EsimNotFound;
                     return result;
                 }
 
                 result.Success = true;
                 result.Data = response;
-                result.Message = "eSIM data fetched successfully.";
+                result.Message = BusinessManager.EsimDataFetched;
             }
             catch (Exception ex)
             {
@@ -52,25 +52,25 @@ namespace eSim.Implementations.Services.Esim
         #endregion
         #region EsimHistory
 
-        public async Task<Result<EsimHistoryResponseDTO>> GetEsimHistoryAsync(string iccid)
+        public async Task<Result<GetEsimHistoryResponseDTO>> GetEsimHistoryAsync(string iccid)
         {
-            var result = new Result<EsimHistoryResponseDTO>();
+            var result = new Result<GetEsimHistoryResponseDTO>();
             string url = $"https://api.esim-go.com/v2.5/esims/{iccid}/history";
 
             try
             {
-                var response = await _consumeApi.GetApi<EsimHistoryResponseDTO>(url);
+                var response = await _consumeApi.GetApi<GetEsimHistoryResponseDTO>(url);
 
-                if (response == null || response.Actions == null || !response.Actions.Any())
+                if (response == null ||  !response.Actions.Any())
                 {
                     result.Success = false;
-                    result.Message = "No eSIM data found.";
+                    result.Message =BusinessManager.EsimNotFound;
                     return result;
                 }
 
                 result.Success = true;
                 result.Data = response;
-                result.Message = "eSIM data fetched successfully.";
+                result.Message = BusinessManager.EsimDataFetched;
             }
             catch (Exception ex)
             {
@@ -83,25 +83,25 @@ namespace eSim.Implementations.Services.Esim
         #endregion
 
         # region EsimList
-        public async Task<Result<EsimResponseDTO>> GetEsimsAsync()
+        public async Task<Result<GetListofyourEsimsResponseDTO>> GetListofEsimsAsync()
         {
-            var result = new Result<EsimResponseDTO>();
+            var result = new Result<GetListofyourEsimsResponseDTO>();
             string url = $" {BusinessManager.BaseURL}/esims";
 
             try
             {
-                var response = await _consumeApi.GetApi<EsimResponseDTO>(url);
+                var response = await _consumeApi.GetApi<GetListofyourEsimsResponseDTO>(url);
 
-                if (response == null || response.Esims == null || !response.Esims.Any())
+                if (response == null ||  !response.Esims.Any())
                 {
                     result.Success = false;
-                    result.Message = "No eSIM data found.";
+                    result.Message = BusinessManager.EsimNotFound;
                     return result;
                 }
 
                 result.Success = true;
                 result.Data = response;
-                result.Message = "eSIM data fetched successfully.";
+                result.Message = BusinessManager.EsimDataFetched;
             }
             catch (Exception ex)
             {

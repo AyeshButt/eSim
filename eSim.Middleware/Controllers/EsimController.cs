@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
 namespace eSim.Middleware.Controllers
 {
     [Route("[controller]")]
@@ -16,9 +17,9 @@ namespace eSim.Middleware.Controllers
         #region ListofEsim
         [AllowAnonymous]
         [HttpGet("List")]
-        public async Task<IActionResult> GetEsims()
+        public async Task<IActionResult>  GetListofyoureSims()
         {
-            var result = await _esimService.GetEsimsAsync();
+            var result = await _esimService.GetListofEsimsAsync();
 
             if (!result.Success)
             {
@@ -30,7 +31,7 @@ namespace eSim.Middleware.Controllers
         #endregion
         #region History of  Esim
         [AllowAnonymous]
-        [HttpGet("History")]
+        [HttpGet("History/{iccid}")]
         public async Task<IActionResult> GetEsimHistory([FromQuery] string iccid)
         {
             var result = await _esimService.GetEsimHistoryAsync(iccid);
@@ -46,7 +47,7 @@ namespace eSim.Middleware.Controllers
         #region EsimBundleInventory
         [AllowAnonymous]
         [HttpGet("Inventory")]
-        public async Task<IActionResult> GetEsimBundleInventory()
+        public async Task<IActionResult> GetBundleInventory()
         {
             var result = await _esimService.GetEsimBundleInventoryAsync();
 

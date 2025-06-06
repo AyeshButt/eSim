@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace eSim.Infrastructure.DTOs.Account
 {
-    public class SubscriberRequestDTO
+    public class SubscriberDTORequest
     {
         [Required]
         public string MerchantId { get; set; }
@@ -48,7 +48,7 @@ namespace eSim.Infrastructure.DTOs.Account
             var email = value.ToString();
             var subscriberService = validationContext.GetRequiredService<ISubscriberService>();
 
-            var result = subscriberService.EmailExists(email).GetAwaiter().GetResult(); 
+            var result = subscriberService.SubscriberEmailExists(email).GetAwaiter().GetResult(); 
 
             if (result.Message == "Email already exists.") 
             {

@@ -19,7 +19,7 @@ namespace eSim.Common.StaticClasses
         public static string forgotPass = "Subscriber/forgot-password";
         public static string OTP = "Subscriber/verify-otp";
         public static string resetPass = "Subscriber/reset-password";
-        public static string LoginSubcriberClaim = "sub-key";
+        public static string SubscriberId = "SubscriberId";
         public static string Ticekt = "Ticket";
         public static string TicketType = "Ticket/Types";
         public static string TicketDetail = "ticket/detail";
@@ -67,6 +67,54 @@ namespace eSim.Common.StaticClasses
         public static string OTPFailed = "OTP Failed";
         public static string LinkExpired = "Link Expired. Get a new link!!!";
         public static string PasswordSuccessfullyReset = "Password Successfully Reset";
+
+        public static string BundleFetched = "Bundle fetched successfully.";
+        public static string BundleNotFound = "No bundle found.";
+        public static string ReagionNotFound = "No bundles found for the specified region.";
+        public static string RegionBundelFetched = "Bundles fetched successfully.";
+        //Auth
+        public static string InvalidLOgin = "Invalid-credentials";
+        //Esim
+        public static string EsimNotFound = "No eSIM data found.";
+        public static string EsimDataFetched = "eSIM data fetched successfully.";
+        //Subscriber
+        public static string EmailRequired = "Email is required.";
+        public static string EmailExist = "Email already exists.";
+        public static string EmailAvailable = "Email is available.";
+        public static string InvalidMerchant = "Invalid Merchant Details";
+        public static string SubscriberSubject = "Welcome to eSim";
+        public static string OTPVerified = "OTP verified successfully.";
+        public static string OTPSendSuccessfully ="OTP has been created successfully";
+
+      
+
+        public static string GetSubscriberBody(string firstName)
+        {
+            return $"Hi {firstName},\n\nYou are successfully signed up on our platform.\n\nThanks,\neSim Team";
+        }
+        public static string EmailSendSuccessfully = "User created and email sent successfully.";
+        public static string EmailNotSend = "User created, but email sending failed.";
+
+        public static string EmailNotFound = "Email not found.";
+        public static string OTPSubject = "OTP";
+        public static string OTPBody = $"Your OTP is";
+        public static string GetOTPBody(string otp)
+        {
+            return $"Your OTP is: {otp}.";
+        }
+
+        public static string SubscriberNotFound  = "Subscriber not found";
+        public static string Subscriberupdated = "Subscriber updated successfully";
+        public static string Error = "An error occurred: ";
+        public static string RequiredOTP = "OTP is required.";
+        public static string InvalidOTP = "Invalid or expired OTP.";
+
+        public static string PasswordChangedSubject = "Password Changed";
+        public static string PasswordChangedBody = "Your password has been changed successfully.";
+        public static string PasswordConfirmationEmail = "Password changed but failed to send confirmation email.";
+
+
+
 
         public static string GenerateUniqueAlphanumericId(int length)
         {

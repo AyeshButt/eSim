@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using eSim.Infrastructure.DTOs.BaseResponse;
 using Microsoft.Identity.Client;
 
 namespace eSim.Infrastructure.DTOs.Middleware.Bundle
@@ -107,5 +108,6 @@ namespace eSim.Infrastructure.DTOs.Middleware.Bundle
                 public List<Allowance> allowances { get; set; }
                 public string billingType { get; set; }
             }
+
         }
     }

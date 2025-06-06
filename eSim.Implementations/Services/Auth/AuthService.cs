@@ -17,9 +17,6 @@ namespace eSim.Implementations.Services.Auth
 {
     public class AuthService : IAuthService
     {
-
-
-
         private readonly ApplicationDbContext _db;
 
         private readonly IConfiguration _configuration;
@@ -30,21 +27,25 @@ namespace eSim.Implementations.Services.Auth
             _configuration = configuration;
         }
 
-        public string? Authenticate(AuthDTO input)
+        public string? Authenticate(AuthDTO request)
         {
+            Subscribers? subscriber = _db.Subscribers.FirstOrDefault(a => a.Active && a.Email == request.Email);
 
-
-            Subscribers? subscriber = _db.Subscribers.FirstOrDefault(a => a.Active && a.Email == input.Email);
-
-            if (subscriber is null)
+            if (subscriber is null || !PasswordHasher.VerifyPassword(request.Password, subscriber.Hash))
                 return null;
 
-            if (!PasswordHasher.VerifyPassword(input.Password, subscriber.Hash))
-                return null;
+            var token = JWTConfiguration(subscriber.Id.ToString());
 
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        //6. move jwt code in a private function - made by ayesh
+
+        private JwtSecurityToken JWTConfiguration(string id)
+        {
             var claims = new[]
             {
-                 new Claim(BusinessManager.LoginSubcriberClaim, subscriber.Id.ToString())
+                 new Claim(BusinessManager.SubscriberId, id)
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? string.Empty));
 
@@ -58,9 +59,7 @@ namespace eSim.Implementations.Services.Auth
                 signingCredentials: creds
             );
 
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return token;
         }
-
     }
 }
