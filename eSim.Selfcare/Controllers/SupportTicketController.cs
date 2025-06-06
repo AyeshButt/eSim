@@ -49,8 +49,9 @@ namespace eSim.Selfcare.Controllers
         #endregion
 
         [HttpGet]
-        public IActionResult TicketDetails()
+        public async Task<IActionResult> TicketDetails(string trn)
         {
+            var response = await _ts.Detail(trn);
             return View();
         }
 

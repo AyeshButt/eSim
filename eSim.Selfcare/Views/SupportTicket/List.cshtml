@@ -67,7 +67,7 @@
             </div><!--end card-body-->
             <div class="card-body">
                 <div class="table-responsive table-card mb-4">
-                    <table class="table align-middle table-nowrap mb-0" id="ticketTable">
+                    <table class="table table-hover align-middle table-nowrap mb-0" id="ticketTable">
                         <thead>
                             <tr>
                                 <th class="sort" data-sort="">Ticket Refrence Number</th>
@@ -91,7 +91,7 @@
                                         <td class="">@item.Type</td>
                                         <td class="">@item.CreatedAt</td>
                                         <td>
-                                            <button class="dropdown-item" onclick="location.href = '@Url.Action("TicketDetails", "SupportTicket")';"><i class="ri-eye-fill align-bottom me-2 text-muted"></i></button>
+                                            <button class="dropdown-item" onclick="viewTicketDetails('@item.TRN')"><i class="ri-eye-fill align-bottom me-2 text-muted"></i></button>
                                         </td>
                                     </tr>
                                 }
@@ -104,6 +104,18 @@
                             </lord-icon>
                             <h5 class="mt-2">Sorry! No Result Found</h5>
                             <p class="text-muted mb-0">We've searched more than 150+ Tickets We did not find any Tickets for you search.</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-2">
+                        <div class="pagination-wrap hstack gap-2">
+                            <a class="page-item pagination-prev disabled" href="#">
+                                Previous
+                            </a>
+                            <ul class="pagination listjs-pagination mb-0"></ul>
+                            <a class="page-item pagination-next" href="#">
+                                Next
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -122,5 +134,46 @@
                 ToastNotification(message, type || "success");
             }
         });
+
+
+
+         
     </script>
+           
+          <script>
+              function viewTicketDetails(trn) {
+            var url = '@Url.Action("TicketDetails", "SupportTicket")' + '?trn=' + trn;
+            window.location.href = url;
+        }
+
+          </script>  
+
+           
+    @* <script>
+        $(document).on('click', '.ticket-detail', function()
+           {
+               var bundleName = $(this).data('name');
+
+                    $('.bs-example-modal-center').modal('show');
+
+                  // Show loader and clear any previous data
+
+               $('#bundleDetailLoader').show();
+                   $('#bundleDetailModalBody').html('');
+
+               $.ajax({
+                   url: '@Url.Action("Detail", "Bundles")',
+                   type: 'GET',
+                   data: { name: bundleName },
+               });
+           });
+    </script> *@
+    <script src="~/assets/libs/list.js/list.min.js"></script>
+
+    <!--list pagination js-->
+    <script src="~/assets/libs/list.pagination.js/list.pagination.min.js"></script>
+
+    <!-- titcket init js -->
+    <script src="~/assets/js/pages/ticketlist.init.js"></script>
+    <script src="~/assets/js/app.js"></script>
 }

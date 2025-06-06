@@ -95,6 +95,17 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
 
         }
 
+        public async Task<Result<TicketDetailDTO>> Detail(string trn)
+        {
+            var Url = BusinessManager.MdwBaseURL + BusinessManager.TicketDetail;
+
+            var fulUrl = $"{Url}?trn={Uri.EscapeDataString(trn)}";
+
+            var request = await _consumeApi.Get<TicketDetailDTO>(fulUrl);
+            
+            return request;
+        }
+
         #endregion
 
 
