@@ -28,6 +28,8 @@ namespace eSim.Infrastructure.DTOs.Selfcare.Subscriber
 
         [Required(ErrorMessage = "Password is required")]
         [MaxLength(75)]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-])[A-Za-z\d@$!%*?&._-]{8,}$",
+        ErrorMessage = "Password must be at least 8 characters long and include uppercase, lowercase, digit, and special character.")]
         public string Password { get; set; }
 
         [Required(ErrorMessage = "country is required")]
