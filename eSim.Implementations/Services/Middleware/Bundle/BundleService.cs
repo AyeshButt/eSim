@@ -37,7 +37,7 @@ namespace eSim.Implementations.Services.Middleware.Bundle
 
             try
             {
-                var response = await _consumeApi.GetApi<GetBundleCatalogueDetail>(url);
+                var response = await _consumeApi.GetApi<GetBundleCatalogueDetailsResponse>(url);
 
                 if (response == null || response.Message is not null)
                 {
