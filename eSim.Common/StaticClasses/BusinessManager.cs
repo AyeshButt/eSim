@@ -24,8 +24,11 @@ namespace eSim.Common.StaticClasses
         public static string SubscriberId = "SubscriberId";
         public static string Ticekt = "Ticket";
         public static string TicketType = "Ticket/Types";
+        public static string TicketDetail = "ticket/detail";
         public static string BundelRegion = "Bundle/GetByRegion";
         public static string Bundeldetail = "bundle/getbyname";
+        public static string EsimList = "esim/list";
+        public static string EsimHistory = "esim/history";
 
 
         public static string OTPError = "Invalid User Id";
