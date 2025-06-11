@@ -29,15 +29,15 @@ namespace eSim.Implementations.Services.Middleware.Bundle
             _db = db;
         }
         #region GetBundleDetail
-        public async Task<Result<GetBundleCatalogueDetailsResponse>> GetBundleDetailsAsync(string name)
+        public async Task<Result<GetBundleCatalogueDetail>> GetBundleDetailsAsync(string name)
         {
-            var result = new Result<GetBundleCatalogueDetailsResponse>();
+            var result = new Result<GetBundleCatalogueDetail>();
 
             string url = $"{BusinessManager.BaseURL}/catalogue/bundle/{name}";
 
             try
             {
-                var response = await _consumeApi.GetApi<GetBundleCatalogueDetailsResponse>(url);
+                var response = await _consumeApi.GetApi<GetBundleCatalogueDetail>(url);
 
                 if (response == null || response.Message is not null)
                 {

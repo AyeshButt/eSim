@@ -12,8 +12,9 @@ namespace eSim.Infrastructure.Interfaces.Selfcare.Ticket
     public interface ITicketService
     {
         public Task<Result<List<TicketsResponseDTO>>> Get();
-
         public Task<Result<List<TicketTypeResponseDTO>>> GetTicketType();
         public Task<Result<string>> Create(TicketRequestViewModel dto);
+
+        public Task<Result<TicketDetailDTO>> Detail(string trn);
     }
 }
