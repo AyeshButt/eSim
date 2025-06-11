@@ -8,9 +8,9 @@ namespace eSim.Infrastructure.DTOs.Esim
 {
     public class GetListofyourEsimsResponseDTO
     {
-        public EsimResponseDTO()
+        public GetListofyourEsimsResponseDTO()
         {
-            List<EsimDTO> Esims = new();        
+            List<EsimDTO> Esims = new();
         }
         public List<EsimDTO> Esims { get; set; }
         public int PageCount { get; set; }

@@ -14,7 +14,7 @@ namespace eSim.Infrastructure.Interfaces.Middleware
     public interface IBundleService
     {
         Task<Result<GetBundleCatalogueResponse>> GetBundlesAsync(RegionDTO request);
-        Task<Result<GetBundleCatalogueDetailsResponse>> GetBundleDetailsAsync(string name);
+        Task<Result<GetBundleCatalogueDetail>> GetBundleDetailsAsync(string name);
         Result<List<CountriesDTO>> GetCountries();
 
 

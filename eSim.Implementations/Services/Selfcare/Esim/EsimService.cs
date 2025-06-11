@@ -18,21 +18,21 @@ namespace eSim.Implementations.Services.Selfcare.Esim
 
 
 
-        public async Task<Result<EsimResponseDTO>> GetList()
+        public async Task<Result<GetListofyourEsimsResponseDTO>> GetList()
         {
             var Url = BusinessManager.MdwBaseURL + BusinessManager.EsimList;
-            var request = await _consumeApi.Get<EsimResponseDTO>(Url);
+            var request = await _consumeApi.Get<GetListofyourEsimsResponseDTO>(Url);
             return request;
         }
 
-        public async Task<Result<EsimHistoryResponseDTO>> GetDetail(string Iccid)
+        public async Task<Result<GetEsimHistoryResponseDTO>> GetDetail(string Iccid)
         {
             var url = BusinessManager.MdwBaseURL + BusinessManager.EsimHistory;
 
         
             var FullURl = $"{url}?iccid={Uri.EscapeDataString(Iccid)}";
 
-            var request = await _consumeApi.Get<EsimHistoryResponseDTO>(FullURl);
+            var request = await _consumeApi.Get<GetEsimHistoryResponseDTO>(FullURl);
 
             return request;
         }

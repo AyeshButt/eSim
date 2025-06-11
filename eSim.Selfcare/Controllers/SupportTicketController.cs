@@ -52,7 +52,7 @@ namespace eSim.Selfcare.Controllers
         public async Task<IActionResult> TicketDetails(string trn)
         {
             var response = await _ts.Detail(trn);
-            return View();
+            return View(response);
         }
 
         #region Open new Ticket
