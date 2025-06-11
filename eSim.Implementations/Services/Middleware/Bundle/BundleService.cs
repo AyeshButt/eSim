@@ -64,7 +64,14 @@ namespace eSim.Implementations.Services.Middleware.Bundle
         public async Task<Result<GetBundleCatalogueResponse>> GetBundlesAsync(RegionDTORequest request)
         {
             var result = new Result<GetBundleCatalogueResponse>();
-            string url = $"{BusinessManager.BaseURL}/catalogue?page={request.Page}&perPage={request.PerPage}&direction={request.Direction}&orderBy={request.OrderBy}&region={request.Region}&countries={request.Countries}";
+            // Build URL conditionally
+            var url = $"{BusinessManager.BaseURL}/catalogue?page={request.Page}&perPage={request.PerPage}&direction={request.Direction}&orderBy={request.OrderBy}&region={request.Region}";
+
+            // Only add countries if it's not null or empty
+            if (!string.IsNullOrWhiteSpace(request.Countries) && request.Countries.ToLower() != "string")
+            {
+                url += $"&countries={request.Countries}";
+            }
 
             try
             {
