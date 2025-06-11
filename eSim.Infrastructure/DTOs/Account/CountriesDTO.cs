@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace eSim.Infrastructure.DTOs.Account
 {
-    public class CountriesDTO
+    public class CountriesDTORequest
     {
         public string CountryName { get; set; }
         public string Iso3 { get; set; }

@@ -7,12 +7,13 @@ using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.DTOs.Middleware.Bundle;
 using static eSim.Infrastructure.DTOs.Middleware.Bundle.GetBundleCatalogueDetailDTO;
 
+
 namespace eSim.Infrastructure.Interfaces.Selfcare.Bundles
 {
     public interface IBundleService
     {
         public Task<Result<GetBundleCatalogueResponse>> GetBundles();
-        public Task<Result<GetBundleCatalogueDetail>> BundleDetail(string input);
+        public Task<Result<GetBundleCatalogueDetailsResponse>> BundleDetail(string input);
 
     }
 }

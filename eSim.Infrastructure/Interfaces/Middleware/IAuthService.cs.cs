@@ -9,6 +9,6 @@ namespace eSim.Infrastructure.Interfaces.Middleware
 {
     public interface IAuthService
     {
-        string? Authenticate(AuthDTO input);
+        string? Authenticate(AuthDTORequest input);
     }
 }

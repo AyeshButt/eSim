@@ -13,6 +13,8 @@ namespace eSim.Infrastructure.DTOs.Account
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
+
+
         [Required(ErrorMessage = "Password is required")]
         [DataType(DataType.Password)]
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-])[A-Za-z\d@$!%*?&._-]{8,}$",

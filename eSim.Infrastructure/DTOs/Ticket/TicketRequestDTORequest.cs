@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace eSim.Infrastructure.DTOs.Ticket
 {
-    public class TicketRequestDTO
+    public class TicketRequestDTORequest
     {
         [Required (ErrorMessage ="select ticket Type")]
         public int TicketType { get; set; }
