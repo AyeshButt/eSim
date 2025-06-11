@@ -29,9 +29,9 @@ namespace eSim.Implementations.Services.Middleware.Bundle
             _db = db;
         }
         #region GetBundleDetail
-        public async Task<Result<GetBundleCatalogueDetail>> GetBundleDetailsAsync(string name)
+        public async Task<Result<GetBundleCatalogueDetailsResponse>> GetBundleDetailsAsync(string name)
         {
-            var result = new Result<GetBundleCatalogueDetail>();
+            var result = new Result<GetBundleCatalogueDetailsResponse>();
 
             string url = $"{BusinessManager.BaseURL}/catalogue/bundle/{name}";
 
