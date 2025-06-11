@@ -26,7 +26,7 @@ namespace eSim.Middleware.Controllers
         #endregion
         #region History of  Esim
         [AllowAnonymous]
-        [HttpGet("History/{iccid}")]
+        [HttpGet("History")]
         public async Task<IActionResult> GetEsimHistory([FromQuery] string iccid)
         {
             var result = await _esimService.GetEsimHistoryAsync(iccid);
