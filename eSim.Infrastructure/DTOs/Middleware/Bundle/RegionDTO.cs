@@ -13,7 +13,7 @@ namespace eSim.Infrastructure.DTOs.Middleware.Bundle
         public string Region { get; set; }
 
         // [Required(ErrorMessage = "Countries are required.")]
-        public string? Countries { get; set; } = string.Empty;
+        public string? Countries { get; set; } 
 
         public int Page { get; set; } = 0;
 
