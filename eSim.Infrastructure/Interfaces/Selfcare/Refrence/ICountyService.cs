@@ -10,7 +10,7 @@ namespace eSim.Infrastructure.Interfaces.Selfcare.Refrence
 {
     public interface ICountyService
     {
-        public Task<List<CountriesDTO>> Countries();
+        public Task<List<CountriesDTORequest>> Countries();
 
     }
 }

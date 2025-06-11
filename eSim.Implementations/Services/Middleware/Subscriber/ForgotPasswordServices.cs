@@ -193,49 +193,48 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
         #endregion
 
         #region changePassowrd
-        public async Task<Result<string>> ChangePasswordAsync(ChangePasswordDTO input)
+        public async Task<Result<string>> ChangePasswordAsync(ChangePasswordDTORequest input)
         {
             var result = new Result<string>();
+            try
+            {
+
+                var user = await _db.Subscribers.FirstOrDefaultAsync(u => u.Email == input.Email);
+                if (user == null)
+                {
+                    result.Success = false;
+                    result.Message = BusinessManager.userNotFound;
+
+                    return result;
+                }
+
+                var oldHash = PasswordHasher.HashPassword(input.OldPassword);
+
+                if (user.Hash != oldHash || input.NewPassword != input.ConfirmPassword)
+                {
+                    result.Success = false;
+                    result.Message = user.Hash != oldHash
+                        ? BusinessManager.IncorrectOldPassword: BusinessManager.PasswordNotMatched;
+
+                    return result;
+                }
 
 
-            var user = await _db.Subscribers.FirstOrDefaultAsync(u => u.Email == input.Email);
-            if (user == null)
+                var resetDto = new SubscriberResetPasswordDTORequest
+                {
+                    Email = input.Email,
+                    NewPassword = input.NewPassword,
+                    ConfirmPassword = input.ConfirmPassword
+                };
+
+                result = await ResetPasswordAsync(resetDto);
+            }
+            catch(Exception ex)
             {
                 result.Success = false;
-                result.Message = "User not found.";
-
-                return result;
+                result.Message = ex.Message;
             }
-
-            // Step 2: Verify old password
-            var oldHash = PasswordHasher.HashPassword(input.OldPassword);
-            if (user.Hash != oldHash)
-            {
-                result.Success = false;
-                result.Message = "Old password is incorrect.";
-
-                return result;
-            }
-
-            // Step 3: Check new & confirm password match
-            if (input.NewPassword != input.ConfirmPassword)
-            {
-                result.Success = false;
-                result.Message = "New password and Confirm password do not match.";
-
-                return result;
-            }
-
-            // Step 4: Proceed with reset
-            var resetDto = new SubscriberResetPasswordDTORequest
-            {
-                Email = input.Email,
-                NewPassword = input.NewPassword,
-                ConfirmPassword = input.ConfirmPassword
-            };
-
-            var resetResult = await ResetPasswordAsync(resetDto);
-            return resetResult;
+            return result;
         }
 
 

@@ -12,7 +12,7 @@ namespace eSim.Infrastructure.Interfaces.Middleware.Esim
     {
         Task<Result<GetListofyourEsimsResponseDTO>> GetListofEsimsAsync();
         Task<Result<GetEsimHistoryResponseDTO>> GetEsimHistoryAsync(string iccid);
-        Task<Result<GetBundleInventoryDTO>> GetEsimBundleInventoryAsync();
+        Task<Result<GetBundleInventoryDTORequest>> GetEsimBundleInventoryAsync();
 
     }
 }

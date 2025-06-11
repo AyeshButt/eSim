@@ -21,12 +21,7 @@ namespace eSim.Middleware.Controllers
         {
             var result = await _esimService.GetListofEsimsAsync();
 
-            if (!result.Success)
-            {
-                return BadRequest( result);
-            }
-
-            return Ok(result);
+            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
         }
         #endregion
         #region History of  Esim
@@ -36,10 +31,7 @@ namespace eSim.Middleware.Controllers
         {
             var result = await _esimService.GetEsimHistoryAsync(iccid);
 
-            if (!result.Success)
-                return BadRequest(result);
-
-            return Ok(result);
+            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
         }
 
         #endregion
@@ -51,10 +43,7 @@ namespace eSim.Middleware.Controllers
         {
             var result = await _esimService.GetEsimBundleInventoryAsync();
 
-            if (!result.Success)
-                return BadRequest(result);
-
-            return Ok(result);
+            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
         }
 
         #endregion

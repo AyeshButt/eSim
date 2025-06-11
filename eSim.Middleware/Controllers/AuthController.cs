@@ -24,9 +24,9 @@ namespace eSim.Middleware.Controllers
         [AllowAnonymous]
         [HttpPost("login")]
 
-        public IActionResult Login([FromBody] AuthDTO request)
+        public IActionResult Login([FromBody] AuthDTORequest input)
         {
-            var token = _authService.Authenticate(request);
+            var token = _authService.Authenticate(input);
 
             if (token == null)
                 return Unauthorized(new { message =BusinessManager.InvalidLOgin });

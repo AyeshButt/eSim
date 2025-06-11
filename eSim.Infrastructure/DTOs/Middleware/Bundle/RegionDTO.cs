@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace eSim.Infrastructure.DTOs.Middleware.Bundle
 {
-    public class RegionDTO
+    public class RegionDTORequest
     {
         [Required(ErrorMessage = "Region is required.")]
         public string Region { get; set; }

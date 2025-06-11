@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace eSim.Infrastructure.DTOs.Account
 {
-    public class UpdateSubscriberDTO
+    public class UpdateSubscriberDTORequest
     {
 
         public string FirstName { get; set; }

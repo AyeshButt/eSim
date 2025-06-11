@@ -74,7 +74,7 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
 
             try
             {
-                TicketRequestDTO dto = new()
+                TicketRequestDTORequest dto = new()
                 {
                     TicketType = model.TicketType,
                     Subject = model.Subject,

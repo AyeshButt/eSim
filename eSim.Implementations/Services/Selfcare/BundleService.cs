@@ -21,27 +21,27 @@ namespace eSim.Implementations.Services.Selfcare
 
         public async Task<Result<GetBundleCatalogueResponse>> GetBundles()
         {
-            RegionDTO dto = new()
+            RegionDTORequest dto = new()
             {
                 Region = "Europe"
             };
             var Url = BusinessManager.MdwBaseURL + BusinessManager.BundelRegion;
             
  
-            var response = await _consumeApi.Post<GetBundleCatalogueResponse, RegionDTO>(Url, dto);
+            var response = await _consumeApi.Post<GetBundleCatalogueResponse, RegionDTORequest>(Url, dto);
 
             return response;
         }
 
 
-        public async Task<Result<GetBundleCatalogueDetail>> BundleDetail(string dto)
+        public async Task<Result<GetBundleCatalogueDetailsResponse>> BundleDetail(string dto)
         {
             var Url = BusinessManager.MdwBaseURL + BusinessManager.Bundeldetail;
 
             //var fullUrl = $"{Url}?name={HttpUtility.UrlEncode(dto)}";
             var FullURl = $"{Url}?name={Uri.EscapeDataString(dto)}";
 
-            var response = await _consumeApi.Get<GetBundleCatalogueDetail>(FullURl);
+            var response = await _consumeApi.Get<GetBundleCatalogueDetailsResponse>(FullURl);
 
             return response;
         }

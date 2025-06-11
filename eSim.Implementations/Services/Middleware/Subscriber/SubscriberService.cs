@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace eSim.Implementations.Services.Middleware.Subscriber
 {
@@ -83,22 +84,38 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
 
                 await _db.Subscribers.AddAsync(subscriber);
                 await _db.SaveChangesAsync();
-                
+             
+                try {
+                    var emailResult = _emailService.SendEmail( new EmailDTO
+                    {
+                        To = input.Email,
+                        Subject = BusinessManager.SubscriberSubject,
+                        Body = BusinessManager.GetSubscriberBody(input.FirstName)
+                    });
 
-
-                var email = new EmailDTO
-                {
-                    To = input.Email,
-                    Subject = BusinessManager.SubscriberSubject,
-                    Body = BusinessManager.GetSubscriberBody(input.FirstName)
-                };
-
-                var emailResult = _emailService.SendEmail(email);
+                 
                     await transaction.CommitAsync();
-                    result.Success = emailResult.Success;
-                    result.Message = emailResult.Success ? BusinessManager.EmailSendSuccessfully : BusinessManager.EmailNotSend;
-                    return result;
+                 
+               //     result.Message = emailResult.Success ? BusinessManager.EmailSendSuccessfully : BusinessManager.EmailNotSend;
                 
+                }
+                catch (Exception ex) 
+                
+                {
+                    await transaction.RollbackAsync();
+                    result.Success = false;
+                    result.Message = $"Email send failed: {ex.Message}";
+                    return result;
+
+                }
+                finally
+                {
+                    result.Message = BusinessManager.SubscriberCreatedSuccessfully;
+                }
+              
+
+                return result;
+
             }
             catch (Exception ex)
             {
@@ -119,19 +136,20 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
         }
         
 
-        public async Task<Result<string>> UpdateSubscriberAsync(Guid id, UpdateSubscriberDTO request)
+        public async Task<Result<string>> UpdateSubscriberAsync(Guid id, UpdateSubscriberDTORequest request)
         {
+            var result = new Result<string>();
             var transaction = await _db.Database.BeginTransactionAsync();
             try
             {
-                var result = new Result<string>();
+             
                 var subscriber = await _db.Subscribers.FirstOrDefaultAsync(x => x.Id == id);
 
                 if (subscriber is null)
                 {
                     result.Success = false;
                     result.Message = BusinessManager.SubscriberNotFound;
-                    return result;
+                   
                 }
 
                 subscriber.FirstName = request.FirstName;
@@ -144,31 +162,52 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
 
                 result.Success = true;
                 result.Message = BusinessManager.Subscriberupdated;
-                return result;
+           
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
                 return new Result<string> { Success = false, Message = ex.Message };
             }
+           return result;
         }
 
 
-        public async Task<Result<string?>> UploadProfileImageAsync(IFormFile file, ProfileImageDTO dto)
+        public async Task<Result<string?>> 
+            
+            UploadProfileImageAsync(IFormFile file, ProfileImageDTORequest dto)
         {
+           
+            var result = new Result<string?>();
+            if (file == null || file.Length == 0)
+            {
+              
+                {
+                    result.Success = false;
+                     result.Message =BusinessManager.Noimagefileprovided;
+                    return result;
+                };
+            }
             try
             {
                 if (file == null || file.Length == 0)
-                    return new Result<string?> { Success = false, Message = "No image file provided." };
+                {
+                    result.Success = false;
+                    result.Message = BusinessManager.NoFileProvided;
+                    return result;
+                }
 
                 var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
                 var ext = Path.GetExtension(file.FileName).ToLower();
 
-                if (!allowedExtensions.Contains(ext))
-                    return new Result<string?> { Success = false, Message = "Only image files allowed (.jpg, .png, .gif)." };
+                if (!allowedExtensions.Contains(ext)|| file.Length > 5 * 1024 * 1024)
+                {
+                    result.Success = false;
+                    result.Message = !allowedExtensions.Contains(ext)  ? BusinessManager.FileAllowed: BusinessManager.FileSize;
+                    return result;
+                }
 
-                if (file.Length > 5 * 1024 * 1024)
-                    return new Result<string?> { Success = false, Message = "File size limit exceeded (5 MB max)." };
+             
 
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
                 if (!Directory.Exists(uploadsFolder))
@@ -180,26 +219,33 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 using var stream = new FileStream(filePath, FileMode.Create);
                 await file.CopyToAsync(stream);
 
-                // Save path to DTO
                 dto.ProfileImage = $"/uploads/{fileName}";
 
-                
                 var subscriber = await _db.Subscribers.FindAsync(dto.SubscriberId);
                 if (subscriber == null)
-                    return new Result<string?> { Success = false, Message = "Subscriber not found." };
+                {
+                    result.Success = false;
+                    result.Message = BusinessManager.Subscribernotfound;
+                    return result;
+                }
 
                 subscriber.ProfileImage = dto.ProfileImage;
                 subscriber.ModifiedAt = DateTime.UtcNow;
 
                 await _db.SaveChangesAsync();
 
-                return new Result<string?> { Success = true, Message = "Image uploaded and saved to database." };
+                result.Success = true;
+                result.Message = BusinessManager.ImageUploaded;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return new Result<string?> { Success = false, Message = "Error uploading image." };
+                result.Success = false;
+                result.Message =ex.Message ;
             }
+
+            return result;
         }
+
 
         public async Task<IQueryable<SubscriberDTO>> GetClient_SubscribersListAsync(string id)
         {

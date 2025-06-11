@@ -23,11 +23,11 @@ namespace eSim.Implementations.Services.Selfcare.Reference
         //private readonly HttpClient _http = http;
         //private readonly IHttpContextAccessor _httpContext = httpContext;
 
-        public async Task<List<CountriesDTO>> Countries()
+        public async Task<List<CountriesDTORequest>> Countries()
         {
 
             var Url = BusinessManager.MdwBaseURL + BusinessManager.Countries; 
-            var resp = await _consumeApi.Get<List<CountriesDTO>>(Url);
+            var resp = await _consumeApi.Get<List<CountriesDTORequest>>(Url);
 
             if (resp.Success)
             {

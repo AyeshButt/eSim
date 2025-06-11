@@ -21,14 +21,11 @@ namespace eSim.Middleware.Controllers
         [AllowAnonymous]
         [HttpPost("Bundles")] 
  
-        public async Task<IActionResult> GetBundlecatalogue([FromBody] RegionDTO request)
+        public async Task<IActionResult> GetBundlecatalogue([FromBody] RegionDTORequest input)
         {            
-            var result = await _bundle.GetBundlesAsync(request);
+            var result = await _bundle.GetBundlesAsync(input);
 
-            if (!result.Success)
-                return NotFound( result );
-
-            return Ok(result);
+            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
         }
 
         #endregion
@@ -39,10 +36,8 @@ namespace eSim.Middleware.Controllers
         {
             var result = await _bundle.GetBundleDetailsAsync(name);
 
-            if (!result.Success || result.Data == null)
-                return NotFound(result);
+            return result.Success && result.Data == null ? StatusCode(StatusCodes.Status200OK, result): StatusCode(StatusCodes.Status400BadRequest, result);
 
-            return Ok(result);
         }
         #endregion
 

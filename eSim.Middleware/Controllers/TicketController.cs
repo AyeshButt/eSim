@@ -39,33 +39,19 @@ namespace eSim.Middleware.Controllers
 
 
         #region Generate Ticket
-       
+
         [HttpPost]
-        public async Task<IActionResult> POST([FromBody] TicketRequestDTO ticketDto)
+        public async Task<IActionResult> POST([FromBody] TicketRequestDTORequest ticketDto)
         {
 
-            if (ModelState.IsValid)
-            {
 
-                var result = await _ticketServices.CreateTicketAsync(ticketDto);
 
-                if (result.Success)
-                {
-                    return Ok(result);
-                }
-                else
-                {
-
-                    return StatusCode(StatusCodes.Status500InternalServerError, result);
-                }
-            }
-            else
-            {
-                return StatusCode(StatusCodes.Status400BadRequest);
-            }
-
+            var result = await _ticketServices.CreateTicketAsync(ticketDto);
+            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
 
         }
+
+        
         #endregion
 
 
@@ -81,23 +67,12 @@ namespace eSim.Middleware.Controllers
         #region TicketAttachment
         [AllowAnonymous]
         [HttpPost("UploadAttachment")]
-        public async Task<IActionResult> UploadAttachment([FromForm] TicketAttachmentDTO dto)
+        public async Task<IActionResult> UploadAttachment([FromForm] TicketAttachmentDTORequest dto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(new
-                {
-                    Success = false,
-                    Message = "Invalid data provided.",
-                    Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
-                });
-            }
+          
             var result = await _ticketServices.UploadAttachmentAsync(dto);
 
-            if (result.Success)
-                return Ok(result);
-            else
-                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
         }
 
         #endregion
@@ -109,16 +84,14 @@ namespace eSim.Middleware.Controllers
         {
             var result = await _ticketServices.GetTicketDetailAsync(trn);
 
-            if (result.Success)
-                return Ok(result);
-
-            return NotFound(result);
+            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
         }
+        
         #endregion
         [HttpPost("comment")]
         public async Task<IActionResult> AddComment([FromBody] TicketCommentDTORequest input)
         {
-            input.CommentType = 1;
+      
 
             var loggedUser = User.SubscriberId();
            
@@ -127,7 +100,7 @@ namespace eSim.Middleware.Controllers
 
             var result = await _ticketServices.AddCommentAsync(input, loggedUser);
 
-            return result.Success ? Ok(result) : BadRequest(result);
+            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
         }
 
 

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace eSim.Infrastructure.DTOs.Ticket
 {
-    public class TicketAttachmentDTO
+    public class TicketAttachmentDTORequest
     {
 
         [Required(ErrorMessage = "TRN is required.")]

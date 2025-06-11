@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace eSim.Infrastructure.DTOs.Esim
 {
-    public class GetBundleInventoryDTO
+    public class GetBundleInventoryDTORequest
     {
         public List<Bundle> bundles { get; set; }
         public int pageSize { get; set; }
