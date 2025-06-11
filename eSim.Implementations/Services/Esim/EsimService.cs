@@ -20,14 +20,14 @@ namespace eSim.Implementations.Services.Esim
             _consumeApi = consumeApi;
         }
         # region EsimBundleInventory
-        public async Task<Result<GetBundleInventoryDTO>> GetEsimBundleInventoryAsync()
+        public async Task<Result<GetBundleInventoryDTORequest>> GetEsimBundleInventoryAsync()
         {
-            var result = new Result<GetBundleInventoryDTO>();
+            var result = new Result<GetBundleInventoryDTORequest>();
             string url = $" {BusinessManager.BaseURL}/inventory";
 
             try
             {
-                var response = await _consumeApi.GetApi<GetBundleInventoryDTO>(url);
+                var response = await _consumeApi.GetApi<GetBundleInventoryDTORequest>(url);
 
                 if (response == null  || !response.bundles.Any())
                 {
@@ -55,7 +55,7 @@ namespace eSim.Implementations.Services.Esim
         public async Task<Result<GetEsimHistoryResponseDTO>> GetEsimHistoryAsync(string iccid)
         {
             var result = new Result<GetEsimHistoryResponseDTO>();
-            string url = $"https://api.esim-go.com/v2.5/esims/{iccid}/history";
+            string url = $"{BusinessManager.BaseURL}/esims/{iccid}/history";
 
             try
             {
@@ -75,7 +75,7 @@ namespace eSim.Implementations.Services.Esim
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = $"Error: {ex.Message}";
+                result.Message = ex.Message;
             }
 
             return result;
@@ -106,7 +106,7 @@ namespace eSim.Implementations.Services.Esim
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = $"Error: {ex.Message}";
+                result.Message = ex.Message;
             }
 
             return result;

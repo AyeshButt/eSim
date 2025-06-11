@@ -27,11 +27,11 @@ namespace eSim.Implementations.Services.Auth
             _configuration = configuration;
         }
 
-        public string? Authenticate(AuthDTO request)
+        public string? Authenticate(AuthDTORequest input)
         {
-            Subscribers? subscriber = _db.Subscribers.FirstOrDefault(a => a.Active && a.Email == request.Email);
+            Subscribers? subscriber = _db.Subscribers.FirstOrDefault(a => a.Active && a.Email == input.Email);
 
-            if (subscriber is null || !PasswordHasher.VerifyPassword(request.Password, subscriber.Hash))
+            if (subscriber is null || !PasswordHasher.VerifyPassword(input.Password, subscriber.Hash))
                 return null;
 
             var token = JWTConfiguration(subscriber.Id.ToString());

@@ -83,19 +83,14 @@ namespace eSim.Infrastructure.DTOs.Middleware.Bundle
 
         //new class
 
-            public class GetBundleCatalogueDetail
-            {
-                public GetBundleCatalogueDetail()
-                {
-                List<Country> countries = new();
-                List<RoamingEnabled> roamingEnabled = new();
-                List<string> group = new();
-                List<Allowance> allowances = new(); 
-                }
+            public class GetBundleCatalogueDetailsResponse
+        {
+                
 
                 public string name { get; set; }
                 public string description { get; set; }
-                public List<Country> countries { get; set; }
+            public string Message { get; set; }
+            public List<Country> countries { get; set; }
                 public int dataAmount { get; set; }
                 public int duration { get; set; }
                 public Speed speed { get; set; }

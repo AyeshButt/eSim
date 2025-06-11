@@ -4,6 +4,8 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using eSim.EF.Entities;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace eSim.Common.StaticClasses
 {
@@ -74,6 +76,8 @@ namespace eSim.Common.StaticClasses
         //Esim
         public static string EsimNotFound = "No eSIM data found.";
         public static string EsimDataFetched = "eSIM data fetched successfully.";
+
+
         //Subscriber
         public static string EmailRequired = "Email is required.";
         public static string EmailExist = "Email already exists.";
@@ -82,8 +86,26 @@ namespace eSim.Common.StaticClasses
         public static string SubscriberSubject = "Welcome to eSim";
         public static string OTPVerified = "OTP verified successfully.";
         public static string OTPSendSuccessfully ="OTP has been created successfully";
+        public static string userNotFound = "User not found.";
+        public static string IncorrectOldPassword = "Old password is incorrect.";
+        public static string PasswordNotMatched = "New password and Confirm password do not match.";
+        public static string NoFileProvided = "No image file provided.";
+        public static string FileAllowed = "Only image files allowed (.jpg, .png, .gif).";
+        public static string FileSize = "File size limit exceeded (5 MB max).";
+        public static string Subscribernotfound = "Subscriber not found.";
+        public static string ImageUploaded = "Image uploaded and saved to database.";
+        public static string Noimagefileprovided = "No image file provided.";
+        //Ticket
 
-      
+        public static string TicketCreated = "Ticket Created Successfully";
+        public static string Ticketnotfound = "Ticket not found.";
+        public static string Attachmentuploaded = "Attachment uploaded successfully.";
+        public static string Commentadded = "Comment added successfully";
+
+
+
+
+
 
         public static string GetSubscriberBody(string firstName)
         {
@@ -101,6 +123,7 @@ namespace eSim.Common.StaticClasses
         }
 
         public static string SubscriberNotFound  = "Subscriber not found";
+        public static string SubscriberCreatedSuccessfully = "Subscriber Created successfully";
         public static string Subscriberupdated = "Subscriber updated successfully";
         public static string Error = "An error occurred: ";
         public static string RequiredOTP = "OTP is required.";

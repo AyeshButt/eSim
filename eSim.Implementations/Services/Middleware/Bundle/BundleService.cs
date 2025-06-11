@@ -52,7 +52,7 @@ namespace eSim.Implementations.Services.Middleware.Bundle
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = $"Error: {ex.Message}";
+                result.Message = ex.Message;
             }
 
             return result;
@@ -61,7 +61,7 @@ namespace eSim.Implementations.Services.Middleware.Bundle
 
         #endregion
         #region GetBundles
-        public async Task<Result<GetBundleCatalogueResponse>> GetBundlesAsync(RegionDTO request)
+        public async Task<Result<GetBundleCatalogueResponse>> GetBundlesAsync(RegionDTORequest request)
         {
             var result = new Result<GetBundleCatalogueResponse>();
             string url = $"{BusinessManager.BaseURL}/catalogue?page={request.Page}&perPage={request.PerPage}&direction={request.Direction}&orderBy={request.OrderBy}&region={request.Region}&countries={request.Countries}";
@@ -96,12 +96,12 @@ namespace eSim.Implementations.Services.Middleware.Bundle
 
         #endregion
 
-        public Result<List<CountriesDTO>> GetCountries()
+        public Result<List<CountriesDTORequest>> GetCountries()
         {
-            var listOfCountry = _db.Countries.Select(a => new CountriesDTO { CountryName = a.CountryName, Iso2 = a.Iso2, Iso3 = a.Iso3 }).ToList();
+            var listOfCountry = _db.Countries.Select(a => new CountriesDTORequest { CountryName = a.CountryName, Iso2 = a.Iso2, Iso3 = a.Iso3 }).ToList();
 
 
-            return new Result<List<CountriesDTO>>()
+            return new Result<List<CountriesDTORequest>>()
             {
 
                 Data = listOfCountry,

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace eSim.Infrastructure.DTOs.Account
 {
-    public class ChangePasswordDTO
+    public class ChangePasswordDTORequest
     {
         public string Email { get; set; }
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-])[A-Za-z\d@$!%*?&._-]{8,}$",
