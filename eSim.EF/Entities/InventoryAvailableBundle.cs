@@ -12,7 +12,7 @@ namespace eSim.EF.Entities
         [Key]
         public Guid Id { get; set; }
         public Guid InventoryBundleId { get; set; }
-
+        //new comment
         //confusion on this prop
         public int AvailableId { get; set; }
         public int Total { get; set; }

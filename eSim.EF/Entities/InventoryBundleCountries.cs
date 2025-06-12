@@ -13,5 +13,7 @@ namespace eSim.EF.Entities
         public Guid Id { get; set; }
         public Guid InventoryBundleId { get; set; }
         public string Name { get; set; }
+        //new comment
+
     }
 }

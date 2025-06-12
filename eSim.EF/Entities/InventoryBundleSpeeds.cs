@@ -14,5 +14,7 @@ namespace eSim.EF.Entities
         public Guid Id { get; set; }
         public Guid InventoryBundleId { get; set; }
         public string Speed { get; set; }
+        //new comment
+
     }
 }

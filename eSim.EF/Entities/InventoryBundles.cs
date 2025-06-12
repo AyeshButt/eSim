@@ -15,6 +15,8 @@ namespace eSim.EF.Entities
         public Guid SubscriberId { get; set; }
         public string Name { get; set; }
         public string Desc { get; set; }
+        //new comment
+
         public bool UseDms { get; set; }
         public int Data { get; set; }
         public int Duration { get; set; }

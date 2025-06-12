@@ -13,6 +13,8 @@ namespace eSim.EF.Entities
         public Guid Id { get; set; }
         public string OrderReferenceId { get; set; }
         public string Type { get; set; }
+        //new comment
+
         public string Item { get; set; }
         public int Quantity { get; set; }
         public double SubTotal { get; set; }

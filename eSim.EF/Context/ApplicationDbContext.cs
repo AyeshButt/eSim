@@ -30,6 +30,13 @@ namespace eSim.EF.Context
         public DbSet<TicketType> TicketType { get; set; }
         public DbSet<Subscribers> Subscribers { get; set; }
         public DbSet<AspNetUsersType> AspNetUsersType { get; set; }
+        public DbSet<Orders> Orders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<InventoryBundles> InventoryBundles { get; set; }
+        public DbSet<InventoryBundleCountries> InventoryBundleCountries { get; set; }
+        public DbSet<InventoryBundleSpeeds> InventoryBundleSpeeds { get; set; }
+        public DbSet<InventoryBundleAllowances> InventoryBundleAllowances { get; set; }
+        public DbSet<InventoryAvailableBundle> InventoryAvailableBundles { get; set; }
 
         public DbSet<Countries> Countries { get; set; }
 

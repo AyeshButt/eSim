@@ -11,6 +11,8 @@ namespace eSim.EF.Entities
     {
         [Key]
         public Guid Id { get; set; }
+        //new comment
+
         public Guid InventoryBundleId { get; set; }
         public string Type { get; set; }
         public string Service { get; set; }
