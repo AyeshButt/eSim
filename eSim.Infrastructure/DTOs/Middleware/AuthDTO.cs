@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace eSim.Infrastructure.DTOs.Middleware
 {
-    public class AuthDTO
+    public class AuthDTORequest
     {
         [Required]
         public string Email { get; set; }

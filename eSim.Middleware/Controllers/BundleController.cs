@@ -9,50 +9,37 @@ namespace eSim.Middleware.Controllers
     [ApiController]
     public class BundleController : ControllerBase
     {
-        private readonly IBundleService _bundleService;
-         
-        public BundleController(IBundleService bundleService)
+
+
+        private readonly IBundleService _bundle;
+        public BundleController(IBundleService bundle)
         {
-            _bundleService = bundleService;
+            _bundle = bundle;
         }
         #region GetBundles
 
-
         [AllowAnonymous]
-        [HttpPost("GetByRegion")]
-        public async Task<IActionResult> GetBundles([FromBody] RegionDTO request)
-        {
-            
-            var result = await _bundleService.GetBundlesAsync(request);
+        [HttpPost("Bundles")] 
+ 
+        public async Task<IActionResult> GetBundlecatalogue([FromBody] RegionDTORequest input)
+        {            
+            var result = await _bundle.GetBundlesAsync(input);
 
-            if (!result.Success)
-                return NotFound( result );
-
-            return Ok(result);
+            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
         }
-
 
         #endregion
-
-
+        #region GetBundleDetailsFromCatalogue
         [AllowAnonymous]
-        [HttpPost("GetByName")]
-        public async Task<IActionResult> GetBundleDetails([FromQuery] string name)
+        [HttpGet("{name}")]
+        public async Task<IActionResult> GetBundleDetailsFromCatalogue(string name)
         {
+            var result = await _bundle.GetBundleDetailsAsync(name);
 
+            return result.Success  ? StatusCode(StatusCodes.Status200OK, result): StatusCode(StatusCodes.Status400BadRequest, result);
 
-            var result = await _bundleService.GetBundleDetailAsync(name);
-
-            if (!result.Success || result.Data == null)
-                return NotFound(result);
-
-            return Ok(result);
         }
-
-
-
-
-
+        #endregion
 
     }
 }

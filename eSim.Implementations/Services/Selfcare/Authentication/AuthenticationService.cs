@@ -22,22 +22,27 @@ using eSim.Infrastructure.Interfaces.ConsumeApi;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Runtime.InteropServices.JavaScript;
-using eSim.Infrastructure.DTOs.Account;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace eSim.Implementations.Services.Selfcare.Authentication
 {
-    public class AuthenticationService(IHttpClientFactory httpClient, IMiddlewareConsumeApi consumeApi) : IAuthenticationService
+    public class AuthenticationService(IHttpClientFactory httpClient, IMiddlewareConsumeApi consumeApi, IHttpClientFactory httpClientFactory) : IAuthenticationService
     {
         private readonly HttpClient _httpClient = httpClient.CreateClient();
         private readonly IMiddlewareConsumeApi _consumeApi = consumeApi;
+        private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
 
 
         #region signIn 
         public async Task<string?> AuthenticateAsync(SignIn model)
         {
             var url = BusinessManager.MdwBaseURL + BusinessManager.MidlewareLogin;
+
+            var req = _httpClientFactory.CreateClient("ds");
+            var ss = await req.PostAsJsonAsync(url,model);
+
             var response = await _httpClient.PostAsJsonAsync(url, model);
+
 
             if (response.IsSuccessStatusCode) 
             {
@@ -91,12 +96,12 @@ namespace eSim.Implementations.Services.Selfcare.Authentication
 
         #region Forgot Password
 
-        public async Task<Result<string?>> ForgotPassword(ForgotPasswordDTO input)
+        public async Task<Result<string?>> ForgotPassword(ForgotPasswordDTORequest input)
         {
 
             var url = BusinessManager.MdwBaseURL + BusinessManager.forgotPass;
 
-            var request = await _consumeApi.Post<string, ForgotPasswordDTO>(url, input);
+            var request = await _consumeApi.Post<string, ForgotPasswordDTORequest>(url, input);
 
             return request;
         }
@@ -118,11 +123,11 @@ namespace eSim.Implementations.Services.Selfcare.Authentication
 
         #region new password
 
-        public async Task<Result<string?>> NewPassword(SubscriberResetPasswordDTO input)
+        public async Task<Result<string?>> NewPassword(SubscriberResetPasswordDTORequest input)
         {
             var url = BusinessManager.MdwBaseURL + BusinessManager.resetPass;
 
-            var request = await _consumeApi.Post<string, SubscriberResetPasswordDTO>(url, input);
+            var request = await _consumeApi.Post<string, SubscriberResetPasswordDTORequest>(url, input);
 
             return request;
         }

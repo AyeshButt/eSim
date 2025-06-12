@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
+using eSim.Common.Enums;
 using eSim.Common.StaticClasses;
 using eSim.EF.Context;
 using eSim.EF.Entities;
@@ -24,87 +26,86 @@ namespace eSim.Implementations.Services.Middleware.Ticket
             _Db = Db;
         }
 
-        public async  Task<Result<TicketActivitiesDTO>> AddCommentAsync(TicketActivitiesDTO dto)
+        public async Task<Result<TicketCommentDTORequest>> AddCommentAsync(TicketCommentDTORequest input, string userId)
         {
+            var result = new Result<TicketCommentDTORequest>();
+
             try
             {
+
+                var ticket = await _Db.Ticket.FirstOrDefaultAsync(u => u.TRN == input.TRN);
+
+                if (ticket == null)
+                {
+                    result.Success = false;
+                    result.Message = string.Empty;
+
+                    return result;
+                }
+
                 var comment = new TicketActivities
                 {
                     Id = Guid.NewGuid(),
-                    TicketId = dto.TicketId,
-                    Comment = dto.Comment,
-                    CommentType = dto.CommentType,
-                    IsVisibleToCustomer = dto.IsVisibleToCustomer,
-                    ActivityBy = dto.ActivityBy,
-                    ActivityAt = DateTime.UtcNow
+                    TicketId = ticket.Id.ToString(),
+                    Comment = input.Comment,
+                    CommentType = (int)CommentType.customer,
+                    IsVisibleToCustomer = input.IsVisibleToCustomer,
+                    ActivityBy = userId,
+                    ActivityAt = BusinessManager.GetDateTimeNow()
                 };
 
-                _Db.TicketActivities.Add(comment);
-                await  _Db.SaveChangesAsync();
+                await _Db.TicketActivities.AddAsync(comment);
+                await _Db.SaveChangesAsync();
 
-                return new Result<TicketActivitiesDTO>
-                {
-                    Success = true,
-                    Message = "Comment added successfully",
-                    Data = null
-                };
+                result.Message = BusinessManager.Commentadded;
+
             }
             catch (Exception ex)
             {
-                return new Result<TicketActivitiesDTO>
-                {
-                    Success = false,
-                    Message = $"Error adding comment: {ex.Message}",
-                    Data = null
-                };
+                result.Success = false;
+                result.Message = ex.Message;
+
             }
+            return result;
         }
-        
+
 
 
         #region CreateTicket
-        public async Task<Result<string?>> CreateTicketAsync(TicketRequestDTO ticketDto)
+        public async Task<Result<string?>> CreateTicketAsync(TicketRequestDTORequest ticketDto)
         {
-
+            var result = new Result<string?>();
             try
             {
 
-                if (ticketDto.Subject.Contains("err"))
-                {
-                    throw new Exception("hello");
-                }
 
                 var ticket = new eSim.EF.Entities.Ticket
                 {
                     Id = Guid.NewGuid(),
-                    TRN = BusinessManager.GenerateTRN(),  // Now this works
+                    TRN = BusinessManager.GenerateTRN(),
                     Subject = ticketDto.Subject,
                     Description = ticketDto.Description,
                     TicketType = ticketDto.TicketType,
                     Status = 0,
                     CreatedAt = BusinessManager.GetDateTimeNow()
                 };
+
                 _Db.Ticket.Add(ticket);
                 await _Db.SaveChangesAsync();
 
-
-                return new Result<string?>
-                {
-                    Success = true,
-                    Message = "Ticket Created Successfully",
-                    Data=ticket.TRN
-
-                };
+                result.Success = true;
+                result.Message = BusinessManager.TicketCreated;
+                result.Data = ticket.TRN;
             }
             catch (Exception ex)
             {
-                return new Result<string?>
-                {
-                    Success = false,
-                    Message = "Error occurred while posting the ticket.",
-                };
+                result.Success = false;
+                result.Message = ex.Message;
             }
+
+            return result;
         }
+
         #endregion
         #region TicketDetail
         public async Task<Result<TicketDTO?>> GetTicketDetailAsync(string trn)
@@ -140,10 +141,11 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                     Attachments = attachments
                 };
 
-                return new Result<TicketDTO?> {
+                return new Result<TicketDTO?>
+                {
                     Success = true,
-                    Message = "Ticket detail retrieved successfully." ,
-                  Data=detail
+                    Message = "Ticket detail retrieved successfully.",
+                    Data = detail
                 };
             }
             catch (Exception)
@@ -166,7 +168,7 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                 Select(a => new TicketTypeResponseDTO() { Id = a.Id, Value = a.Type }).ToList();
 
 
-            return new Result<List<TicketTypeResponseDTO>>() {Data=list  };
+            return new Result<List<TicketTypeResponseDTO>>() { Data = list };
         }
         #endregion
 
@@ -183,21 +185,24 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                 Type = types.FirstOrDefault(a => a.Id == a.Id).Type
             });
 
-            return new Result<IQueryable<TicketsResponseDTO>>() { Data = tickets.OrderByDescending(a=>a.CreatedAt) };
+            return new Result<IQueryable<TicketsResponseDTO>>() { Data = tickets.OrderByDescending(a => a.CreatedAt) };
         }
         #endregion
 
         #region TicketAttachment
-        public async Task<Result<string?>> UploadAttachmentAsync(TicketAttachmentDTO dto)
+        public async Task<Result<string?>> UploadAttachmentAsync(TicketAttachmentDTORequest dto)
         {
+            var result = new Result<string?>();
             try
             {
-                int attachmentType = 2;
+                // TicketTypeEnum.attachmentType.ToString();
                 Guid? activityId = null;
                 var ticket = await _Db.Ticket.FirstOrDefaultAsync(x => x.TRN == dto.TRN);
                 if (ticket == null)
-                    return new Result<string?> { Success = false, Message = "Ticket not found." };
- 
+
+                { result.Success = false; result.Message = BusinessManager.Ticketnotfound; }
+                ;
+
 
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
                 if (!Directory.Exists(uploadsFolder))
@@ -214,33 +219,32 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                     await dto.File.CopyToAsync(stream);
                 }
 
-           
+
                 var attachment = new TicketAttachments
                 {
                     Id = Guid.NewGuid(),
                     TicketId = ticket.Id.ToString(),
                     Attachment = $"/uploads/{fileName}",
-                    AttachmentType = attachmentType,
+                    AttachmentType = (int)TicketTypeEnum.attachmentType,
                     ActivityId = activityId
                 };
 
                 _Db.TicketAttachments.Add(attachment);
                 await _Db.SaveChangesAsync();
 
-                return new Result<string?>
-                {
-                    Success = true,
-                    Message = "Attachment uploaded successfully."
-                };
+
+                result.Success = true;
+                result.Message = BusinessManager.Attachmentuploaded;
+
             }
             catch (Exception ex)
             {
-                return new Result<string?>
-                {
-                    Success = false,
-                    Message = "Error uploading attachment."
-                };
+
+                result.Success = false;
+                result.Message = ex.Message;
+
             }
+            return result;
         }
         #endregion
     }

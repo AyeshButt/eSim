@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace eSim.Infrastructure.DTOs.Account
 {
-    public class ProfileImageDTO
+    public class ProfileImageDTORequest
     {
         public Guid SubscriberId { get; set; }
         public string? ProfileImage { get; set; }

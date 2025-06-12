@@ -162,7 +162,7 @@ namespace eSim.Selfcare.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PasswordReset( ForgotPasswordDTO input)
+        public async Task<IActionResult> PasswordReset(ForgotPasswordDTORequest input)
         {
             if (ModelState.IsValid)
             {
@@ -248,7 +248,7 @@ namespace eSim.Selfcare.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> PasswordChange(SubscriberResetPasswordDTO input)
+        public async Task<IActionResult> PasswordChange(SubscriberResetPasswordDTORequest input)
         {
 
             if (ModelState.IsValid) 

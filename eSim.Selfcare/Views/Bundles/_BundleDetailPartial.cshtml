@@ -1,0 +1,94 @@
+﻿@model eSim.Infrastructure.DTOs.Middleware.Bundle.GetBundleCatalogueDetailDTO.GetBundleCatalogueDetailsResponse
+
+<div class="row">
+    <div class="col-5 ">
+        <div class="p-4">
+            <h4>@Model.name</h4>
+            <div class="d-flex mt-3 justify-content-between">
+                <h6 class="d-flex flex-column align-items-center">
+                    @if (Model.dataAmount != 0)
+                    {
+                        var GB = Math.Round((double)Model.dataAmount / 1024);
+                        <i class="mdi mdi-database mdi-36px mb-1"></i>
+                        <span>@($"{GB} GB")</span>
+                    }
+                </h6>
+                <h6 class="d-flex text-muted flex-column align-items-center">
+
+                    <i class="mdi mdi-phone mdi-36px mb-1"></i>
+                    <span >NONE</span>
+
+                </h6>
+                <h6 class="d-flex text-muted flex-column align-items-center">
+                    <i class="mdi mdi-message-processing mdi-36px mb-1"></i>
+                    <span >NONE</span>
+                </h6>
+            </div>
+            <div class="d-flex justify-content-around mt-5">
+                <h6 class="d-flex flex-column align-items-center">
+                    <i class="mdi mdi-clock-outline mdi-36px mb-1"></i>
+                    <span> @Model.duration Days </span>
+                </h6>
+                <h6 class="d-flex flex-column align-items-center">
+                    <i class="mdi mdi-earth mdi-36px mb-1"></i>
+                    <span>
+                        @if (Model.roamingEnabled?.Count() > 0)
+                        {
+                            <text>@Model.roamingEnabled?.Count() Countries</text>
+                        }
+                        else
+                        {
+                            <text>No</text>
+                        }
+                    </span>
+                </h6>
+            </div>
+            <div class="d-flex justify-content-around mt-2">
+                <h6 class="d-flex flex-column align-items-center">
+                    <i class="mdi mdi-speedometer mdi-36px mb-1"></i>
+                   
+                    <span> Unknown </span>
+                </h6>
+                <h6 class="d-flex flex-column align-items-center">
+                    <i class="mdi mdi-play-circle-outline mdi-36px mb-1"></i>
+                    <span>
+                        @if (Model.autostart == true)
+                        {
+                            <text>AutoStart Enabled</text>
+                        }
+                        else
+                        {
+                            <text>AutoStart Disabled</text>
+                        }
+                    </span>
+                </h6>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-7 p-4">
+        <div class="d-flex justify-content-between">
+            <h4 class="modal-title" id="exampleModalgridLabel">Bundle Details</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="mt-3">
+            <p>@Model.description</p>
+            <h5 class="mt-3">Base Country</h5> 
+            <ul class="list-unstyled d-flex flex-wrap gap-2">
+                @foreach (var item in Model.countries)
+                {
+                    <li>@item.country.name</li>
+                }
+            </ul>
+
+            <h5 class="mt-3">Roaming Countries</h5>
+            <ul class="list-unstyled d-flex flex-wrap gap-2">
+                @foreach (var item in Model.roamingEnabled)
+                {
+                    <li>@item.country.name</li>
+                }
+            </ul>
+           
+        </div>
+    </div>
+</div>

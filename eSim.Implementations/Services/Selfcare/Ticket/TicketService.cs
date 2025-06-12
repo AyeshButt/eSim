@@ -74,7 +74,7 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
 
             try
             {
-                TicketRequestDTO dto = new()
+                TicketRequestDTORequest dto = new()
                 {
                     TicketType = model.TicketType,
                     Subject = model.Subject,
@@ -93,6 +93,17 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
                 return new Result<string>() { Success = false, Message = "Failed to Open New Ticket" };
             }
 
+        }
+
+        public async Task<Result<TicketDetailDTO>> Detail(string trn)
+        {
+            var Url = BusinessManager.MdwBaseURL + BusinessManager.TicketDetail;
+
+            var fulUrl = $"{Url}?trn={Uri.EscapeDataString(trn)}";
+
+            var request = await _consumeApi.Get<TicketDetailDTO>(fulUrl);
+            
+            return request;
         }
 
         #endregion

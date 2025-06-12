@@ -9,14 +9,16 @@ using eSim.Infrastructure.DTOs.Middleware.Bundle;
 using Microsoft.AspNetCore.Mvc;
 using static eSim.Infrastructure.DTOs.Middleware.Bundle.GetBundleCatalogueDetailDTO;
 
+
 namespace eSim.Infrastructure.Interfaces.Middleware
 {
     public interface IBundleService
     {
-        Task<Result<GetBundleCatalogueResponse>> GetBundlesAsync(RegionDTO request);
-        Task<Result<GetBundleCatalogueDetail>> GetBundleDetailAsync(string name);
-        Result<List<CountriesDTO>> GetCountries();
+        Task<Result<GetBundleCatalogueResponse>> GetBundlesAsync(RegionDTORequest input);
+        Task<Result<GetBundleCatalogueDetailsResponse>> GetBundleDetailsAsync(string name);
+        Result<List<CountriesDTORequest>> GetCountries();
 
 
     }
 }
+    

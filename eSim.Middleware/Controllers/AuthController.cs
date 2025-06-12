@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using eSim.EF.Entities;
 using eSim.Infrastructure.DTOs.Middleware;
+using eSim.Common.StaticClasses;
 
 namespace eSim.Middleware.Controllers
 {
@@ -14,29 +15,30 @@ namespace eSim.Middleware.Controllers
     {
         private readonly IAuthService _authService;
 
-
         public AuthController(IAuthService authService)
         {
             _authService = authService;
-            
+
         }
+
         [AllowAnonymous]
         [HttpPost("login")]
-        public IActionResult Login([FromBody] AuthDTO model)
+
+        public IActionResult Login([FromBody] AuthDTORequest input)
         {
-            var token = _authService.Authenticate(model);
+            var token = _authService.Authenticate(input);
 
             if (token == null)
-                return Unauthorized(new { message = "Invalid-credentials" });
+                return Unauthorized(new { message =BusinessManager.InvalidLOgin });
 
             return Ok(new { access_token = token });
         }
 
-        
+
 
     }
 
 
-   
+
 
 }

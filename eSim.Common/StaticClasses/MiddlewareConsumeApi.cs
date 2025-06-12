@@ -87,7 +87,9 @@ namespace eSim.Common.StaticClasses
                 _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var jsonResponse  = await _http.PostAsJsonAsync(url, input);
-                Console.WriteLine("response" + await jsonResponse.Content.ReadAsStringAsync());
+
+                Console.WriteLine("Bundle Detail" + await jsonResponse.Content.ReadAsStringAsync());
+
                 response = JsonConvert.DeserializeObject<Result<T>>(await jsonResponse.Content.ReadAsStringAsync());
 
             }

@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Json;
 using System.Text;
-using System.Text.Json.Serialization;
+
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using eSim.Infrastructure.Interfaces.ConsumeApi;
 using eSim.EF.Entities;
 using eSim.Infrastructure.Interfaces.Admin.Client;
 using eSim.Infrastructure.DTOs.Global;
+using Raven.Client.Linq;
 
 namespace eSim.Common.StaticClasses
 {
@@ -35,8 +36,12 @@ namespace eSim.Common.StaticClasses
                 req.Headers.Add("x-api-Key", _apiKey);
 
                 var request = await _httpClient.SendAsync(req);
+                var statusCode = (int)request.StatusCode;
+
+                var jsonString = await request.Content.ReadAsStringAsync();
 
                 response = JsonConvert.DeserializeObject<T>(await request.Content.ReadAsStringAsync());
+
 
             }
             catch (Exception ex)
@@ -82,9 +87,6 @@ namespace eSim.Common.StaticClasses
         }
 
         //Consume Put Api
-
-
-
 
         public async Task<T?> PutApi<T, I>(string Url, I input)
         {

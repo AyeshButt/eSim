@@ -2,11 +2,10 @@
 
 namespace eSim.Infrastructure.DTOs.Account
 {
-    public class ForgotPasswordDTO
+    public class ForgotPasswordDTORequest
     {
         [Required(ErrorMessage = "Email is required")]
         [DataType(DataType.EmailAddress, ErrorMessage = "Enter a valid email address")]
-  
-        public string? Email { get; set; }
+        public string Email { get; set; } = null!;
     }
 }
