@@ -25,8 +25,8 @@ namespace eSim.Common.StaticClasses
         public static string Ticekt = "Ticket";
         public static string TicketType = "Ticket/Types";
         public static string TicketDetail = "ticket/detail";
-        public static string BundelRegion = "Bundle/GetByRegion";
-        public static string Bundeldetail = "bundle/getbyname";
+        public static string BundelRegion = "bundle/bundles";
+        public static string Bundeldetail = "bundle/";
         public static string EsimList = "esim/list";
         public static string EsimHistory = "esim/history";
 

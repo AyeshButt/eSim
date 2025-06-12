@@ -39,7 +39,7 @@ namespace eSim.Implementations.Services.Selfcare.Bundle
             var Url = BusinessManager.MdwBaseURL + BusinessManager.Bundeldetail;
 
             //var fullUrl = $"{Url}?name={HttpUtility.UrlEncode(dto)}";
-            var FullURl = $"{Url}?name={Uri.EscapeDataString(dto)}";
+            var FullURl = $"{Url}{Uri.EscapeDataString(dto)}";
 
             var response = await _consumeApi.Get<GetBundleCatalogueDetailsResponse>(FullURl);
 
