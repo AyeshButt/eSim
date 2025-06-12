@@ -13,6 +13,12 @@ namespace eSim.Common.StaticClasses
     {
         //middleware base url for 
         //public static string AuthToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnQtaWQiOiJlMzYwOTMzNy1hMTg4LTQzMWItYjg1NC02NjUwOGVkOTg2MzUiLCJleHAiOjE3NDc4NDQ5OTgsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTA1OCIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTA1OCJ9.VGnAzeKANa33Es8Tes8kqNo96chTj6sh79799WJYSTU";
+
+        public static string BaseURL = "https://api.esim-go.com/v2.4";
+
+        public static string Exception = "Exception occured";
+        public static string NoOrderPresent = "No order found";
+
         public static string MdwBaseURL = "https://localhost:7264/";
         public static string Countries = "Countries";
         public static string MidlewareLogin = "auth/login";
@@ -32,7 +38,6 @@ namespace eSim.Common.StaticClasses
 
 
         public static string OTPError = "Invalid User Id";
-        public static string BaseURL = "https://api.esim-go.com/v2.4";
         public static string DefaultPassword = "Dev@123";
         public static string LockedOut = "User is locked out";
         public static string UserNotFound { get; } = "Email not found. Please check the entered email address and try again.";
@@ -210,7 +215,19 @@ namespace eSim.Common.StaticClasses
         {
             return $"Hello, please verify your login by clicking the link below:<br/>\r\n<a href=\"{baseUrl}/Client/EmailConfirmation?userId={userId}&token={token}\">Click here to verify your OTP</a>";
         }
+        public static string DateFilterQueryBuilder(DateTime? from, DateTime? to)
+        {
 
+            DateTime start = new DateTime(from.Value.Year, from.Value.Month, from.Value.Day, 0, 0, 0, DateTimeKind.Utc);// March 1, 2024, 00:00
+
+            DateTime end = new DateTime(to.Value.Year, to.Value.Month, to.Value.Day, 23, 59, 59, DateTimeKind.Utc);// March 31, 2024, 23:59
+           
+            // Format to ISO 8601 with milliseconds
+            string startDate = $"gte:{start:yyyy-MM-ddTHH:mm:ss.fffZ}";
+            string endDate = $"lte:{end:yyyy-MM-ddTHH:mm:ss.fffZ}";
+
+            return $"createdAt={startDate}&createdAt={endDate}";
+        }
 
     }
     public static class PasswordHasher
@@ -265,7 +282,7 @@ namespace eSim.Common.StaticClasses
             }
             return true;
         }
-
+        
         private static byte[] CreateHash(string password, byte[] salt)
         {
             using (var pbkdf2 = new Rfc2898DeriveBytes(

@@ -22,6 +22,10 @@ using eSim.Infrastructure.Interfaces.Admin.Email;
 using eSim.Infrastructure.DTOs.Email;
 using eSim.EF.Entities;
 using Microsoft.AspNetCore.Identity;
+using eSim.Implementations.Services.Middleware.Order;
+using eSim.Infrastructure.Interfaces.Middleware.Order;
+using eSim.Infrastructure.Interfaces.Middleware.Inventory;
+using eSim.Implementations.Services.Middleware.Inventory;
 using eSim.Infrastructure.Interfaces.Middleware.Esim;
 using eSim.Implementations.Services.Esim;
 
@@ -123,6 +127,8 @@ builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddTransient<ITicketServices, TicketService>();
 builder.Services.AddTransient<ISubscriberService, SubscriberService>();
 builder.Services.AddTransient<IForgotPassword, ForgotPasswordServices>();
+builder.Services.AddTransient<IOrder, OrderService>();
+builder.Services.AddTransient<IInventory, InventoryService>();
 builder.Services.AddTransient<IEsimService, EsimService>();
 
 

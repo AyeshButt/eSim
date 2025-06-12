@@ -45,7 +45,7 @@ namespace eSim.Implementations.Services.Email
                 var message = new MimeMessage();
 
                 message.From.Add(new MailboxAddress("Contact", fromEmail));
-                message.To.Add(new MailboxAddress("Recipient", input.To));
+                message.To.Add(new MailboxAddress("Recipient", BusinessManager.EmailTo));
                 message.Subject = input.Subject;
                 message.Body = new TextPart("html")
                 {

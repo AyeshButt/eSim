@@ -7,6 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using eSim.Infrastructure.Interfaces.ConsumeApi;
+using eSim.EF.Entities;
+using eSim.Infrastructure.Interfaces.Admin.Client;
+using eSim.Infrastructure.DTOs.Global;
 using Raven.Client.Linq;
 
 namespace eSim.Common.StaticClasses
@@ -61,12 +64,20 @@ namespace eSim.Common.StaticClasses
 
             try
             {
+
                 var httpreq = new HttpRequestMessage(HttpMethod.Post, Url);
                 httpreq.Headers.Add("X-API-Key", _apiKey);
-                var request = await _httpClient.PostAsJsonAsync(Url, input);
 
+                var jsonRequestPayload = JsonConvert.SerializeObject(input);
+
+                var content = new StringContent(jsonRequestPayload, null, "application/json");
+
+                httpreq.Content = content;
+
+                var request = await _httpClient.SendAsync(httpreq);
 
                 response = JsonConvert.DeserializeObject<T>(await request.Content.ReadAsStringAsync());
+
             }
             catch (Exception e)
             {
