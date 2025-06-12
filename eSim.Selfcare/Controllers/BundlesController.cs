@@ -36,7 +36,7 @@ namespace eSim.Selfcare.Controllers
         {
             var bundle = await _bundelService.BundleDetail(name);
 
-            Console.WriteLine("bundle dateaikdjkf" + bundle.Data);
+            //Console.WriteLine("bundle dateaikdjkf" + bundle.Data);
             return PartialView("_BundleDetailPartial", bundle.Data);
         }
 
