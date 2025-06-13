@@ -13,6 +13,8 @@ using eSim.Infrastructure.DTOs.Global;
 using Raven.Client.Linq;
 using System.Net;
 using Microsoft.AspNetCore.Http;
+using System.Net.Http.Headers;
+using Org.BouncyCastle.Utilities;
 
 namespace eSim.Common.StaticClasses
 {
@@ -58,10 +60,11 @@ namespace eSim.Common.StaticClasses
         //Consume Get Api by Ayesh
         public async Task<Result<T>?> GetApii<T>(string Url)
         {
-            Result<T> response = new();
-            T? result = default;
-            HttpResponseMessage request = new();
             HttpRequestMessage req = new();
+            HttpResponseMessage request = new();
+
+            T? result = default;
+            Result<T> response = new();
 
             try
             {
@@ -74,9 +77,35 @@ namespace eSim.Common.StaticClasses
 
                 if (request.IsSuccessStatusCode)
                 {
-                    result = JsonConvert.DeserializeObject<T>(await request.Content.ReadAsStringAsync());
+                    #region checking content type for qr code
+                    if (request.Content.Headers.ContentType?.MediaType == BusinessManager.ImageMediaContentType)
+                    {
+                        var imageBytes = await request.Content.ReadAsByteArrayAsync();
+
+                        #region typecast imageBytes to generic result variable
+                        if (typeof(T) == typeof(byte[]))
+                        {
+                            result = (T)(object)imageBytes; // Cast through object to match T
+                        }
+                        else
+                        {
+                            response.Success = false;
+                            response.StatusCode = StatusCodes.Status500InternalServerError;
+                            response.Message = string.Empty;
+
+                            return response;
+                        }
+                        #endregion
+
+                    }
+                    #endregion
+
+                    else
+                    {
+                        result = JsonConvert.DeserializeObject<T>(await request.Content.ReadAsStringAsync());
+                    }
+
                     response.Data = result;
-                    response.StatusCode = (int)request.StatusCode;
 
                 }
 
@@ -84,23 +113,28 @@ namespace eSim.Common.StaticClasses
                 {
                     response = JsonConvert.DeserializeObject<Result<T>>(await request.Content.ReadAsStringAsync());
                     response.Success = false;
-                    response.StatusCode = (int)request.StatusCode;
-
                 }
+                response.StatusCode = (int)request.StatusCode;
 
             }
+            #region typecast exception handling
+            catch (InvalidCastException ex) when (ex is InvalidCastException)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.StatusCode = StatusCodes.Status500InternalServerError;
+            }
+            #endregion
             catch (Exception ex)
             {
-
-                    response.Success = false;
-                    response.Message = ex.Message;
-                    response.Data = default;
-                    response.StatusCode = (int)request.StatusCode;
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Data = default;
+                response.StatusCode = (int)request.StatusCode;
             }
 
             return response;
         }
-        //Consume Post Api
         public async Task<T?> PostApi<T, I>(string Url, I? input)
         {
             T? response = default;
@@ -134,9 +168,6 @@ namespace eSim.Common.StaticClasses
             }
             return response;
         }
-
-        //Consume Put Api
-
         public async Task<T?> PutApi<T, I>(string Url, I input)
         {
             T? response = default;

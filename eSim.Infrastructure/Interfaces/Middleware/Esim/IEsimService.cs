@@ -17,6 +17,7 @@ namespace eSim.Infrastructure.Interfaces.Middleware.Esim
         Task<Result<GetEsimInstallDetailReponseDTO>> GetEsimInstallDetailAsync(string reference);
         Task<Result<EsimCompatibilityResponseDTO>> CheckeSIMandBundleCompatibilityAsync(EsimCompatibilityRequestDto request);
         Task<Result<ListBundlesAppliedToESIMResponseDTO>> GetListBundlesappliedtoeSIMAsync(ListBundlesAppliedToESIMRequestDTO request);
+        Task<Result<byte[]>> DownloadQRAsync(string iccid);
 
 
     }
