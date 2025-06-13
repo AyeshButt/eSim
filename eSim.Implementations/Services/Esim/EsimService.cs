@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -19,7 +20,45 @@ namespace eSim.Implementations.Services.Esim
         {
             _consumeApi = consumeApi;
         }
-        # region EsimBundleInventory
+        #region  CheckeSIMandBundleCompatibility
+        public async Task<Result<EsimCompatibilityResponseDTO>> CheckeSIMandBundleCompatibilityAsync(EsimCompatibilityRequestDto request)
+        {
+            var result = new Result<EsimCompatibilityResponseDTO>();
+            string url = $" {BusinessManager.BaseURL}/esims/{request.Iccid}/compatible/{request.Bundle}";
+
+
+            try
+            {
+                var response = await _consumeApi.GetApi<EsimCompatibilityResponseDTO>(url);
+
+                if (response == null)
+                {
+                    result.Success = false;
+                    result.Message = BusinessManager.EsimNotCompatible;
+                    return result;
+                }
+                if (response.Message is not null) 
+                
+                {
+                    result.Success = false;
+                    result.Message = response.Message;
+                    return result;
+                }
+                result.Success = response.Compatible;
+                result.Data = response;
+                result.Message = response.Compatible ? BusinessManager.EsimCompatible : BusinessManager.EsimNotCompatible;
+
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = $"Error: {ex.Message}";
+            }
+
+            return result;
+        }
+        #endregion
+        #region EsimBundleInventory
         public async Task<Result<GetBundleInventoryDTORequest>> GetEsimBundleInventoryAsync()
         {
             var result = new Result<GetBundleInventoryDTORequest>();
@@ -81,8 +120,85 @@ namespace eSim.Implementations.Services.Esim
             return result;
         }
         #endregion
+        #region GetEsimInstallDetail
+        public async Task<Result<GetEsimInstallDetailReponseDTO>> GetEsimInstallDetailAsync(string reference)
 
-        # region EsimList
+
+        {
+            var result = new Result<GetEsimInstallDetailReponseDTO>();
+            if (string.IsNullOrWhiteSpace(reference))
+            {
+                result.Success = false;
+                result.Message = BusinessManager.Missingreference; 
+                return result;
+            }
+            string url = $"{BusinessManager.BaseURL}/esims/assignments?reference={reference}";
+
+            try
+            {
+                var response = await _consumeApi.GetApi<GetEsimInstallDetailReponseDTO>(url);
+
+                if (response == null )
+                {
+                    result.Success = false;
+                    result.Message = BusinessManager.EsimInstallDetailNotFound;
+                    return result;
+                }
+
+                result.Success = true;
+                result.Data = response;
+                result.Message = BusinessManager.EsimInstallDetail;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message;
+            }
+
+            return result;
+        }
+        #endregion
+        #region  GetListBundlesappliedtoeSIM
+        public async Task<Result<ListBundlesAppliedToESIMResponseDTO>> GetListBundlesappliedtoeSIMAsync(ListBundlesAppliedToESIMRequestDTO request)
+        {
+            var result = new Result<ListBundlesAppliedToESIMResponseDTO>();
+
+            try
+            {
+                string url = $"{BusinessManager.BaseURL}/esims/{request.iccid}/bundles";
+
+                if (request.includeUsed.HasValue)
+                    url += $"?includeUsed={request.includeUsed.Value.ToString().ToLower()}" +
+                           (!string.IsNullOrEmpty(request.limit?.ToString()) ? $"&limit={request.limit}" : "");
+                else if (request.limit.HasValue)
+                    url += $"?limit={request.limit}";
+
+                var response = await _consumeApi.GetApi<ListBundlesAppliedToESIMResponseDTO>(url);
+
+                if (response == null)
+                {
+                    result.Success = false;
+                    result.Message = BusinessManager.BundleNotFound;
+                    return result;
+                }
+
+                result.Success = true;
+                result.Data = response;
+                result.Message = BusinessManager.ListofEsimBundleFetched;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = $"Error retrieving bundles: {ex.Message}.";
+            }
+
+            return result;
+        }
+
+
+        #endregion
+
+        #region EsimList
         public async Task<Result<GetListofyourEsimsResponseDTO>> GetListofEsimsAsync()
         {
             var result = new Result<GetListofyourEsimsResponseDTO>();

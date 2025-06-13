@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
+using eSim.Infrastructure.DTOs.Esim;
 namespace eSim.Middleware.Controllers
 {
     [Route("[controller]")]
@@ -47,6 +48,44 @@ namespace eSim.Middleware.Controllers
         }
 
         #endregion
+        #region EsimBundleInventory
+        [AllowAnonymous]
+        [HttpGet("EsimInstallDetail")]
+        public async Task<IActionResult> GetEsimInstallDetail([FromQuery] string reference)
+        {
+            var result = await _esimService.GetEsimInstallDetailAsync(reference);
+
+            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
+        }
+
+        #endregion
+        #region EsimBundleInventory
+        [AllowAnonymous]
+        [HttpGet("eSIMCompatibility")]
+        public async Task<IActionResult> CheckeSIMAndBundleCompatibility([FromQuery] EsimCompatibilityRequestDto request)
+        {
+            var result = await _esimService.CheckeSIMandBundleCompatibilityAsync(request);
+
+            if (result.Message is not  null)
+                return StatusCode(StatusCodes.Status403Forbidden, result);
+
+            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
+        }
+
+        #endregion
+        #region ListBundlesAppliedToESIM
+        [AllowAnonymous]
+        [HttpGet("ListBundlesAppliedToESIM")]
+        public async Task<IActionResult> ListBundlesAppliedToESIM([FromQuery] ListBundlesAppliedToESIMRequestDTO request)
+        {
+            var result = await _esimService.GetListBundlesappliedtoeSIMAsync(request);
+
+         
+
+            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
+        }
+
+#endregion
 
     }
 }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using eSim.Infrastructure.DTOs.Esim;
 using eSim.Infrastructure.DTOs.Global;
+using eSim.Infrastructure.DTOs.Middleware.Order;
 
 namespace eSim.Infrastructure.Interfaces.Middleware.Esim
 {
@@ -13,6 +14,10 @@ namespace eSim.Infrastructure.Interfaces.Middleware.Esim
         Task<Result<GetListofyourEsimsResponseDTO>> GetListofEsimsAsync();
         Task<Result<GetEsimHistoryResponseDTO>> GetEsimHistoryAsync(string iccid);
         Task<Result<GetBundleInventoryDTORequest>> GetEsimBundleInventoryAsync();
+        Task<Result<GetEsimInstallDetailReponseDTO>> GetEsimInstallDetailAsync(string reference);
+        Task<Result<EsimCompatibilityResponseDTO>> CheckeSIMandBundleCompatibilityAsync(EsimCompatibilityRequestDto request);
+        Task<Result<ListBundlesAppliedToESIMResponseDTO>> GetListBundlesappliedtoeSIMAsync(ListBundlesAppliedToESIMRequestDTO request);
+
 
     }
 }

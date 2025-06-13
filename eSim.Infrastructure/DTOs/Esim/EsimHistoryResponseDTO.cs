@@ -20,4 +20,5 @@ namespace eSim.Infrastructure.DTOs.Esim
         public string BundleName { get; set; }
         public string Date { get; set; } 
     }
+
 }
