@@ -134,11 +134,11 @@ namespace eSim.Admin.Controllers
         [HttpGet]
         public IActionResult ForgotPassword()
         {
-            return View(new ForgotPasswordDTO());
+            return View(new ForgotPasswordDTORequest());
         }
 
         [HttpPost]
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordDTO input)
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordDTORequest input)
         {
             if (string.IsNullOrEmpty(input.Email))
             {
