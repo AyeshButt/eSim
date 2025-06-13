@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using eSim.Infrastructure.DTOs.Esim;
+using Azure;
+using eSim.Common.StaticClasses;
 namespace eSim.Middleware.Controllers
 {
     [Route("[controller]")]
@@ -23,7 +25,8 @@ namespace eSim.Middleware.Controllers
         {
             var result = await _esimService.GetListofEsimsAsync();
 
-            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
+        
         }
         #endregion
 
@@ -34,7 +37,8 @@ namespace eSim.Middleware.Controllers
         {
             var result = await _esimService.GetEsimHistoryAsync(iccid);
 
-            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
+
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
 
         #endregion
@@ -46,7 +50,8 @@ namespace eSim.Middleware.Controllers
         {
             var result = await _esimService.GetEsimBundleInventoryAsync();
 
-            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
+        
         }
 
         #endregion
@@ -57,7 +62,7 @@ namespace eSim.Middleware.Controllers
         {
             var result = await _esimService.GetEsimInstallDetailAsync(reference);
 
-            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
 
         #endregion
@@ -71,7 +76,7 @@ namespace eSim.Middleware.Controllers
             if (result.Message is not  null)
                 return StatusCode(StatusCodes.Status403Forbidden, result);
 
-            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
 
         #endregion
@@ -82,12 +87,12 @@ namespace eSim.Middleware.Controllers
         {
             var result = await _esimService.GetListBundlesappliedtoeSIMAsync(request);
 
-         
 
-            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
+
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
 
-#endregion
+        #endregion
 
     }
 }

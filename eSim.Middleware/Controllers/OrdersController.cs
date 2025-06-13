@@ -5,6 +5,7 @@ using eSim.Infrastructure.DTOs.Middleware.Order;
 using eSim.Infrastructure.Interfaces.Middleware.Order;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static Raven.Client.Linq.LinqPathProvider;
 
 namespace eSim.Middleware.Controllers
 {
@@ -36,7 +37,7 @@ namespace eSim.Middleware.Controllers
 
             var response = await _order.CreateOrderAsync(input, loggedUser);
 
-            return response.Success ? StatusCode(StatusCodes.Status200OK, response) : StatusCode(StatusCodes.Status400BadRequest, response);
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(response.StatusCode), response);
         }
 
         [AllowAnonymous]
@@ -53,8 +54,8 @@ namespace eSim.Middleware.Controllers
         public async Task<IActionResult> ListOrder([FromQuery] ListOrderRequest input)
         {
             var response = await _order.ListOrderAsync(input);
-
-            return response.Success ? StatusCode(StatusCodes.Status200OK, response) : StatusCode(StatusCodes.Status400BadRequest, response);
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(response.StatusCode), response);
+        
         }
 
         [AllowAnonymous]
