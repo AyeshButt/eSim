@@ -14,8 +14,6 @@ namespace eSim.EF.Entities
         public Guid SubscriberId { get; set; }
         public string OrderReferenceId { get; set; }
         public double Total { get; set; }
-        //new comment
-
         public string Currency { get; set; }
         public string Status { get; set; }
         public string StatusMessage { get; set; }
