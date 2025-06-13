@@ -1,4 +1,4 @@
-﻿dotnet ef migrations add "AddedOrdersInventory" -s ../eSim.Admin -p ../eSim.EF
+﻿dotnet ef migrations add "ModifiedOrderModel" -s ../eSim.Admin -p ../eSim.EF
 
 
-dotnet ef database update -s ..\eSim.Middleware -p ..\eSim.EF
+dotnet ef database update -s ..\eSim.Admin -p ..\eSim.EF

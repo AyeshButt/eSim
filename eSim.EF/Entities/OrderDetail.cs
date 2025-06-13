@@ -12,13 +12,11 @@ namespace eSim.EF.Entities
         [Key]
         public Guid Id { get; set; }
         public string OrderReferenceId { get; set; }
-        public string Type { get; set; }
-        //new comment
-
-        public string Item { get; set; }
-        public int Quantity { get; set; }
-        public double SubTotal { get; set; }
-        public double PricePerUnit { get; set; }
-        public bool AllowReassign { get; set; }
+        public string? Type { get; set; }
+        public string? Item { get; set; }
+        public int? Quantity { get; set; }
+        public double? SubTotal { get; set; }
+        public double? PricePerUnit { get; set; }
+        public bool? AllowReassign { get; set; }
     }
 }
