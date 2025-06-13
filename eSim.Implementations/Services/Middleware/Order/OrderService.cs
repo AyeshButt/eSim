@@ -2,11 +2,16 @@
 using eSim.Common.Enums;
 using eSim.Common.StaticClasses;
 using eSim.EF.Context;
+using eSim.EF.Entities;
+using eSim.Infrastructure.DTOs.Email;
 using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.DTOs.Middleware.Bundle;
 using eSim.Infrastructure.DTOs.Middleware.Order;
+using eSim.Infrastructure.Interfaces.Admin.Email;
 using eSim.Infrastructure.Interfaces.ConsumeApi;
+using eSim.Infrastructure.Interfaces.Middleware.Inventory;
 using eSim.Infrastructure.Interfaces.Middleware.Order;
+using Newtonsoft.Json;
 using Raven.Client.Linq;
 using System;
 using System.Collections.Generic;
@@ -20,22 +25,39 @@ namespace eSim.Implementations.Services.Middleware.Order
     {
         private readonly ApplicationDbContext _db;
         private readonly IConsumeApi _consume;
+        private readonly IEmailService _email;
 
-        public OrderService(ApplicationDbContext db, IConsumeApi consume)
+        public OrderService(ApplicationDbContext db, IConsumeApi consume, IEmailService email)
         {
             _db = db;
             _consume = consume;
+            _email = email;
         }
-        public async Task<Result<CreateOrderResponse>> CreateOrderAsync(CreateOrderRequest input)
+        public async Task<Result</*CreateOrderResponse*/ GetOrderDetailResponse>> CreateOrderAsync(CreateOrderRequest input,string subscriberId)
         {
-            var result = new Result<CreateOrderResponse>();
+            var result = new Result</*CreateOrderResponse*/ GetOrderDetailResponse>();
+            var orderRefId = "6875ae78-0f7d-4026-84bb-f6989036a71a";
 
             string url = $"{BusinessManager.BaseURL}/orders";
 
+            Orders order = new();
+            OrderDetail orderDetail = new();
+            GetOrderDetailResponse orderDetailResponse = new();
+
             try
             {
-                var response = await _consume.PostApi<CreateOrderResponse, CreateOrderRequest>(url, input);
+                //var response = await _consume.PostApi<CreateOrderResponse, CreateOrderRequest>(url, input);
 
+                order.SubscriberId = Guid.Parse(subscriberId);
+                order.Id = Guid.NewGuid();
+                order.OrderReferenceId = orderRefId;
+
+                await _db.Orders.AddAsync(order);
+                await _db.SaveChangesAsync();
+
+                var response = await GetOrderDetailAsync(orderRefId);
+                
+                
                 if (response is null)
                 {
                     result.Success = false;
@@ -44,27 +66,61 @@ namespace eSim.Implementations.Services.Middleware.Order
                     return result;
                 }
 
-                if (!response.Order.Any())
+                //if (!response.Order.Any())
+                if (!response.Data.Order.Any())
                 {
                     result.Success = false;
                     result.Message = response.Message;
                 }
                 else
                 {
-                    //db entry
+                    orderDetailResponse = response.Data;
 
-                    result.Data = response;
+                    order.Total = response.Data.Total;
+                    order.Assigned = response.Data.Assigned ?? false;
+                    order.CreatedDate = response.Data.CreatedDate;
+                    order.Currency = response.Data.Currency;
+                    order.SourceIP = response.Data.SourceIP;
+                    order.Status = response.Data.Status;
+                    order.StatusMessage = response.Data.StatusMessage;
+
+                    _db.Orders.Update(order);
+                    await _db.SaveChangesAsync();
+
+                    var orderDetails = response.Data.Order.Select(u => new OrderDetail()
+                    {
+                        Id = Guid.NewGuid(),
+                        OrderReferenceId = response.Data.OrderReference,
+                        Type = u.Type,
+                        Item = u.Item,
+                        Quantity = u.Quantity,
+                        SubTotal = u.SubTotal,
+                        PricePerUnit = u.PricePerUnit,
+                        AllowReassign = u.AllowReassign,
+                    });
+
+                    await _db.OrderDetails.AddRangeAsync(orderDetails);
+
+                    await _db.SaveChangesAsync();
+
+                    result.Data = response.Data;
+                    throw new Exception();
                 }
             }
             catch (Exception ex)
             {
-                result.Success = false;
+                var email = new EmailDTO()
+                {
+                    To = "ayeshbutt4321@gmail.com",
+                    Subject = "Exception while dumping db data",
+                    Body = GeneratePlainTextOrderSummary(orderDetailResponse)
+                };
+                _email.SendEmail(email);
                 result.Message = ex.Message;
             }
 
             return result;
         }
-
         public async Task<Result<GetOrderDetailResponse>> GetOrderDetailAsync(string orderReferenceId)
         {
             var result = new Result<GetOrderDetailResponse>();
@@ -72,34 +128,21 @@ namespace eSim.Implementations.Services.Middleware.Order
             string url = $"{BusinessManager.BaseURL}/orders/{orderReferenceId}";
             try
             {
-                var response = await _consume.GetApi<GetOrderDetailResponse>(url);
+                result = await _consume.GetApii<GetOrderDetailResponse>(url);
 
-                if(response is null)
+                if (result.Success)
                 {
-                    result.Success = false;
-                    result.Message = BusinessManager.Exception;
-
-                    return result;
+                    //perform db related operations
                 }
-
-                if(response.Message is not null)
-                {
-                    result.Message = response.Message;
-                    result.Success = false;
-                }
-                else
-                {
-                    result.Data = response;
-                }
+                
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 result.Success = false;
                 result.Message = ex.Message;
             }
             return result;
         }
-
         public async Task<Result<ListOrderResponse>> ListOrderAsync(ListOrderRequest input)
         {
             var result = new Result<ListOrderResponse>();
@@ -144,5 +187,34 @@ namespace eSim.Implementations.Services.Middleware.Order
             return result;
         }
 
+        #region Order response mapped to email body (to be refined)
+        public string GeneratePlainTextOrderSummary(GetOrderDetailResponse response)
+        {
+            var sb = new StringBuilder();
+
+            sb.AppendLine("ORDER SUMMARY");
+            sb.AppendLine("------------------------------");
+            sb.AppendLine($"Order Reference: {response.OrderReference}");
+            sb.AppendLine($"Created Date   : {response.CreatedDate:yyyy-MM-dd HH:mm:ss}");
+            sb.AppendLine($"Status         : {response.Status}");
+            sb.AppendLine($"Status Message : {response.StatusMessage}");
+            sb.AppendLine($"Total Amount   : {response.Total} {response.Currency}");
+            sb.AppendLine($"Assigned       : {response.Assigned}");
+            sb.AppendLine($"Source IP      : {response.SourceIP}");
+            sb.AppendLine($"Message        : {response.Message}");
+            sb.AppendLine($"Type           : {response.Currency}");
+            sb.AppendLine();
+            sb.AppendLine("ORDERED ITEMS:");
+            sb.AppendLine("Type\tItem\tQty\tUnitPrice\tSubTotal\tReassign");
+            sb.AppendLine("------------------------------------------------------");
+
+            foreach (var item in response.Order)
+            {
+                sb.AppendLine($"{item.Type}\t{item.Item}\t{item.Quantity}\t{item.PricePerUnit}\t{item.SubTotal}\t{item.AllowReassign}");
+            }
+
+            return sb.ToString();
+        }
+        #endregion
     }
 }
