@@ -10,7 +10,7 @@ namespace eSim.Infrastructure.Interfaces.Middleware.Order
 {
     public interface IOrder
     {
-        public Task<Result<CreateOrderResponse>> CreateOrderAsync(CreateOrderRequest input);
+        public Task<Result</*CreateOrderResponse*/ GetOrderDetailResponse>> CreateOrderAsync(CreateOrderRequest input,string loggedUser);
         public Task<Result<ListOrderResponse>> ListOrderAsync(ListOrderRequest input);
         public Task<Result<GetOrderDetailResponse>> GetOrderDetailAsync(string orderReferenceId);
     }

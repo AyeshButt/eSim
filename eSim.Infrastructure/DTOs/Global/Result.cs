@@ -9,5 +9,6 @@ namespace eSim.Infrastructure.DTOs.Global
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public T? Data { get; set; }
+        public int StatusCode { get; set; }
     }
 }

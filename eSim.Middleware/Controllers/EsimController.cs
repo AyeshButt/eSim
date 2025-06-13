@@ -15,6 +15,7 @@ namespace eSim.Middleware.Controllers
         {
             _esimService = esimService;
         }
+
         #region ListofEsim
         [AllowAnonymous]
         [HttpGet("List")]
@@ -25,6 +26,7 @@ namespace eSim.Middleware.Controllers
             return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
         }
         #endregion
+
         #region History of  Esim
         [AllowAnonymous]
         [HttpGet("History")]
