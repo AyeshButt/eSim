@@ -18,6 +18,9 @@ namespace eSim.Common.StaticClasses
 
         public static string Exception = "Exception occured";
         public static string NoOrderPresent = "No order found";
+        public static string QRFailed = "Failed to get QR code";
+        public static string ImageMediaContentType = "image/png";
+        public static string QRCode = "qr-code.png";
 
         public static string MdwBaseURL = "https://localhost:7264/";
         public static string Countries = "Countries";

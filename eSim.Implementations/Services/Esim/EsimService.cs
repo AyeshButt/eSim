@@ -5,11 +5,14 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Azure;
 using eSim.Common.StaticClasses;
 using eSim.Infrastructure.DTOs.Esim;
 using eSim.Infrastructure.DTOs.Global;
+using eSim.Infrastructure.DTOs.Middleware.Order;
 using eSim.Infrastructure.Interfaces.ConsumeApi;
 using eSim.Infrastructure.Interfaces.Middleware.Esim;
+using Microsoft.AspNetCore.Http;
 
 namespace eSim.Implementations.Services.Esim
 {
@@ -58,6 +61,25 @@ namespace eSim.Implementations.Services.Esim
             return result;
         }
         #endregion
+
+        public async Task<Result<byte[]>> DownloadQRAsync(string iccid)
+        {
+            var result = new Result<byte[]>();
+            
+            string url = $"{BusinessManager.BaseURL}/esims/{iccid}/qr";
+            
+            try
+            {
+                result = await _consumeApi.GetApii<byte[]>(url);
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message;
+            }
+            return result;
+        }
+
         #region EsimBundleInventory
         public async Task<Result<GetBundleInventoryDTORequest>> GetEsimBundleInventoryAsync()
         {
@@ -89,6 +111,7 @@ namespace eSim.Implementations.Services.Esim
         }
         
         #endregion
+        
         #region EsimHistory
 
         public async Task<Result<GetEsimHistoryResponseDTO>> GetEsimHistoryAsync(string iccid)
@@ -119,7 +142,9 @@ namespace eSim.Implementations.Services.Esim
 
             return result;
         }
+
         #endregion
+        
         #region GetEsimInstallDetail
         public async Task<Result<GetEsimInstallDetailReponseDTO>> GetEsimInstallDetailAsync(string reference)
 
@@ -158,6 +183,7 @@ namespace eSim.Implementations.Services.Esim
             return result;
         }
         #endregion
+        
         #region  GetListBundlesappliedtoeSIM
         public async Task<Result<ListBundlesAppliedToESIMResponseDTO>> GetListBundlesappliedtoeSIMAsync(ListBundlesAppliedToESIMRequestDTO request)
         {
@@ -230,3 +256,4 @@ namespace eSim.Implementations.Services.Esim
         #endregion
     }
 }
+

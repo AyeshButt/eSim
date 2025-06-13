@@ -6,13 +6,20 @@ using System.Collections.Generic;
 using eSim.Infrastructure.DTOs.Esim;
 using Azure;
 using eSim.Common.StaticClasses;
+using eSim.EF.Entities;
+using System.Net.Http.Headers;
+using System.Net.Http;
+using Org.BouncyCastle.Ocsp;
+using System.Net;
+using eSim.Infrastructure.DTOs.Global;
 namespace eSim.Middleware.Controllers
 {
-    [Route("[controller]")]
+    [Route("esims")]
     [ApiController]
     public class EsimController : ControllerBase
     {
         private readonly IEsimService _esimService;
+
         public EsimController(IEsimService esimService)
         {
             _esimService = esimService;
@@ -42,7 +49,7 @@ namespace eSim.Middleware.Controllers
         }
 
         #endregion
-
+        
         #region EsimBundleInventory
         [AllowAnonymous]
         [HttpGet("Inventory")]
@@ -55,6 +62,7 @@ namespace eSim.Middleware.Controllers
         }
 
         #endregion
+        
         #region EsimBundleInventory
         [AllowAnonymous]
         [HttpGet("EsimInstallDetail")]
@@ -66,6 +74,7 @@ namespace eSim.Middleware.Controllers
         }
 
         #endregion
+        
         #region EsimBundleInventory
         [AllowAnonymous]
         [HttpGet("eSIMCompatibility")]
@@ -80,6 +89,7 @@ namespace eSim.Middleware.Controllers
         }
 
         #endregion
+        
         #region ListBundlesAppliedToESIM
         [AllowAnonymous]
         [HttpGet("ListBundlesAppliedToESIM")]
@@ -87,12 +97,27 @@ namespace eSim.Middleware.Controllers
         {
             var result = await _esimService.GetListBundlesappliedtoeSIMAsync(request);
 
-
-
             return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
 
         #endregion
 
+        [AllowAnonymous]
+        [HttpGet("{iccid}/qr")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized,Type = typeof(Result<string>))]        
+        [ProducesResponseType(StatusCodes.Status403Forbidden,Type = typeof(Result<string>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound,Type = typeof(Result<string>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError,Type = typeof(Result<string>))]
+        public async Task<IActionResult> DownloadQR([FromRoute] string iccid)
+        {
+            var response = await _esimService.DownloadQRAsync(iccid);
+
+            if(response.Data is not null)
+            return File(response.Data, BusinessManager.ImageMediaContentType, BusinessManager.QRCode);
+
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(response.StatusCode), response);
+        }
+       
     }
 }

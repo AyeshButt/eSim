@@ -21,12 +21,9 @@ namespace eSim.Middleware.Controllers
         }
 
         [HttpPost]
-       
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<CreateOrderResponse>))]
-       
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        
         [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequest input)
         {
@@ -42,13 +39,10 @@ namespace eSim.Middleware.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<ListOrderResponse>))]
-        
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
-        
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
         public async Task<IActionResult> ListOrder([FromQuery] ListOrderRequest input)
@@ -59,16 +53,13 @@ namespace eSim.Middleware.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("detail/{orderReferenceId}")]
-        
+        [HttpGet("detail/{orderReferenceId}")]        
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<GetOrderDetailResponse>))]
-
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Result<string>))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Result<string>))]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
-        
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
         public async Task<IActionResult> GetOrderDetail([FromRoute] string orderReferenceId)
