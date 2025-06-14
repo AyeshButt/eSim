@@ -18,6 +18,9 @@ namespace eSim.Common.StaticClasses
 
         public static string Exception = "Exception occured";
         public static string NoOrderPresent = "No order found";
+        public static string QRFailed = "Failed to get QR code";
+        public static string ImageMediaContentType = "image/png";
+        public static string QRCode = "qr-code.png";
 
         public static string MdwBaseURL = "https://localhost:7264/";
         public static string Countries = "Countries";
@@ -84,6 +87,11 @@ namespace eSim.Common.StaticClasses
         //Esim
         public static string EsimNotFound = "No eSIM data found.";
         public static string EsimDataFetched = "eSIM data fetched successfully.";
+        public static string Missingreference = "Missing reference";
+        public static string EsimInstallDetail = "Esim install detail fetched successfully ";
+        public static string EsimNotCompatible = "eSIM is not compatible with the specified bundle.";
+        public static string EsimCompatible = "eSIM is compatible with the specified bundle.";
+
 
 
         //Subscriber
@@ -109,6 +117,10 @@ namespace eSim.Common.StaticClasses
         public static string Ticketnotfound = "Ticket not found.";
         public static string Attachmentuploaded = "Attachment uploaded successfully.";
         public static string Commentadded = "Comment added successfully";
+        public static string EsimInstallDetailNotFound = "No esim install detail data found.";
+        public static string ListofEsimBundleFetched = "list of Bundles Applied to eSiM fetched successfully.";
+        
+
 
 
 

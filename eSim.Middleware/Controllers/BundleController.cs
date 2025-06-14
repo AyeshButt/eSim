@@ -1,4 +1,5 @@
-﻿using eSim.Infrastructure.DTOs.Middleware.Bundle;
+﻿using eSim.Common.StaticClasses;
+using eSim.Infrastructure.DTOs.Middleware.Bundle;
 using eSim.Infrastructure.Interfaces.Middleware;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +26,8 @@ namespace eSim.Middleware.Controllers
         {            
             var result = await _bundle.GetBundlesAsync(input);
 
-            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
+        
         }
 
         #endregion
@@ -36,8 +38,7 @@ namespace eSim.Middleware.Controllers
         {
             var result = await _bundle.GetBundleDetailsAsync(name);
 
-            return result.Success  ? StatusCode(StatusCodes.Status200OK, result): StatusCode(StatusCodes.Status400BadRequest, result);
-
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
         #endregion
 

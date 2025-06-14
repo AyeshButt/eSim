@@ -1,4 +1,5 @@
-﻿using eSim.Implementations.Services.Middleware.Subscriber;
+﻿using eSim.Common.StaticClasses;
+using eSim.Implementations.Services.Middleware.Subscriber;
 using eSim.Infrastructure.DTOs.Account;
 using eSim.Infrastructure.DTOs.Email;
 using eSim.Infrastructure.DTOs.Global;
@@ -22,7 +23,8 @@ namespace eSim.Middleware.Controllers
         public async Task<IActionResult> CheckSubscriberEmailExists([FromQuery] string email)
         {
             var result = await _subscriber.SubscriberEmailExists(email);
-            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
+        
 
         }
 
@@ -33,7 +35,7 @@ namespace eSim.Middleware.Controllers
         {
             var result = await _subscriber.CreateSubscriber(input);
 
-            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
 
         #endregion
@@ -43,7 +45,7 @@ namespace eSim.Middleware.Controllers
         {
             var result = await _password.ForgotPasswordAsync(input);
 
-            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
 
         }
 
@@ -53,7 +55,7 @@ namespace eSim.Middleware.Controllers
         {
             var result = await _password.VerifyOTPAsync(otp);
 
-            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
 
         [AllowAnonymous]
@@ -62,7 +64,7 @@ namespace eSim.Middleware.Controllers
         {
             var result = await _password.ResetPasswordAsync(input);
 
-            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
 
         [AllowAnonymous]
@@ -72,8 +74,7 @@ namespace eSim.Middleware.Controllers
            
 
             var result = await _password.ChangePasswordAsync(input);
-
-            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
 
         [AllowAnonymous]
@@ -81,8 +82,7 @@ namespace eSim.Middleware.Controllers
         public async Task<IActionResult> UpdateSubscriber(Guid id, [FromBody] UpdateSubscriberDTORequest input)
         {
             var result = await _subscriber.UpdateSubscriberAsync(id, input);
-
-            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
 
 
@@ -100,7 +100,7 @@ namespace eSim.Middleware.Controllers
 
             var result = await _subscriber.UploadProfileImageAsync(file, dto);
 
-            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
 
 

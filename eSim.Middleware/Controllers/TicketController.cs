@@ -47,7 +47,7 @@ namespace eSim.Middleware.Controllers
 
 
             var result = await _ticketServices.CreateTicketAsync(ticketDto);
-            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
 
         }
 
@@ -72,7 +72,7 @@ namespace eSim.Middleware.Controllers
           
             var result = await _ticketServices.UploadAttachmentAsync(dto);
 
-            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
 
         #endregion
@@ -83,8 +83,7 @@ namespace eSim.Middleware.Controllers
         public async Task<IActionResult> GetTicketDetail(string trn)
         {
             var result = await _ticketServices.GetTicketDetailAsync(trn);
-
-            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
         
         #endregion
@@ -100,7 +99,7 @@ namespace eSim.Middleware.Controllers
 
             var result = await _ticketServices.AddCommentAsync(input, loggedUser);
 
-            return result.Success ? StatusCode(StatusCodes.Status200OK, result) : StatusCode(StatusCodes.Status400BadRequest, result);
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
 
 
