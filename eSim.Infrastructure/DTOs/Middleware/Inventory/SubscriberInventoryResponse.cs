@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace eSim.EF.Entities
+namespace eSim.Infrastructure.DTOs.Middleware.Inventory
 {
-    public class SubscribersInventory
+    public class SubscriberInventoryResponse
     {
-        [Key]
         public Guid Id { get; set; }
         public Guid SubscriberId { get; set; }
         public string OrderRefrenceId { get; set; }

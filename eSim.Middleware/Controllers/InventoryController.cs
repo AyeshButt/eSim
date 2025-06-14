@@ -1,4 +1,5 @@
-﻿using eSim.Infrastructure.DTOs.Global;
+﻿using eSim.Common.Extensions;
+using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.DTOs.Middleware.Bundle;
 using eSim.Infrastructure.DTOs.Middleware.Inventory;
 using eSim.Infrastructure.DTOs.Middleware.Order;
@@ -33,5 +34,23 @@ namespace eSim.Middleware.Controllers
 
             return response.Success ? StatusCode(StatusCodes.Status200OK,response) : StatusCode(StatusCodes.Status400BadRequest,response);
         }
+
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<GetBundleInventoryResponse>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+        public async Task<IActionResult> GetSubscriberInventory()
+        {
+            var loggedUser = User.SubscriberId();
+
+           var response = await _inventory.GetSubscriberInventoryResponse(loggedUser);
+
+            return response.Success ? StatusCode(StatusCodes.Status200OK,response) : StatusCode(StatusCodes.Status400BadRequest,response);
+        }
+
+
     }
 }
