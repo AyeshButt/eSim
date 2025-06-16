@@ -12,6 +12,7 @@ using System.Net.Http;
 using Org.BouncyCastle.Ocsp;
 using System.Net;
 using eSim.Infrastructure.DTOs.Global;
+using eSim.Infrastructure.DTOs;
 namespace eSim.Middleware.Controllers
 {
     [Route("esims")]
@@ -82,8 +83,6 @@ namespace eSim.Middleware.Controllers
         {
             var result = await _esimService.CheckeSIMandBundleCompatibilityAsync(request);
 
-            if (result.Message is not  null)
-                return StatusCode(StatusCodes.Status403Forbidden, result);
 
             return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
@@ -96,6 +95,17 @@ namespace eSim.Middleware.Controllers
         public async Task<IActionResult> ListBundlesAppliedToESIM([FromQuery] ListBundlesAppliedToESIMRequestDTO request)
         {
             var result = await _esimService.GetListBundlesappliedtoeSIMAsync(request);
+
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
+        }
+
+        #endregion
+        #region GetappliedBundlestatus
+        [AllowAnonymous]
+        [HttpGet("appliedBundlestatus")]
+        public async Task<IActionResult> GetappliedBundlestatus([FromQuery] GetAppliedBundleStatusRequestDTO request)
+        {
+            var result = await _esimService.GetAppliedBundleStatusAsync(request);
 
             return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Azure;
 using eSim.Common.StaticClasses;
+using eSim.Infrastructure.DTOs;
 using eSim.Infrastructure.DTOs.Esim;
 using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.DTOs.Middleware.Order;
@@ -77,6 +78,43 @@ namespace eSim.Implementations.Services.Esim
                 result.Success = false;
                 result.Message = ex.Message;
             }
+            return result;
+        }
+
+        public async Task<Result<GetAppliedBundleStatusResponseDTO>> GetAppliedBundleStatusAsync(GetAppliedBundleStatusRequestDTO request)
+        {
+            var result = new Result<GetAppliedBundleStatusResponseDTO>();
+            string url = $" {BusinessManager.BaseURL}/esims/{request.Iccid}/bundles/{request.Bundle}";
+
+
+            try
+            {
+                var response = await _consumeApi.GetApi<GetAppliedBundleStatusResponseDTO>(url);
+
+                if (response == null)
+                {
+                    result.Success = false;
+                    result.Message = BusinessManager.EsimNotCompatible;
+                    return result;
+                }
+                if (response.Message is not null)
+
+                {
+                    result.Success = false;
+                    result.Message = response.Message;
+                    return result;
+                }
+                result.Success = true;
+                result.Data = response;
+
+
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = $"Error: {ex.Message}";
+            }
+
             return result;
         }
 
