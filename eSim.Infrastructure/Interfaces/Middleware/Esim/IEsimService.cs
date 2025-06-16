@@ -11,7 +11,7 @@ namespace eSim.Infrastructure.Interfaces.Middleware.Esim
 {
     public interface IEsimService
     {
-        Task<Result<GetListofyourEsimsResponseDTO>> GetListofEsimsAsync();
+        Task<Result<IQueryable<EsimsDTO>>> GetListofEsimsAsync(string loggedUser);
         Task<Result<GetEsimHistoryResponseDTO>> GetEsimHistoryAsync(string iccid);
         Task<Result<GetBundleInventoryDTORequest>> GetEsimBundleInventoryAsync();
         Task<Result<GetEsimInstallDetailReponseDTO>> GetEsimInstallDetailAsync(string reference);
