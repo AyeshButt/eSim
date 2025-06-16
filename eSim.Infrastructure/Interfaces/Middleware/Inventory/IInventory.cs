@@ -1,5 +1,6 @@
 ﻿using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.DTOs.Middleware.Inventory;
+using eSim.Infrastructure.DTOs.Middleware.Order;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,10 @@ namespace eSim.Infrastructure.Interfaces.Middleware.Inventory
 {
     public interface IInventory
     {
-        public Task<Result<GetBundleInventoryResponse>> GetBundleInventoryAsync(); 
+        public Task<Result<GetBundleInventoryResponse>> GetBundleInventoryAsync();
+        public Task<Result<string>> AddBundleInventoryAsync(GetOrderDetailResponse input, string subscriberId);
+        public Task<Result<List<SubscriberInventoryResponse>>> GetSubscriberInventoryResponse(string subscriberId);
+        public Task<Result<string>> RefundBundleAsync(RefundBundleDataBaseRequest input, string subscriberId);
+
     }
 }

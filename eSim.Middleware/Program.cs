@@ -130,6 +130,7 @@ builder.Services.AddTransient<IForgotPassword, ForgotPasswordServices>();
 builder.Services.AddTransient<IOrder, OrderService>();
 builder.Services.AddTransient<IInventory, InventoryService>();
 builder.Services.AddTransient<IEsimService, EsimService>();
+builder.Services.AddTransient<IInventory, InventoryService>();
 
 
 

@@ -32,12 +32,7 @@ namespace eSim.EF.Context
         public DbSet<AspNetUsersType> AspNetUsersType { get; set; }
         public DbSet<Orders> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
-        public DbSet<InventoryBundles> InventoryBundles { get; set; }
-        public DbSet<InventoryBundleCountries> InventoryBundleCountries { get; set; }
-        public DbSet<InventoryBundleSpeeds> InventoryBundleSpeeds { get; set; }
-        public DbSet<InventoryBundleAllowances> InventoryBundleAllowances { get; set; }
-        public DbSet<InventoryAvailableBundle> InventoryAvailableBundles { get; set; }
-
+        public DbSet<SubscribersInventory> SubscribersInventory { get; set; }
         public DbSet<Countries> Countries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -26,17 +26,19 @@ namespace eSim.Implementations.Services.Middleware.Order
         private readonly ApplicationDbContext _db;
         private readonly IConsumeApi _consume;
         private readonly IEmailService _email;
+        private readonly IInventory _inventory;
 
-        public OrderService(ApplicationDbContext db, IConsumeApi consume, IEmailService email)
+        public OrderService(ApplicationDbContext db, IConsumeApi consume, IEmailService email, IInventory inventory)
         {
             _db = db;
             _consume = consume;
             _email = email;
+            _inventory = inventory;
         }
         public async Task<Result</*CreateOrderResponse*/ GetOrderDetailResponse>> CreateOrderAsync(CreateOrderRequest input,string subscriberId)
         {
             var result = new Result</*CreateOrderResponse*/ GetOrderDetailResponse>();
-            var orderRefId = "6875ae78-0f7d-4026-84bb-f6989036a71a";
+            var orderRefId = "1505bd98-54a3-49fb-bcfb-5c027389f163";
 
             string url = $"{BusinessManager.BaseURL}/orders";
 
@@ -100,11 +102,12 @@ namespace eSim.Implementations.Services.Middleware.Order
                     });
 
                     await _db.OrderDetails.AddRangeAsync(orderDetails);
-
+                    
                     await _db.SaveChangesAsync();
 
+                    await _inventory.AddBundleInventoryAsync(orderDetailResponse, subscriberId);
+
                     result.Data = response.Data;
-                    throw new Exception();
                 }
             }
             catch (Exception ex)
