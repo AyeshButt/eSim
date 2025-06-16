@@ -11,8 +11,10 @@ namespace eSim.Infrastructure.Interfaces.Middleware.Inventory
 {
     public interface IInventory
     {
-        public Task<Result<GetBundleInventoryResponse>> GetBundleInventoryAsync(); 
+        public Task<Result<GetBundleInventoryResponse>> GetBundleInventoryAsync();
         public Task<Result<string>> AddBundleInventoryAsync(GetOrderDetailResponse input, string subscriberId);
         public Task<Result<List<SubscriberInventoryResponse>>> GetSubscriberInventoryResponse(string subscriberId);
+        public Task<Result<string>> RefundBundleAsync(RefundBundleDataBaseRequest input, string subscriberId);
+
     }
 }

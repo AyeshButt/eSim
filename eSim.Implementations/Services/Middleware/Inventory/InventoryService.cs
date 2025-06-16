@@ -1,4 +1,5 @@
-﻿using eSim.Common.StaticClasses;
+﻿using Azure;
+using eSim.Common.StaticClasses;
 using eSim.EF.Context;
 using eSim.EF.Entities;
 using eSim.Infrastructure.DTOs.Email;
@@ -37,6 +38,8 @@ namespace eSim.Implementations.Services.Middleware.Inventory
             _email = email;
         }
 
+        #region main inventory from eSim Go
+
         public async Task<Result<GetBundleInventoryResponse>> GetBundleInventoryAsync()
         {
             var result = new Result<GetBundleInventoryResponse>();
@@ -65,6 +68,10 @@ namespace eSim.Implementations.Services.Middleware.Inventory
 
             return result;
         }
+
+        #endregion
+
+        #region add bundle detail in subscribers inventory
 
         public async Task<Result<string>> AddBundleInventoryAsync(GetOrderDetailResponse input, string subscriberId)
         {
@@ -129,6 +136,10 @@ namespace eSim.Implementations.Services.Middleware.Inventory
             }
         }
 
+        #endregion
+
+        #region get list of bundles from subscribers inventory
+
         public async Task<Result<List<SubscriberInventoryResponse>>> GetSubscriberInventoryResponse(string subscriberId)
         {
             Result<List<SubscriberInventoryResponse>> result = new();
@@ -171,5 +182,121 @@ namespace eSim.Implementations.Services.Middleware.Inventory
                 return result;
             }
         }
+
+        #endregion
+
+        #region refund bundle from subscribers inventory
+        public async Task<Result<string>> RefundBundleAsync(RefundBundleDataBaseRequest input, string subscriberId)
+        {
+            Result<string> result = new Result<string>();
+            var subID = Guid.Parse(subscriberId);
+
+            try
+            {
+                //find the selected bundle form database against the subscriber
+                var subscriberBundls = _db.SubscribersInventory
+                    .FirstOrDefault(x => x.SubscriberId == subID && x.Item == input.Item);
+
+                if (subscriberBundls == null)
+                {
+                    result.Success = false;
+                    result.Message = "No Bundle Found From subscriber Inventory";
+                    return result;
+                }
+
+                if (subscriberBundls.Quantity < input.Quantity)
+                {
+                    result.Success = false;
+                    result.Message = "Quantity Mismatch";
+                    return result;
+                }
+
+                //get all the available bundles from inventory
+
+                Result<GetBundleInventoryResponse> inventory = await GetBundleInventoryAsync();
+
+                if (!inventory.Success || inventory.Data == null)
+                {
+                    result.Success = false;
+                    result.Message = "something went wrong";
+                    return result;
+                }
+
+                var matchedBundle = inventory.Data.Bundles
+                    .FirstOrDefault(b => b.Name == subscriberBundls.Item);
+
+                if (matchedBundle == null)
+                {
+                    result.Success = false;
+                    result.Message = "There is no bundle in inventory";
+                    return result;
+                }
+
+
+                //Executing the refund bundle Method
+
+                RefundBundleInventoryRequest request = new RefundBundleInventoryRequest()
+                {
+                    usageId = matchedBundle.Available.FirstOrDefault()?.Id,
+                    quantity = matchedBundle.Available.FirstOrDefault()?.Total
+                };
+
+                var refundedBundle = await RefundAsync(request);
+
+                if (refundedBundle.Success)
+                {
+                    //delete the bundle from subscribers inventory
+                    _db.SubscribersInventory.Remove(subscriberBundls);
+                    await _db.SaveChangesAsync();
+
+                    result.Message = refundedBundle.Message;
+                    return result;
+                }
+
+                result.Success = false;
+                result.Message = refundedBundle.Message;
+                return result;
+
+            }
+            catch (Exception ex) 
+            {
+                result.Success = false;
+                result.Message = ex.Message;
+                return result;
+            }
+        }
+
+
+        //calling refund Api of eSim Go
+
+        private async Task<Result<string>> RefundAsync(RefundBundleInventoryRequest request)
+        {
+            Result<string> result = new();
+            var Url = $"{BusinessManager.BaseURL}/inventory/refund";
+
+            try
+            {
+                var response = await _consume.PostApi<RefundBundleResponse, RefundBundleInventoryRequest>(Url, request);
+
+                if (response.Status != null && response.Status.Contains("Successfully", StringComparison.OrdinalIgnoreCase)) 
+                { 
+                    result.Message = response.Status;
+                    return result;
+                }
+
+                result.Success = false;
+                result.Message = response.Status;
+                return result;
+
+            }
+            catch (Exception ex) 
+            {
+                result.Success = false;
+                result.Message = ex.Message;
+                return result;
+            }
+        }
+        #endregion
+
     }
 }

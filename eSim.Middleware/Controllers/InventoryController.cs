@@ -32,10 +32,10 @@ namespace eSim.Middleware.Controllers
         {
             var response = await _inventory.GetBundleInventoryAsync();
 
-            return response.Success ? StatusCode(StatusCodes.Status200OK,response) : StatusCode(StatusCodes.Status400BadRequest,response);
+            return response.Success ? StatusCode(StatusCodes.Status200OK, response) : StatusCode(StatusCodes.Status400BadRequest, response);
         }
 
-        [HttpGet]
+        [HttpGet("subscriber")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<GetBundleInventoryResponse>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -46,11 +46,32 @@ namespace eSim.Middleware.Controllers
         {
             var loggedUser = User.SubscriberId();
 
-           var response = await _inventory.GetSubscriberInventoryResponse(loggedUser);
+            if (loggedUser is null)
+                return StatusCode(StatusCodes.Status401Unauthorized, new Result<string> { Success = false, Message = string.Empty });
+
+            var response = await _inventory.GetSubscriberInventoryResponse(loggedUser);
 
             return response.Success ? StatusCode(StatusCodes.Status200OK,response) : StatusCode(StatusCodes.Status400BadRequest,response);
         }
 
 
+        [HttpPost("refund")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<GetBundleInventoryResponse>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+        public async Task<IActionResult> RefundBundle(RefundBundleDataBaseRequest model)
+        {
+            var loggedUser = User.SubscriberId();
+
+            if (loggedUser is null)
+                return StatusCode(StatusCodes.Status401Unauthorized, new Result<string> { Success = false, Message = string.Empty });
+
+            var response = await _inventory.RefundBundleAsync(model, loggedUser);   
+
+            return response.Success ? StatusCode(StatusCodes.Status200OK, response) : StatusCode(StatusCodes.Status400BadRequest, response);
+        }
     }
 }

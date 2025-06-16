@@ -8,7 +8,6 @@ namespace eSim.Infrastructure.DTOs.Middleware.Inventory
 {
     public class SubscriberInventoryResponse
     {
-        public Guid Id { get; set; }
         public Guid SubscriberId { get; set; }
         public string OrderRefrenceId { get; set; }
         public string? Type { get; set; }
