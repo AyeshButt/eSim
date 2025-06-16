@@ -86,12 +86,13 @@ namespace eSim.Common.StaticClasses
         public static string InvalidLOgin = "Invalid-credentials";
         //Esim
         public static string EsimNotFound = "No eSIM data found.";
+        public static string EmptyEsimList = "No eSIM available";
         public static string EsimDataFetched = "eSIM data fetched successfully.";
         public static string Missingreference = "Missing reference";
         public static string EsimInstallDetail = "Esim install detail fetched successfully ";
         public static string EsimNotCompatible = "eSIM is not compatible with the specified bundle.";
         public static string EsimCompatible = "eSIM is compatible with the specified bundle.";
-
+        
 
 
         //Subscriber
