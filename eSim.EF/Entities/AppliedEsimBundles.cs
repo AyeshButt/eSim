@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 
 namespace eSim.EF.Entities
 {
-    public class InventoryBundleCountries
+    public class AppliedEsimBundles
     {
         [Key]
-        public Guid Id { get; set; }
-        public Guid InventoryBundleId { get; set; }
-        public string Name { get; set; }
-        //new comment
-
+        public string Id { get; set; }
+        public string Iccid { get; set; }
+        public string BundleName { get; set; }
+        public DateTime AssignedDate { get; set; }
     }
 }

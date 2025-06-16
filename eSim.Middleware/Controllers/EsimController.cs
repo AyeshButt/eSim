@@ -12,7 +12,7 @@ using System.Net.Http;
 using Org.BouncyCastle.Ocsp;
 using System.Net;
 using eSim.Infrastructure.DTOs.Global;
-using eSim.Infrastructure.DTOs;
+using eSim.Common.Extensions;
 namespace eSim.Middleware.Controllers
 {
     [Route("esims")]
@@ -27,11 +27,25 @@ namespace eSim.Middleware.Controllers
         }
 
         #region ListofEsim
-        [AllowAnonymous]
-        [HttpGet("List")]
-        public async Task<IActionResult>  GetListofyoureSims()
+        [Authorize]
+        [HttpGet("list")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetListofyoureSims()
         {
-            var result = await _esimService.GetListofEsimsAsync();
+            var loggedUser = User.SubscriberId();
+
+            if (loggedUser is null)
+                return Unauthorized();
+
+            var result = await _esimService.GetListofEsimsAsync(loggedUser);
+
+            if (result.Data is not null)
+                result.Data.ToList();
 
             return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         
@@ -112,6 +126,7 @@ namespace eSim.Middleware.Controllers
 
         #endregion
 
+        
         [AllowAnonymous]
         [HttpGet("{iccid}/qr")]
         [ProducesResponseType(StatusCodes.Status200OK)]
