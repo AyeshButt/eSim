@@ -11,6 +11,7 @@ using Azure;
 using eSim.Common.StaticClasses;
 using eSim.EF.Context;
 using eSim.EF.Entities;
+using eSim.Infrastructure.DTOs;
 using eSim.Infrastructure.DTOs.Esim;
 using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.DTOs.Middleware.Order;
@@ -234,6 +235,7 @@ namespace eSim.Implementations.Services.Esim
             string url = $" {BusinessManager.BaseURL}/esims/{request.Iccid}/compatible/{request.Bundle}";
 
 
+
             try
             {
                 var response = await _consumeApi.GetApi<EsimCompatibilityResponseDTO>(url);
@@ -285,7 +287,7 @@ namespace eSim.Implementations.Services.Esim
             return result;
         }
 
-        #endregion
+  
 
         #region Esim history
 
@@ -317,7 +319,7 @@ namespace eSim.Implementations.Services.Esim
             if (string.IsNullOrWhiteSpace(reference))
             {
                 result.Success = false;
-                result.Message = BusinessManager.Missingreference;
+                result.Message = BusinessManager.Missingreference; 
                 return result;
             }
             string url = $"{BusinessManager.BaseURL}/esims/assignments?reference={reference}";
@@ -326,7 +328,7 @@ namespace eSim.Implementations.Services.Esim
             {
                 var response = await _consumeApi.GetApi<GetEsimInstallDetailReponseDTO>(url);
 
-                if (response == null)
+                if (response == null )
                 {
                     result.Success = false;
                     result.Message = BusinessManager.EsimInstallDetailNotFound;

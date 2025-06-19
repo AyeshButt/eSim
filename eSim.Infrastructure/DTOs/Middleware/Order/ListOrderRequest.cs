@@ -52,7 +52,7 @@ namespace eSim.Infrastructure.DTOs.Middleware.Order
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public double SubTotal { get; set; }
         public double PricePerUnit { get; set; }
-        public bool AllowReassign { get; set; }
+        public bool AllowReassign { get; set; } 
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public List<Esim> Esims { get; set; }

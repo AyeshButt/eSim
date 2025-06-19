@@ -11,14 +11,14 @@ namespace eSim.Infrastructure.Interfaces.Middleware.Ticket
 {
     public interface ITicketServices
     {
-        Task<Result<string?>> CreateTicketAsync(TicketRequestDTORequest ticketDto);
-        Result<IQueryable<TicketsResponseDTO>> Tickets();
-        Task<Result<string?>> UploadAttachmentAsync(TicketAttachmentDTORequest dto);
+        Task<Result<string?>> CreateTicketAsync(TicketRequest input);
+        Result<IQueryable<TicketsResponse>> Tickets();
+        Task<Result<string?>> UploadAttachmentAsync(TicketAttachmentRequest input);
 
         Task<Result<TicketDTO?>> GetTicketDetailAsync(string trn);
-        Result<List<TicketTypeResponseDTO>> GetTicketType();
+        Result<List<TicketTypeResponse>> GetTicketType();
 
-        Task<Result<TicketCommentDTORequest>> AddCommentAsync(TicketCommentDTORequest dto,string userId);
+        Task<Result<TicketCommentRequest>> AddCommentAsync(TicketCommentRequest input,string userId);
 
     }
 }

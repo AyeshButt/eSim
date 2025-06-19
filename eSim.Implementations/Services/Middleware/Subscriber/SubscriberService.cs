@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using eSim.Common.StaticClasses;
 using eSim.EF.Context;
@@ -37,10 +38,13 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
         {
             var result = new Result<string>();
 
-            if (string.IsNullOrEmpty(email))
+            var isValidEmail = Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+
+            if (!isValidEmail) 
             {
                 result.Success = false;
-                result.Message = BusinessManager.EmailRequired;
+                result.Message = BusinessManager.validemailaddress;
+                result.StatusCode = StatusCodes.Status400BadRequest;
                 return result;
             }
 
@@ -48,6 +52,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
 
             result.Success = true;
             result.Message = exists ? BusinessManager.EmailExist : BusinessManager.EmailAvailable;
+            result.StatusCode = StatusCodes.Status200OK;
             return result;
         }
         public async Task<Result<string>> CreateSubscriber(SubscriberDTORequest input)
@@ -59,11 +64,11 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             try
             {
                 var client = await _db.Client.FirstOrDefaultAsync(c => c.Name == input.MerchantId);
-            
-                if (client == null)
+                if (client == null || !Regex.IsMatch(input.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
                 {
                     result.Success = false;
-                    result.Message = BusinessManager.InvalidMerchant;
+                    result.Message = client == null ? BusinessManager.InvalidMerchant : BusinessManager.Invalidemailformat;
+                    result.StatusCode = StatusCodes.Status400BadRequest;
                     return result;
                 }
 
@@ -104,13 +109,15 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 {
                     await transaction.RollbackAsync();
                     result.Success = false;
-                    result.Message = $"Email send failed: {ex.Message}";
+                    result.Message = ex.Message;
+                    result.StatusCode = StatusCodes.Status500InternalServerError;
                     return result;
 
                 }
                 finally
                 {
                     result.Message = BusinessManager.SubscriberCreatedSuccessfully;
+                    result.StatusCode=StatusCodes.Status200OK;
                 }
               
 
@@ -149,6 +156,8 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 {
                     result.Success = false;
                     result.Message = BusinessManager.SubscriberNotFound;
+                    result.StatusCode = StatusCodes.Status400BadRequest; 
+                    return result;
                    
                 }
 
@@ -167,7 +176,13 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                return new Result<string> { Success = false, Message = ex.Message };
+                {
+                    result.Success = false;
+                    result.Message = ex.Message;
+                    result.StatusCode = StatusCodes.Status500InternalServerError;
+                    return result;
+                }
+                
             }
            return result;
         }
@@ -184,18 +199,15 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
               
                 {
                     result.Success = false;
+
                      result.Message =BusinessManager.Noimagefileprovided;
+                    result.StatusCode = StatusCodes.Status400BadRequest;
                     return result;
                 };
             }
             try
             {
-                if (file == null || file.Length == 0)
-                {
-                    result.Success = false;
-                    result.Message = BusinessManager.NoFileProvided;
-                    return result;
-                }
+               
 
                 var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
                 var ext = Path.GetExtension(file.FileName).ToLower();
@@ -226,6 +238,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 {
                     result.Success = false;
                     result.Message = BusinessManager.Subscribernotfound;
+                    result.StatusCode = StatusCodes.Status400BadRequest;
                     return result;
                 }
 
@@ -236,11 +249,14 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
 
                 result.Success = true;
                 result.Message = BusinessManager.ImageUploaded;
+                result.StatusCode = StatusCodes.Status200OK; 
+                return result;
             }
             catch (Exception ex)
             {
                 result.Success = false;
                 result.Message =ex.Message ;
+                result.StatusCode = StatusCodes.Status500InternalServerError;
             }
 
             return result;

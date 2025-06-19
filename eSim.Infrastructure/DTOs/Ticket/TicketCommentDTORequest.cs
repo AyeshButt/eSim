@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace eSim.Infrastructure.DTOs.Ticket
 {
-    public class TicketCommentDTORequest
+    public class TicketCommentRequest
     {
         [Required(ErrorMessage = "TRN is required.")]
         public string TRN { get; set; } = null!;

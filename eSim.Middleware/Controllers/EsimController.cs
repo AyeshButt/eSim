@@ -13,6 +13,7 @@ using Org.BouncyCastle.Ocsp;
 using System.Net;
 using eSim.Infrastructure.DTOs.Global;
 using eSim.Common.Extensions;
+using eSim.Infrastructure.DTOs;
 namespace eSim.Middleware.Controllers
 {
     [Route("esims")]
@@ -110,6 +111,17 @@ namespace eSim.Middleware.Controllers
         public async Task<IActionResult> ListBundlesAppliedToESIM([FromQuery] ListBundlesAppliedToESIMRequestDTO request)
         {
             var result = await _esimService.GetListBundlesappliedtoeSIMAsync(request);
+
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
+        }
+
+        #endregion
+        #region GetappliedBundlestatus
+        [AllowAnonymous]
+        [HttpGet("appliedBundlestatus")]
+        public async Task<IActionResult> GetappliedBundlestatus([FromQuery] GetAppliedBundleStatusRequestDTO request)
+        {
+            var result = await _esimService.GetAppliedBundleStatusAsync(request);
 
             return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }

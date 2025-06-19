@@ -21,14 +21,14 @@ namespace eSim.Implementations.Services.Selfcare.Bundle
 
         public async Task<Result<GetBundleCatalogueResponse>> GetBundles()
         {
-            RegionDTORequest dto = new()
+            BundleRequest dto = new()
             {
                 Region = "Europe"
             };
             var Url = BusinessManager.MdwBaseURL + BusinessManager.BundelRegion;
             
  
-            var response = await _consumeApi.Post<GetBundleCatalogueResponse, RegionDTORequest>(Url, dto);
+            var response = await _consumeApi.Post<GetBundleCatalogueResponse, BundleRequest>(Url, dto);
 
             return response;
         }

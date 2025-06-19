@@ -34,12 +34,12 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
         }
 
         #region GetTicket List 
-        public async Task<Result<List<TicketsResponseDTO>>> Get()
+        public async Task<Result<List<TicketsResponse>>> Get()
         {
 
             string URL = BusinessManager.MdwBaseURL + BusinessManager.Ticekt;
 
-            var data = await _consumeApi.Get<List<TicketsResponseDTO>>(URL);
+            var data = await _consumeApi.Get<List<TicketsResponse>>(URL);
 
             return data;
 
@@ -49,13 +49,13 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
 
 
         #region Get Ticket Type
-        public async Task<Result<List<TicketTypeResponseDTO>>> GetTicketType()
+        public async Task<Result<List<TicketTypeResponse>>> GetTicketType()
         {
 
             string URL = BusinessManager.MdwBaseURL + BusinessManager.TicketType;
 
            
-            var response = await _consumeApi.Get<List<TicketTypeResponseDTO>>(URL);
+            var response = await _consumeApi.Get<List<TicketTypeResponse>>(URL);
 
             return response;
             
@@ -74,7 +74,7 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
 
             try
             {
-                TicketRequestDTORequest dto = new()
+                TicketRequest dto = new()
                 {
                     TicketType = model.TicketType,
                     Subject = model.Subject,

@@ -10,7 +10,7 @@ namespace eSim.Infrastructure.DTOs.Selfcare.Ticket
 {
     public class TicketRequestViewModel 
     {
-        public List<TicketTypeResponseDTO> Types { get; set; } = new();
+        public List<TicketTypeResponse> Types { get; set; } = new();
 
         [Required(ErrorMessage = "select ticket Type")]
         public int TicketType { get; set; }

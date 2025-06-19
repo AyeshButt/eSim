@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace eSim.Infrastructure.DTOs.Ticket
 {
-    public class TicketRequestDTORequest
+    public class TicketRequest
     {
-        [Required (ErrorMessage ="select ticket Type")]
+        [Required(ErrorMessage = "Select ticket type")]
+  
         public int TicketType { get; set; }
 
         [Required(ErrorMessage ="Subject is required")]
@@ -18,15 +19,16 @@ namespace eSim.Infrastructure.DTOs.Ticket
 
         [Required(ErrorMessage = "Description is Required")]
         public string Description { get; set; } = null!;
-       
+        
     }
 
 
-    public class TicketsResponseDTO
+    public class TicketsResponse
     {
         public string TRN { get; set; }
         public string Subject { get; set; }
         public string Type { get; set; }
+        public string status { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 

@@ -20,6 +20,7 @@ namespace eSim.Infrastructure.DTOs.Esim
         public bool Compatible { get; set; }
         public string? Message { get; set; }
     }
+   
 
 
 }
