@@ -32,6 +32,7 @@ namespace eSim.Implementations.Services.Esim
             _consumeApi = consumeApi;
             _db = db;
         }
+
         #region Apply bundle to a new esim
         public async Task<Result<ApplyBundleToEsimResponse>> ApplyBundleToEsimAsync(ApplyBundleToEsimRequest input, string loggedUser)
         {
@@ -171,11 +172,11 @@ namespace eSim.Implementations.Services.Esim
                     result.Success = false;
                     result.Message = response.Message;
 
-                    if(result.Message == BusinessManager.IncompatibleBundle)
+                    if (result.Message == BusinessManager.IncompatibleBundle)
                     {
                         result.StatusCode = StatusCodes.Status400BadRequest;
                     }
-                    else if(result.Message == BusinessManager.NotFound)
+                    else if (result.Message == BusinessManager.NotFound)
                     {
                         result.StatusCode = StatusCodes.Status404NotFound;
                     }
@@ -287,18 +288,39 @@ namespace eSim.Implementations.Services.Esim
             return result;
         }
 
-  
+        #endregion
+
+        #region Esim details
+        public async Task<Result<GetEsimDetailsResponse>> GetEsimDetailsAsync(string iccid, string? additionalfields)
+        {
+            var result = new Result<GetEsimDetailsResponse>();
+            
+            string url = additionalfields is not null ? $"{BusinessManager.BaseURL}/esims/{iccid}?additionalFields={additionalfields}" : $"{BusinessManager.BaseURL}/esims/{iccid}";
+
+            try
+            {
+                result = await _consumeApi.GetApii<GetEsimDetailsResponse>(url);
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.StatusCode = StatusCodes.Status500InternalServerError;
+                result.Message = ex.Message;
+            }
+            return result;
+        }
+        #endregion
 
         #region Esim history
 
-        public async Task<Result<GetEsimHistoryResponseDTO>> GetEsimHistoryAsync(string iccid)
+        public async Task<Result<GetEsimHistoryResponse>> GetEsimHistoryAsync(string iccid)
         {
-            var result = new Result<GetEsimHistoryResponseDTO>();
+            var result = new Result<GetEsimHistoryResponse>();
             string url = $"{BusinessManager.BaseURL}/esims/{iccid}/history";
 
             try
             {
-                result = await _consumeApi.GetApii<GetEsimHistoryResponseDTO>(url);
+                result = await _consumeApi.GetApii<GetEsimHistoryResponse>(url);
             }
             catch (Exception ex)
             {
@@ -319,7 +341,7 @@ namespace eSim.Implementations.Services.Esim
             if (string.IsNullOrWhiteSpace(reference))
             {
                 result.Success = false;
-                result.Message = BusinessManager.Missingreference; 
+                result.Message = BusinessManager.Missingreference;
                 return result;
             }
             string url = $"{BusinessManager.BaseURL}/esims/assignments?reference={reference}";
@@ -328,7 +350,7 @@ namespace eSim.Implementations.Services.Esim
             {
                 var response = await _consumeApi.GetApi<GetEsimInstallDetailReponseDTO>(url);
 
-                if (response == null )
+                if (response == null)
                 {
                     result.Success = false;
                     result.Message = BusinessManager.EsimInstallDetailNotFound;
@@ -428,7 +450,7 @@ namespace eSim.Implementations.Services.Esim
         }
         #endregion
 
-        private async Task<bool> UpdateInventory(string subscriberId,string bundle)
+        private async Task<bool> UpdateInventory(string subscriberId, string bundle)
         {
             bool result = false;
 
@@ -452,9 +474,9 @@ namespace eSim.Implementations.Services.Esim
                 }
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                
+
             }
             return result;
         }

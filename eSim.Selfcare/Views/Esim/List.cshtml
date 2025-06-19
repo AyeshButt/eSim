@@ -23,12 +23,12 @@
                         {
                             @foreach (var item in Model)
                             {
-                                <tr class="View-Detail" data-iccid="@item" data-bs-toggle="modal" data-bs-target=".bs-example-modal-center">
+                                <tr class="View-Detail" data-iccid="@item.Iccid" data-bs-toggle="modal" data-bs-target=".bs-example-modal-center">
                                     <td> <i class="mdi mdi-qrcode mdi-24px" ></i>  @item.Iccid</td>
                                     <td>@item.CustomerRef</td>
                                     <td>@item.LastAction</td>
-                                    <td>$@item.ActionDate</td>
-                                    <td>$@item.AssignedDate</td>
+                                    <td>@item.ActionDate</td>
+                                    <td>@item.AssignedDate</td>
                                     <td><button class="btn btn-sm btn-soft-primary">!</button> <button class="btn btn-sm btn-soft-primary rounded-pill">+</button></td>
                                 </tr>
                             }

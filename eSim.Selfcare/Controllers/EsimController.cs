@@ -1,4 +1,6 @@
 ﻿using System.Threading.Tasks;
+using eSim.Infrastructure.DTOs.Esim;
+using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.Interfaces.Selfcare.Esim;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,16 +15,22 @@ namespace eSim.Selfcare.Controllers
         [HttpGet]
         public async Task<IActionResult> List()
         {
-            var response = await _esim.GetEsimList();
+            var response = await _esim.GetEsimListAsync();
 
             return View(response.Data);
         }
 
         [HttpGet]
-        public ActionResult Detail(string iccid)
+        public async Task<IActionResult> Detail(string iccid)
         {
-            var detail = _esim.GetDetail(iccid);
-            return PartialView("_EsimDetailPartial", detail.Result.Data);
+            var result = new EsimDetailsPartialViewModel();
+
+            result.EsimDetails = await _esim.GetEsimDetailsAsync(iccid);
+            result.EsimHistory = await _esim.GetEsimHistoryAsync(iccid);
+
+            return PartialView("_EsimDetailPartial", result);
         }
+
     }
 }
+
