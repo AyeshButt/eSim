@@ -26,10 +26,10 @@ namespace eSim.Middleware.Controllers
             _esimService = esimService;
         }
 
-        #region ListofEsim
+        #region List eSIMs
         [Authorize]
         [HttpGet("list")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<EsimsDTO>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -44,43 +44,42 @@ namespace eSim.Middleware.Controllers
 
             var result = await _esimService.GetListofEsimsAsync(loggedUser);
 
-            if (result.Data is not null)
-                result.Data.ToList();
-
             return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
-        
+
         }
         #endregion
 
-        #region History of  Esim
-        [AllowAnonymous]
-        [HttpGet("History")]
-        public async Task<IActionResult> GetEsimHistory([FromQuery] string iccid)
+        #region Get eSIM history
+
+        [Authorize]
+        [HttpGet("{iccid}/history")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+        public async Task<IActionResult> GetEsimHistory([FromRoute] string iccid)
         {
             var result = await _esimService.GetEsimHistoryAsync(iccid);
 
-
             return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
 
         #endregion
-        
-        #region EsimBundleInventory
-        [AllowAnonymous]
-        [HttpGet("Inventory")]
-        public async Task<IActionResult> GetBundleInventory()
-        {
-            var result = await _esimService.GetEsimBundleInventoryAsync();
 
-            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
-        
-        }
+        #region Get eSIM Install Details
 
-        #endregion
-        
-        #region EsimBundleInventory
-        [AllowAnonymous]
-        [HttpGet("EsimInstallDetail")]
+        [Authorize]
+        [HttpGet("install-details")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
         public async Task<IActionResult> GetEsimInstallDetail([FromQuery] string reference)
         {
             var result = await _esimService.GetEsimInstallDetailAsync(reference);
@@ -89,7 +88,7 @@ namespace eSim.Middleware.Controllers
         }
 
         #endregion
-        
+
         #region EsimBundleInventory
         [AllowAnonymous]
         [HttpGet("eSIMCompatibility")]
@@ -97,14 +96,14 @@ namespace eSim.Middleware.Controllers
         {
             var result = await _esimService.CheckeSIMandBundleCompatibilityAsync(request);
 
-            if (result.Message is not  null)
+            if (result.Message is not null)
                 return StatusCode(StatusCodes.Status403Forbidden, result);
 
             return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
 
         #endregion
-        
+
         #region ListBundlesAppliedToESIM
         [AllowAnonymous]
         [HttpGet("ListBundlesAppliedToESIM")]
@@ -117,23 +116,78 @@ namespace eSim.Middleware.Controllers
 
         #endregion
 
-        
+        #region Download QR
+
         [AllowAnonymous]
         [HttpGet("{iccid}/qr")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized,Type = typeof(Result<string>))]        
-        [ProducesResponseType(StatusCodes.Status403Forbidden,Type = typeof(Result<string>))]
-        [ProducesResponseType(StatusCodes.Status404NotFound,Type = typeof(Result<string>))]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError,Type = typeof(Result<string>))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(Result<string>))]
+        [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(Result<string>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Result<string>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Result<string>))]
         public async Task<IActionResult> DownloadQR([FromRoute] string iccid)
         {
             var response = await _esimService.DownloadQRAsync(iccid);
 
-            if(response.Data is not null)
-            return File(response.Data, BusinessManager.ImageMediaContentType, BusinessManager.QRCode);
+            if (response.Data is not null)
+                return File(response.Data, BusinessManager.ImageMediaContentType, BusinessManager.QRCode);
 
             return StatusCode(HttpStatusCodeMapper.FetchStatusCode(response.StatusCode), response);
         }
-       
+
+        #endregion
+
+        #region Apply bundle to an existing esim
+
+        [AllowAnonymous]
+        [HttpPost("apply-bundle-existing-esim")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<string>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Result<string>))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(Result<string>))]
+        [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(Result<string>))]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests, Type = typeof(Result<string>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Result<string>))]
+        [ProducesResponseType(StatusCodes.Status503ServiceUnavailable, Type = typeof(Result<string>))]
+        public async Task<IActionResult> ApplyBundleToExistingEsim(ApplyBundleToExistingEsimRequest input)
+        {
+            Result<ApplyBundleToEsimResponse> response = new();
+
+            var loggedUser = "c595c0f5-9a8b-4cec-9733-08dda9a3fe55";
+
+            if (loggedUser == null)
+                return Unauthorized();
+
+            response = await _esimService.ApplyBundleToExistingEsimAsync(input, loggedUser);
+
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(response.StatusCode), response);
+        }
+
+        #endregion
+
+        #region Apply bundle to a new esim
+
+        [AllowAnonymous]
+        [HttpPost("apply-bundle-new-esim")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<ApplyBundleToEsimResponse>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Result<ApplyBundleToEsimResponse>))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(Result<string>))]
+        [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(Result<ApplyBundleToEsimResponse>))]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests, Type = typeof(Result<ApplyBundleToEsimResponse>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Result<ApplyBundleToEsimResponse>))]
+        [ProducesResponseType(StatusCodes.Status503ServiceUnavailable, Type = typeof(Result<ApplyBundleToEsimResponse>))]
+        public async Task<IActionResult> ApplyBundleToEsim(ApplyBundleToEsimRequest input)
+        {
+            //var loggedUser = User.SubscriberId();
+            var loggedUser = "c595c0f5-9a8b-4cec-9733-08dda9a3fe55";
+
+            if (loggedUser == null)
+                return Unauthorized();
+
+            var response = await _esimService.ApplyBundleToEsimAsync(input, loggedUser);
+
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(response.StatusCode), response);
+        }
+
+        #endregion
     }
 }

@@ -6,9 +6,11 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 using Azure;
 using eSim.Common.StaticClasses;
 using eSim.EF.Context;
+using eSim.EF.Entities;
 using eSim.Infrastructure.DTOs.Esim;
 using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.DTOs.Middleware.Order;
@@ -16,6 +18,7 @@ using eSim.Infrastructure.Interfaces.ConsumeApi;
 using eSim.Infrastructure.Interfaces.Middleware.Esim;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using static Raven.Client.Linq.LinqPathProvider;
 
 namespace eSim.Implementations.Services.Esim
 {
@@ -28,6 +31,202 @@ namespace eSim.Implementations.Services.Esim
             _consumeApi = consumeApi;
             _db = db;
         }
+        #region Apply bundle to a new esim
+        public async Task<Result<ApplyBundleToEsimResponse>> ApplyBundleToEsimAsync(ApplyBundleToEsimRequest input, string loggedUser)
+        {
+            var result = new Result<ApplyBundleToEsimResponse>();
+            ApplyBundleToEsimResponse? response = new();
+
+            var url = $"{BusinessManager.BaseURL}/esims/apply";
+
+            try
+            {
+                response = await _consumeApi.PostApi<ApplyBundleToEsimResponse, ApplyBundleToEsimRequest>(url, input);
+
+                if (response is null)
+                {
+                    result.Success = false;
+                    result.Message = BusinessManager.Exception;
+                    return result;
+                }
+
+                if (response.Message is not null)
+                {
+                    result.Success = false;
+                    result.Message = response.Message;
+
+                    result.StatusCode = result.Message == BusinessManager.InternalServerError ? StatusCodes.Status500InternalServerError : StatusCodes.Status404NotFound;
+
+                    return result;
+                }
+
+                result.Data = response;
+                result.StatusCode = StatusCodes.Status200OK;
+
+                #region Update Subscriber Inventory
+
+                var subscriberInventoryUpdate = await UpdateInventory(loggedUser, input.Name);
+
+                #endregion
+
+                #region Esim Entry
+
+                var fetchIccid = response.Esims.Select(u => u.Iccid).FirstOrDefault();
+
+                string esimListUrl = $"{BusinessManager.BaseURL}/esims?filter={fetchIccid}&filterBy=iccid";
+
+                var esimListResponse = await _consumeApi.GetApii<ListEsimsResponse>(esimListUrl);
+
+                if (!esimListResponse.Success)
+                {
+                    //send email with full response and ask admin to manually dump data
+
+                    result.Success = false;
+                    result.Message = BusinessManager.DataDumpingIssue;
+
+                    return result;
+                }
+
+                var esimDetails = esimListResponse.Data?.Esims?.Select(u => new Esims()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    CustomerRef = u.CustomerRef ?? string.Empty,
+                    LastAction = u.LastAction ?? string.Empty,
+                    AssignedDate = u.ActionDate,
+                    Iccid = u.Iccid ?? string.Empty,
+                    ActionDate = u.ActionDate,
+                    SubscriberId = loggedUser,
+                    Physical = u.Physical,
+                }).FirstOrDefault();
+
+                if (esimDetails is not null)
+                {
+                    await _db.Esims.AddRangeAsync(esimDetails);
+                    await _db.SaveChangesAsync();
+                }
+
+                #endregion
+
+                #region Applied Esim Bundles Entry
+
+                var esim = response.Esims.Select(u => new AppliedEsimBundles()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Iccid = u.Iccid,
+                    AssignedDate = BusinessManager.GetDateTimeNow(),
+                    BundleName = u.Bundle,
+                }).FirstOrDefault();
+
+                if (esim is not null)
+                {
+                    await _db.AppliedEsimBundles.AddAsync(esim);
+                    await _db.SaveChangesAsync();
+                }
+
+                #endregion
+            }
+            catch (Exception ex)
+            {
+                //send email for manual data dumping
+
+                result.Success = false;
+                result.Message = ex.Message;
+            }
+            return result;
+        }
+        #endregion
+
+        #region Apply bundle to an existing esim
+        public async Task<Result<ApplyBundleToEsimResponse>> ApplyBundleToExistingEsimAsync(ApplyBundleToExistingEsimRequest input, string loggedUser)
+        {
+            var result = new Result<ApplyBundleToEsimResponse>();
+            ApplyBundleToEsimResponse? response = new();
+
+            var url = $"{BusinessManager.BaseURL}/esims/apply";
+            try
+            {
+                var iccid = await _db.Esims.FirstOrDefaultAsync(u => u.Iccid == input.Iccid && u.SubscriberId == loggedUser);
+
+                if (iccid is null)
+                {
+                    result.Success = false;
+                    result.Message = BusinessManager.InvalidIccid;
+                    result.StatusCode = StatusCodes.Status400BadRequest;
+
+                    return result;
+                }
+
+                response = await _consumeApi.PostApi<ApplyBundleToEsimResponse, ApplyBundleToExistingEsimRequest>(url, input);
+
+                if (response is null)
+                {
+                    result.Success = false;
+                    result.Message = BusinessManager.Exception;
+                    return result;
+                }
+
+                if (response.Message is not null)
+                {
+                    result.Success = false;
+                    result.Message = response.Message;
+
+                    if(result.Message == BusinessManager.IncompatibleBundle)
+                    {
+                        result.StatusCode = StatusCodes.Status400BadRequest;
+                    }
+                    else if(result.Message == BusinessManager.NotFound)
+                    {
+                        result.StatusCode = StatusCodes.Status404NotFound;
+                    }
+                    else
+                    {
+                        result.StatusCode = StatusCodes.Status500InternalServerError;
+                    }
+
+                    return result;
+                }
+
+                result.Data = response;
+                result.StatusCode = (int)HttpStatusCode.OK;
+
+                #region Update Subscriber Inventory
+
+                var subscriberInventoryUpdate = await UpdateInventory(loggedUser, input.Name);
+
+                #endregion
+
+                #region Applied Esim Bundles Entry
+
+                var esim = response.Esims.Select(u => new AppliedEsimBundles()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Iccid = u.Iccid,
+                    AssignedDate = BusinessManager.GetDateTimeNow(),
+                    BundleName = u.Bundle,
+                }).FirstOrDefault();
+
+                if (esim is not null)
+                {
+                    await _db.AppliedEsimBundles.AddAsync(esim);
+                    await _db.SaveChangesAsync();
+                }
+
+                #endregion
+
+            }
+            catch (Exception ex)
+            {
+                //send email for manual data dumping
+
+                result.Success = false;
+                result.Message = ex.Message;
+            }
+
+            return result;
+        }
+
+        #endregion
+
         #region  CheckeSIMandBundleCompatibility
         public async Task<Result<EsimCompatibilityResponseDTO>> CheckeSIMandBundleCompatibilityAsync(EsimCompatibilityRequestDto request)
         {
@@ -67,6 +266,7 @@ namespace eSim.Implementations.Services.Esim
         }
         #endregion
 
+        #region Download QR
         public async Task<Result<byte[]>> DownloadQRAsync(string iccid)
         {
             var result = new Result<byte[]>();
@@ -85,39 +285,9 @@ namespace eSim.Implementations.Services.Esim
             return result;
         }
 
-        #region EsimBundleInventory
-        public async Task<Result<GetBundleInventoryDTORequest>> GetEsimBundleInventoryAsync()
-        {
-            var result = new Result<GetBundleInventoryDTORequest>();
-            string url = $" {BusinessManager.BaseURL}/inventory";
-
-            try
-            {
-                var response = await _consumeApi.GetApi<GetBundleInventoryDTORequest>(url);
-
-                if (response == null || !response.bundles.Any())
-                {
-                    result.Success = false;
-                    result.Message = BusinessManager.EsimNotFound;
-                    return result;
-                }
-
-                result.Success = true;
-                result.Data = response;
-                result.Message = BusinessManager.EsimDataFetched;
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Message = $"Error: {ex.Message}";
-            }
-
-            return result;
-        }
-
         #endregion
 
-        #region EsimHistory
+        #region Esim history
 
         public async Task<Result<GetEsimHistoryResponseDTO>> GetEsimHistoryAsync(string iccid)
         {
@@ -126,36 +296,24 @@ namespace eSim.Implementations.Services.Esim
 
             try
             {
-                var response = await _consumeApi.GetApi<GetEsimHistoryResponseDTO>(url);
-
-                if (response == null || !response.Actions.Any())
-                {
-                    result.Success = false;
-                    result.Message = BusinessManager.EsimNotFound;
-                    return result;
-                }
-
-                result.Success = true;
-                result.Data = response;
-                result.Message = BusinessManager.EsimDataFetched;
+                result = await _consumeApi.GetApii<GetEsimHistoryResponseDTO>(url);
             }
             catch (Exception ex)
             {
                 result.Success = false;
                 result.Message = ex.Message;
+                result.StatusCode = StatusCodes.Status500InternalServerError;
             }
-
             return result;
         }
 
         #endregion
 
-        #region GetEsimInstallDetail
+        #region Get eSIM Install Details
         public async Task<Result<GetEsimInstallDetailReponseDTO>> GetEsimInstallDetailAsync(string reference)
-
-
         {
             var result = new Result<GetEsimInstallDetailReponseDTO>();
+
             if (string.IsNullOrWhiteSpace(reference))
             {
                 result.Success = false;
@@ -229,24 +387,24 @@ namespace eSim.Implementations.Services.Esim
 
         #endregion
 
-        #region EsimList
-        public async Task<Result<IQueryable<EsimsDTO>>> GetListofEsimsAsync(string loggedUser)
+        #region List eSims
+        public async Task<Result<IEnumerable<EsimsDTO>>> GetListofEsimsAsync(string loggedUser)
         {
-            var result = new Result<IQueryable<EsimsDTO>>();
+            var result = new Result<IEnumerable<EsimsDTO>>();
 
             try
             {
-                var esimList = _db.Esims.AsNoTracking().Where(u => u.SubscriberId == loggedUser).Select(u => new EsimsDTO()
+                var esimList = await _db.Esims.AsNoTracking().Where(u => u.SubscriberId == loggedUser).Select(u => new EsimsDTO()
                 {
                     Id = u.Id,
                     SubscriberId = loggedUser,
                     CustomerRef = u.CustomerRef,
                     Iccid = u.Iccid,
-                    Physical = u.Physical,
+                    Physical = u.Physical == false ? false : true,
                     ActionDate = u.ActionDate,
                     AssignedDate = u.AssignedDate,
                     LastAction = u.LastAction,
-                });
+                }).ToListAsync();
 
                 result.Data = esimList;
 
@@ -267,6 +425,36 @@ namespace eSim.Implementations.Services.Esim
             return result;
         }
         #endregion
+
+        private async Task<bool> UpdateInventory(string subscriberId,string bundle)
+        {
+            bool result = false;
+
+            try
+            {
+                var bundleFromSubscriberInventory = await _db.SubscribersInventory.FirstOrDefaultAsync(u => u.Item == bundle && u.SubscriberId == Guid.Parse(subscriberId));
+
+                if (bundleFromSubscriberInventory is not null)
+                {
+                    bundleFromSubscriberInventory.Quantity -= 1;
+
+                    if (bundleFromSubscriberInventory.Quantity == 0)
+                    {
+                        _db.SubscribersInventory.Remove(bundleFromSubscriberInventory);
+
+                    }
+
+                    await _db.SaveChangesAsync();
+
+                    result = true;
+                }
+
+            }
+            catch(Exception ex)
+            {
+                
+            }
+            return result;
+        }
     }
 }
-

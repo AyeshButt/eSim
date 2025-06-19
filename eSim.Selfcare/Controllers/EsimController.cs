@@ -13,10 +13,10 @@ namespace eSim.Selfcare.Controllers
         [HttpGet]
         public async Task<IActionResult> List()
         {
-            var response = await _esim.GetList();
+            var response = await _esim.GetEsimList();
+
             return View(response.Data);
         }
-
 
         [HttpGet]
         public ActionResult Detail(string iccid)

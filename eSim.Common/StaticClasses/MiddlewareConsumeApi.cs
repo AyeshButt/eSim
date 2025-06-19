@@ -18,7 +18,6 @@ namespace eSim.Common.StaticClasses
         private readonly HttpClient _http = http;
         private readonly IHttpContextAccessor _httpContext = httpContext;
 
-
         #region Get Request
         
         /// <summary>
@@ -42,7 +41,6 @@ namespace eSim.Common.StaticClasses
 
                 var content = await request.Content.ReadAsStringAsync();
 
-                
                 if (request.IsSuccessStatusCode) 
                 {
                     response = JsonConvert.DeserializeObject<Result<T?>>(content);

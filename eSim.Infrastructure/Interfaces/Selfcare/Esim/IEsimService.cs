@@ -10,7 +10,7 @@ namespace eSim.Infrastructure.Interfaces.Selfcare.Esim
 {
     public interface IEsimService
     {
-        public Task<Result<GetListofyourEsimsResponseDTO>> GetList();
+        public Task<Result<IEnumerable<EsimDTO>>> GetEsimList();
         public Task<Result<GetEsimHistoryResponseDTO>> GetDetail(string Id);
     }
 }
