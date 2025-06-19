@@ -22,7 +22,7 @@ namespace eSim.Middleware.Controllers
         [AllowAnonymous]
         [HttpPost("Bundles")] 
  
-        public async Task<IActionResult> GetBundlecatalogue([FromBody] RegionDTORequest input)
+        public async Task<IActionResult> GetBundleCatalogue([FromBody] BundleRequest input)
         {            
             var result = await _bundle.GetBundlesAsync(input);
 

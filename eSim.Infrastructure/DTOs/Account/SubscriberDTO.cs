@@ -22,6 +22,8 @@ namespace eSim.Infrastructure.DTOs.Account
         [MaxLength(500)]
         [EmailAddress]
         [EmailExists]
+
+        
         public string Email { get; set; } 
 
         [Required]

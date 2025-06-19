@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Azure;
 using eSim.Common.StaticClasses;
-using eSim.EF.Context;
 using eSim.Infrastructure.DTOs.Esim;
 using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.DTOs.Middleware.Order;
@@ -45,8 +44,8 @@ namespace eSim.Implementations.Services.Esim
                     result.Message = BusinessManager.EsimNotCompatible;
                     return result;
                 }
-                if (response.Message is not null)
-
+                if (response.Message is not null) 
+                
                 {
                     result.Success = false;
                     result.Message = response.Message;
@@ -70,9 +69,9 @@ namespace eSim.Implementations.Services.Esim
         public async Task<Result<byte[]>> DownloadQRAsync(string iccid)
         {
             var result = new Result<byte[]>();
-
+            
             string url = $"{BusinessManager.BaseURL}/esims/{iccid}/qr";
-
+            
             try
             {
                 result = await _consumeApi.GetApii<byte[]>(url);
@@ -132,7 +131,7 @@ namespace eSim.Implementations.Services.Esim
             {
                 var response = await _consumeApi.GetApi<GetBundleInventoryDTORequest>(url);
 
-                if (response == null || !response.bundles.Any())
+                if (response == null  || !response.bundles.Any())
                 {
                     result.Success = false;
                     result.Message = BusinessManager.EsimNotFound;
@@ -151,9 +150,9 @@ namespace eSim.Implementations.Services.Esim
 
             return result;
         }
-
+        
         #endregion
-
+        
         #region EsimHistory
 
         public async Task<Result<GetEsimHistoryResponseDTO>> GetEsimHistoryAsync(string iccid)
@@ -163,14 +162,7 @@ namespace eSim.Implementations.Services.Esim
 
             try
             {
-                var response = await _consumeApi.GetApi<GetEsimHistoryResponseDTO>(url);
-
-                if (response == null || !response.Actions.Any())
-                {
-                    result.Success = false;
-                    result.Message = BusinessManager.EsimNotFound;
-                    return result;
-                }
+                result = await _consumeApi.GetApii<GetEsimHistoryResponseDTO>(url);
 
                 result.Success = true;
                 result.Data = response;
@@ -186,7 +178,7 @@ namespace eSim.Implementations.Services.Esim
         }
 
         #endregion
-
+        
         #region GetEsimInstallDetail
         public async Task<Result<GetEsimInstallDetailReponseDTO>> GetEsimInstallDetailAsync(string reference)
 
@@ -196,7 +188,7 @@ namespace eSim.Implementations.Services.Esim
             if (string.IsNullOrWhiteSpace(reference))
             {
                 result.Success = false;
-                result.Message = BusinessManager.Missingreference;
+                result.Message = BusinessManager.Missingreference; 
                 return result;
             }
             string url = $"{BusinessManager.BaseURL}/esims/assignments?reference={reference}";
@@ -205,7 +197,7 @@ namespace eSim.Implementations.Services.Esim
             {
                 var response = await _consumeApi.GetApi<GetEsimInstallDetailReponseDTO>(url);
 
-                if (response == null)
+                if (response == null )
                 {
                     result.Success = false;
                     result.Message = BusinessManager.EsimInstallDetailNotFound;
@@ -225,7 +217,7 @@ namespace eSim.Implementations.Services.Esim
             return result;
         }
         #endregion
-
+        
         #region  GetListBundlesappliedtoeSIM
         public async Task<Result<ListBundlesAppliedToESIMResponseDTO>> GetListBundlesappliedtoeSIMAsync(ListBundlesAppliedToESIMRequestDTO request)
         {
@@ -267,38 +259,30 @@ namespace eSim.Implementations.Services.Esim
         #endregion
 
         #region EsimList
-        public async Task<Result<IQueryable<EsimsDTO>>> GetListofEsimsAsync(string loggedUser)
+        public async Task<Result<GetListofyourEsimsResponseDTO>> GetListofEsimsAsync()
         {
-            var result = new Result<IQueryable<EsimsDTO>>();
+            var result = new Result<GetListofyourEsimsResponseDTO>();
+            string url = $" {BusinessManager.BaseURL}/esims";
 
             try
             {
-                var esimList = _db.Esims.AsNoTracking().Where(u => u.SubscriberId == loggedUser).Select(u => new EsimsDTO()
-                {
-                    Id = u.Id,
-                    SubscriberId = loggedUser,
-                    CustomerRef = u.CustomerRef,
-                    Iccid = u.Iccid,
-                    Physical = u.Physical,
-                    ActionDate = u.ActionDate,
-                    AssignedDate = u.AssignedDate,
-                    LastAction = u.LastAction,
-                });
+                var response = await _consumeApi.GetApi<GetListofyourEsimsResponseDTO>(url);
 
-                result.Data = esimList;
-
-                if (!result.Data.Any())
+                if (response == null ||  !response.Esims.Any())
                 {
-                    result.Message = BusinessManager.EmptyEsimList;
+                    result.Success = false;
+                    result.Message = BusinessManager.EsimNotFound;
+                    return result;
                 }
 
-                result.StatusCode = (int)HttpStatusCode.OK;
+                result.Success = true;
+                result.Data = response;
+                result.Message = BusinessManager.EsimDataFetched;
             }
             catch (Exception ex)
             {
                 result.Success = false;
                 result.Message = ex.Message;
-                result.StatusCode = (int)HttpStatusCode.InternalServerError;
             }
 
             return result;

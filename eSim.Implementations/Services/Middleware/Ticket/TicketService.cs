@@ -11,10 +11,15 @@ using eSim.EF.Entities;
 using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.DTOs.Ticket;
 using eSim.Infrastructure.Interfaces.Middleware.Ticket;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
+using Raven.Client.Util;
+using static Raven.Database.Indexing.IndexingWorkStats;
+
 
 namespace eSim.Implementations.Services.Middleware.Ticket
 {
@@ -25,10 +30,10 @@ namespace eSim.Implementations.Services.Middleware.Ticket
         {
             _Db = Db;
         }
-
-        public async Task<Result<TicketCommentDTORequest>> AddCommentAsync(TicketCommentDTORequest input, string userId)
+        #region AddComment
+        public async Task<Result<TicketCommentRequest>> AddCommentAsync(TicketCommentRequest input, string userId)
         {
-            var result = new Result<TicketCommentDTORequest>();
+            var result = new Result<TicketCommentRequest>();
 
             try
             {
@@ -38,8 +43,8 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                 if (ticket == null)
                 {
                     result.Success = false;
-                    result.Message = string.Empty;
-
+                    result.Message = BusinessManager.Ticketnotfound;
+                    result.StatusCode = StatusCodes.Status400BadRequest;
                     return result;
                 }
 
@@ -58,49 +63,63 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                 await _Db.SaveChangesAsync();
 
                 result.Message = BusinessManager.Commentadded;
+                result.StatusCode = StatusCodes.Status200OK;
 
             }
             catch (Exception ex)
             {
                 result.Success = false;
                 result.Message = ex.Message;
-
+                result.StatusCode = StatusCodes.Status500InternalServerError;
+                return result;
             }
             return result;
         }
 
-
+        #endregion
 
         #region CreateTicket
-        public async Task<Result<string?>> CreateTicketAsync(TicketRequestDTORequest ticketDto)
+        public async Task<Result<string?>> CreateTicketAsync(TicketRequest input)
         {
             var result = new Result<string?>();
+
+
             try
             {
+                if (input.TicketType == 0 ||!await _Db.TicketType.AnyAsync(t => t.Id == input.TicketType))
+                {
+                    result.Success = false;
+                    result.Message = BusinessManager.InvalidTicketType;
+                    result.StatusCode = StatusCodes.Status400BadRequest;
+                    return result;
+                }
 
 
                 var ticket = new eSim.EF.Entities.Ticket
                 {
                     Id = Guid.NewGuid(),
                     TRN = BusinessManager.GenerateTRN(),
-                    Subject = ticketDto.Subject,
-                    Description = ticketDto.Description,
-                    TicketType = ticketDto.TicketType,
-                    Status = 0,
+                    Subject = input.Subject,
+                    Description = input.Description,
+                    TicketType = input.TicketType,
+                    Status = (int)Common.Enums.TicketStatus.open,
+
                     CreatedAt = BusinessManager.GetDateTimeNow()
                 };
-
+            
                 _Db.Ticket.Add(ticket);
                 await _Db.SaveChangesAsync();
 
                 result.Success = true;
                 result.Message = BusinessManager.TicketCreated;
                 result.Data = ticket.TRN;
+                result.StatusCode = StatusCodes.Status200OK;
             }
             catch (Exception ex)
             {
                 result.Success = false;
                 result.Message = ex.Message;
+                result.StatusCode = StatusCodes.Status500InternalServerError;
             }
 
             return result;
@@ -110,6 +129,7 @@ namespace eSim.Implementations.Services.Middleware.Ticket
         #region TicketDetail
         public async Task<Result<TicketDTO?>> GetTicketDetailAsync(string trn)
         {
+            var result = new Result<TicketDTO?>();
             try
             {
                 var ticket = await _Db.Ticket
@@ -117,7 +137,11 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                     .FirstOrDefaultAsync(t => t.TRN == trn);
 
                 if (ticket == null)
-                    return new Result<TicketDTO?> { Success = false, Message = "Ticket not found." };
+               { result.Success = false; 
+                    result.Message = BusinessManager.Ticketnotfound; 
+                    result.StatusCode = StatusCodes.Status400BadRequest;
+                    return result;                }
+                ;
 
                 var ticketType = await _Db.TicketType
                     .AsNoTracking()
@@ -141,74 +165,82 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                     Attachments = attachments
                 };
 
-                return new Result<TicketDTO?>
+      
                 {
-                    Success = true,
-                    Message = "Ticket detail retrieved successfully.",
-                    Data = detail
+                    result.Success = true;
+                    result.Message = BusinessManager.TicketdetailRetrieved;
+                    result.Data = detail;
+                   
                 };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return new Result<TicketDTO?>
+                
                 {
-                    Success = false,
-                    Message = "Error fetching ticket detail."
+                    result.Success = false;
+                    result.Message = ex.Message;
+                    result.StatusCode = StatusCodes.Status500InternalServerError;
+                    return result;
                 };
 
+          
             }
-
+            return result;
         }
         #endregion
 
-        #region GetTicketType
-        public Result<List<TicketTypeResponseDTO>> GetTicketType()
+        #region GetTicketType   
+        public Result<List<TicketTypeResponse>> GetTicketType()
         {
-            List<TicketTypeResponseDTO> list = _Db.TicketType.AsNoTracking().
-                Select(a => new TicketTypeResponseDTO() { Id = a.Id, Value = a.Type }).ToList();
+            List<TicketTypeResponse> list = _Db.TicketType.AsNoTracking().
+                Select(a => new TicketTypeResponse() { Id = a.Id, Value = a.Type }).ToList();
 
 
-            return new Result<List<TicketTypeResponseDTO>>() { Data = list };
+            return new Result<List<TicketTypeResponse>>() { Data = list ,StatusCode=StatusCodes.Status200OK};
         }
         #endregion
 
         #region TicketsResponse
-        public Result<IQueryable<TicketsResponseDTO>> Tickets()
+        public Result<IQueryable<TicketsResponse>> Tickets()
         {
-            var types = _Db.TicketType.AsNoTracking();
-
-            var tickets = _Db.Ticket.Select(a => new TicketsResponseDTO
+            var types = _Db.TicketType.AsNoTracking().ToList();
+            var status=_Db.TicketStatus.AsNoTracking().ToList();
+            var tickets = _Db.Ticket.AsNoTracking().ToList().Select(a => new TicketsResponse
             {
                 CreatedAt = a.CreatedAt,
                 Subject = a.Subject,
                 TRN = a.TRN,
-                Type = types.FirstOrDefault(a => a.Id == a.Id).Type
-            });
+                Type = types.FirstOrDefault(t => t.Id == a.TicketType)?.Type ,
+                status = status.FirstOrDefault(s => s.Id == a.Status)?.Status
 
-            return new Result<IQueryable<TicketsResponseDTO>>() { Data = tickets.OrderByDescending(a => a.CreatedAt) };
+            }).AsQueryable();
+            
+            return new Result<IQueryable<TicketsResponse>>() 
+            
+            { Data = tickets.OrderByDescending(a => a.CreatedAt) ,StatusCode=StatusCodes.Status200OK};
         }
         #endregion
 
         #region TicketAttachment
-        public async Task<Result<string?>> UploadAttachmentAsync(TicketAttachmentDTORequest dto)
+        public async Task<Result<string?>> UploadAttachmentAsync(TicketAttachmentRequest input)
         {
             var result = new Result<string?>();
             try
             {
                 // TicketTypeEnum.attachmentType.ToString();
                 Guid? activityId = null;
-                var ticket = await _Db.Ticket.FirstOrDefaultAsync(x => x.TRN == dto.TRN);
+                var ticket = await _Db.Ticket.FirstOrDefaultAsync(x => x.TRN == input.TRN);
                 if (ticket == null)
 
-                { result.Success = false; result.Message = BusinessManager.Ticketnotfound; }
-                ;
+                { result.Success = false; result.Message = BusinessManager.Ticketnotfound; result.StatusCode = StatusCodes.Status400BadRequest; return result; }
+         
 
 
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
                 if (!Directory.Exists(uploadsFolder))
                     Directory.CreateDirectory(uploadsFolder);
 
-                var fileName = $"{Guid.NewGuid()}_{dto.File.FileName}";
+                var fileName = $"{Guid.NewGuid()}_{input.File.FileName}";
                 var filePath = Path.Combine(uploadsFolder, fileName);
 
 
@@ -216,7 +248,7 @@ namespace eSim.Implementations.Services.Middleware.Ticket
 
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    await dto.File.CopyToAsync(stream);
+                    await input.File.CopyToAsync(stream);
                 }
 
 
@@ -235,6 +267,7 @@ namespace eSim.Implementations.Services.Middleware.Ticket
 
                 result.Success = true;
                 result.Message = BusinessManager.Attachmentuploaded;
+                result.StatusCode = StatusCodes.Status200OK;
 
             }
             catch (Exception ex)
@@ -242,6 +275,8 @@ namespace eSim.Implementations.Services.Middleware.Ticket
 
                 result.Success = false;
                 result.Message = ex.Message;
+                result.StatusCode = StatusCodes.Status500InternalServerError;
+                
 
             }
             return result;

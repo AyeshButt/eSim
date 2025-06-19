@@ -37,17 +37,9 @@ namespace eSim.Implementations.Services.Middleware.Bundle
 
             try
             {
-                var response = await _consumeApi.GetApi<GetBundleCatalogueDetailsResponse>(url);
+                result = await _consumeApi.GetApii<GetBundleCatalogueDetailsResponse>(url);
 
-                if (response == null || response.Message is not null)
-                {
-                    result.Success = false;
-                    result.Message = response?.Message ?? BusinessManager.BundleNotFound;
-                    return result;
-                }
-
-                result.Data = response;
-                result.Message = BusinessManager.BundleFetched;
+              
             }
             catch (Exception ex)
             {
@@ -61,33 +53,21 @@ namespace eSim.Implementations.Services.Middleware.Bundle
 
         #endregion
         #region GetBundles
-        public async Task<Result<GetBundleCatalogueResponse>> GetBundlesAsync(RegionDTORequest request)
+        public async Task<Result<GetBundleCatalogueResponse>> GetBundlesAsync(BundleRequest request)
         {
             var result = new Result<GetBundleCatalogueResponse>();
-            // Build URL conditionally
+          
             var url = $"{BusinessManager.BaseURL}/catalogue?page={request.Page}&perPage={request.PerPage}&direction={request.Direction}&orderBy={request.OrderBy}&region={request.Region}";
 
-            // Only add countries if it's not null or empty
+            // Only add countries if it's not null or empty ali
             if (!string.IsNullOrWhiteSpace(request.Countries) && request.Countries.ToLower() != "string")
             {
-                url += $"&countries={request.Countries}";
+                url += $"&countries={request.Countries}";   
             }
 
             try
             {
-                var response = await _consumeApi.GetApi<GetBundleCatalogueResponse>(url);
-
-                if (response == null || !response.bundles.Any())
-                {
-                    result.Success = false;
-                    result.Message = BusinessManager.ReagionNotFound;
-                    return result;
-                }
-
-                result.Success = true;
-                result.Data = response;
-                result.Message = BusinessManager.RegionBundelFetched;
-
+                result = await _consumeApi.GetApii<GetBundleCatalogueResponse>(url);
 
             }
             catch (Exception ex)

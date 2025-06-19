@@ -13,6 +13,7 @@ using Org.BouncyCastle.Ocsp;
 using System.Net;
 using eSim.Infrastructure.DTOs.Global;
 using eSim.Common.Extensions;
+using eSim.Infrastructure.DTOs;
 namespace eSim.Middleware.Controllers
 {
     [Route("esims")]

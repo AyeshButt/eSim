@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace eSim.Middleware.Controllers
 {
-    [Route("[controller]")]
+    [Route("/[controller]")]
     [ApiController]
     public class TicketController : ControllerBase
     {
@@ -28,6 +28,7 @@ namespace eSim.Middleware.Controllers
         #region Generate Ticket
 
         [HttpGet]
+        [Route("List")]
         public IActionResult Get()
         {
         
@@ -41,10 +42,8 @@ namespace eSim.Middleware.Controllers
         #region Generate Ticket
 
         [HttpPost]
-        public async Task<IActionResult> POST([FromBody] TicketRequestDTORequest ticketDto)
+        public async Task<IActionResult> POST([FromBody] TicketRequest ticketDto)
         {
-
-
 
             var result = await _ticketServices.CreateTicketAsync(ticketDto);
             return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
@@ -66,8 +65,8 @@ namespace eSim.Middleware.Controllers
         #endregion
         #region TicketAttachment
         [AllowAnonymous]
-        [HttpPost("UploadAttachment")]
-        public async Task<IActionResult> UploadAttachment([FromForm] TicketAttachmentDTORequest dto)
+        [HttpPost("Attachment")]
+        public async Task<IActionResult> UploadAttachment([FromForm] TicketAttachmentRequest dto)
         {
           
             var result = await _ticketServices.UploadAttachmentAsync(dto);
@@ -88,12 +87,12 @@ namespace eSim.Middleware.Controllers
         
         #endregion
         [HttpPost("comment")]
-        public async Task<IActionResult> AddComment([FromBody] TicketCommentDTORequest input)
+        public async Task<IActionResult> AddComment([FromBody] TicketCommentRequest input)
         {
       
 
             var loggedUser = User.SubscriberId();
-           
+            
             if (loggedUser is null)
                 return StatusCode(StatusCodes.Status401Unauthorized, new Result<string> { Success = false ,Message = string.Empty});
 

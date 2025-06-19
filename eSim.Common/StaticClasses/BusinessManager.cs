@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
+using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -100,6 +102,7 @@ namespace eSim.Common.StaticClasses
         public static string EmailExist = "Email already exists.";
         public static string EmailAvailable = "Email is available.";
         public static string InvalidMerchant = "Invalid Merchant Details";
+        public static string Invalidemailformat = "Invalid email format";
         public static string SubscriberSubject = "Welcome to eSim";
         public static string OTPVerified = "OTP verified successfully.";
         public static string OTPSendSuccessfully ="OTP has been created successfully";
@@ -112,6 +115,9 @@ namespace eSim.Common.StaticClasses
         public static string Subscribernotfound = "Subscriber not found.";
         public static string ImageUploaded = "Image uploaded and saved to database.";
         public static string Noimagefileprovided = "No image file provided.";
+        public static string validemailaddress = "Please enter a valid/full email address.";
+
+
         //Ticket
 
         public static string TicketCreated = "Ticket Created Successfully";
@@ -120,7 +126,10 @@ namespace eSim.Common.StaticClasses
         public static string Commentadded = "Comment added successfully";
         public static string EsimInstallDetailNotFound = "No esim install detail data found.";
         public static string ListofEsimBundleFetched = "list of Bundles Applied to eSiM fetched successfully.";
-        
+        public static string InvalidTicketType = "Invalid Ticket Type selected";
+        public static string TicketdetailRetrieved = "Ticket detail retrieved successfully.";
+
+
 
 
 

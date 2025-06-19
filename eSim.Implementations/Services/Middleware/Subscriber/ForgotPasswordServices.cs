@@ -17,6 +17,7 @@ using Microsoft.EntityFrameworkCore;
 using static System.Net.WebRequestMethods;
 using eSim.Common.Enums;
 using System.ServiceModel.Channels;
+using Microsoft.AspNetCore.Http;
 
 namespace eSim.Implementations.Services.Middleware.Subscriber
 {
@@ -41,6 +42,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 {
                     result.Success = false;
                     result.Message = BusinessManager.SubscriberNotFound;
+                    result.StatusCode = StatusCodes.Status400BadRequest;
                     return result;
                 }
 
@@ -72,12 +74,16 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 finally
                 {
                     result.Message = BusinessManager.OTPSendSuccessfully;
+                    result.StatusCode = StatusCodes.Status200OK;
                 }
             }
             catch (Exception ex)
             {
                 result.Success = false;
                 result.Message = ex.Message;
+                result.StatusCode = StatusCodes.Status500InternalServerError;
+                return result;
+               
             }
 
             return result;
@@ -94,6 +100,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             {
                 result.Success = false;
                 result.Message = BusinessManager.RequiredOTP;
+                result.StatusCode = StatusCodes.Status400BadRequest;
                 return result;
             }
 
@@ -112,6 +119,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 {
                     result.Success = false;
                     result.Message = BusinessManager.InvalidOTP;
+                    result.StatusCode= StatusCodes.Status400BadRequest;
 
                     return result;
                 }
@@ -127,6 +135,8 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             {
                 result.Success = false;
                 result.Message = ex.Message;
+                result.StatusCode = StatusCodes.Status500InternalServerError;
+                return result ;
             }
 
             return result;
@@ -148,6 +158,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 {
                     result.Success = false;
                     result.Message = BusinessManager.SubscriberNotFound;
+                    result.StatusCode=StatusCodes.Status400BadRequest;
 
                     return result;
                 }
@@ -175,6 +186,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 finally
                 {
                     result.Message = BusinessManager.PasswordChangedBody;
+                    result.StatusCode = StatusCodes.Status200OK;
 
                 }
 
@@ -183,6 +195,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             {
                 result.Success = false;
                 result.Message = ex.Message;
+                result.StatusCode = StatusCodes.Status500InternalServerError;
 
             }
             return result;
@@ -204,6 +217,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 {
                     result.Success = false;
                     result.Message = BusinessManager.userNotFound;
+                    result.StatusCode = StatusCodes.Status400BadRequest;
 
                     return result;
                 }
@@ -215,6 +229,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                     result.Success = false;
                     result.Message = user.Hash != oldHash
                         ? BusinessManager.IncorrectOldPassword: BusinessManager.PasswordNotMatched;
+                    result.StatusCode = StatusCodes.Status400BadRequest;
 
                     return result;
                 }
@@ -226,13 +241,15 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                     NewPassword = input.NewPassword,
                     ConfirmPassword = input.ConfirmPassword
                 };
-
+                
                 result = await ResetPasswordAsync(resetDto);
+               
             }
             catch(Exception ex)
             {
                 result.Success = false;
                 result.Message = ex.Message;
+                result.StatusCode = StatusCodes.Status500InternalServerError;
             }
             return result;
         }
