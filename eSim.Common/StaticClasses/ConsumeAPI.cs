@@ -158,6 +158,7 @@ namespace eSim.Common.StaticClasses
 
                 var request = await _httpClient.SendAsync(httpreq);
 
+                int statusCode = (int)request.StatusCode;
 
                 response = JsonConvert.DeserializeObject<T>(await request.Content.ReadAsStringAsync());
 

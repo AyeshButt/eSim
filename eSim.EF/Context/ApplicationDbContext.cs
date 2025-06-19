@@ -34,6 +34,8 @@ namespace eSim.EF.Context
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<SubscribersInventory> SubscribersInventory { get; set; }
         public DbSet<Countries> Countries { get; set; }
+        public DbSet<Esims> Esims { get; set; }
+        public DbSet<AppliedEsimBundles> AppliedEsimBundles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -16,12 +16,12 @@ namespace eSim.Implementations.Services.Selfcare.Esim
     {
         private readonly IMiddlewareConsumeApi _consumeApi = consumeApi;
 
-
-
-        public async Task<Result<GetListofyourEsimsResponseDTO>> GetList()
+        public async Task<Result<IEnumerable<EsimDTO>?>> GetEsimList()
         {
-            var Url = BusinessManager.MdwBaseURL + BusinessManager.EsimList;
-            var request = await _consumeApi.Get<GetListofyourEsimsResponseDTO>(Url);
+            var url = $"{BusinessManager.MdwBaseURL}{BusinessManager.EsimList}";
+
+            var request = await _consumeApi.Get<IEnumerable<EsimDTO>>(url);
+
             return request;
         }
 
