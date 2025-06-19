@@ -38,7 +38,7 @@ namespace eSim.Implementations.Services.Middleware.Order
         public async Task<Result</*CreateOrderResponse*/ GetOrderDetailResponse>> CreateOrderAsync(CreateOrderRequest input,string subscriberId)
         {
             var result = new Result</*CreateOrderResponse*/ GetOrderDetailResponse>();
-            var orderRefId = "1505bd98-54a3-49fb-bcfb-5c027389f163";
+            var orderRefId = "5a38e795-0112-42dd-8b13-af95c49d3370";
 
             string url = $"{BusinessManager.BaseURL}/orders";
 

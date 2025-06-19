@@ -38,6 +38,9 @@ namespace eSim.Common.StaticClasses
         public static string Bundeldetail = "bundle/";
         public static string EsimList = "esim/list";
         public static string EsimHistory = "esim/history";
+        public static string SubscriberInventory = "inventory/subscriber";
+        //public static string SubscriberInventory = "inventory/subscriber";
+
 
 
         public static string OTPError = "Invalid User Id";

@@ -11,6 +11,7 @@ using eSim.Infrastructure.Interfaces.Admin.Email;
 using eSim.Infrastructure.Interfaces.ConsumeApi;
 using eSim.Infrastructure.Interfaces.Middleware;
 using eSim.Infrastructure.Interfaces.Middleware.Inventory;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
@@ -166,17 +167,21 @@ namespace eSim.Implementations.Services.Middleware.Inventory
                         CreatedDate = o.CreatedDate,
                     }).ToList();
 
+                    result.StatusCode = StatusCodes.Status200OK;
                     result.Data = bundleList;
                 }
                 else
                 {
+                    result.StatusCode = StatusCodes.Status400BadRequest;
                     result.Success = false;
                     result.Message = "Not found the Inventory";
                 }
-                    return result;
+
+                return result;
             }
             catch (Exception ex) 
             { 
+                result.StatusCode = StatusCodes.Status500InternalServerError;
                 result.Success=false;
                 result.Message = "something went wrong";
                 return result;
@@ -197,15 +202,20 @@ namespace eSim.Implementations.Services.Middleware.Inventory
                 var subscriberBundls = _db.SubscribersInventory
                     .FirstOrDefault(x => x.SubscriberId == subID && x.Item == input.Item);
 
-                if (subscriberBundls == null)
+                if (subscriberBundls == null )
                 {
+                    result.StatusCode = StatusCodes.Status404NotFound;
                     result.Success = false;
-                    result.Message = "No Bundle Found From subscriber Inventory";
+                    result.Message = "No Bundle Found From Inventory";
                     return result;
                 }
 
-                if (subscriberBundls.Quantity < input.Quantity)
+
+                //only one bundle will be refunded
+
+                if (subscriberBundls.Quantity < input.Quantity || input.Quantity > 1)
                 {
+                    result.StatusCode = StatusCodes.Status400BadRequest;
                     result.Success = false;
                     result.Message = "Quantity Mismatch";
                     return result;
@@ -217,6 +227,7 @@ namespace eSim.Implementations.Services.Middleware.Inventory
 
                 if (!inventory.Success || inventory.Data == null)
                 {
+                    result.StatusCode= StatusCodes.Status404NotFound;
                     result.Success = false;
                     result.Message = "something went wrong";
                     return result;
@@ -227,6 +238,7 @@ namespace eSim.Implementations.Services.Middleware.Inventory
 
                 if (matchedBundle == null)
                 {
+                    result.StatusCode = StatusCodes.Status400BadRequest;
                     result.Success = false;
                     result.Message = "There is no bundle in inventory";
                     return result;
@@ -245,21 +257,37 @@ namespace eSim.Implementations.Services.Middleware.Inventory
 
                 if (refundedBundle.Success)
                 {
-                    //delete the bundle from subscribers inventory
-                    _db.SubscribersInventory.Remove(subscriberBundls);
+                    if(subscriberBundls.Quantity > 1)
+                    {
+                        //when bundle quantity is more than one
+                        subscriberBundls.Quantity -= 1;
+                        _db.SubscribersInventory.Update(subscriberBundls);
+                    }
+
+                    else
+                    {
+                        //delete the bundle from subscribers inventory when quantity is one
+                        _db.SubscribersInventory.Remove(subscriberBundls);
+                    }
+                        
+                       
                     await _db.SaveChangesAsync();
 
+               
                     result.Message = refundedBundle.Message;
+                    result.StatusCode =refundedBundle.StatusCode;
                     return result;
                 }
 
                 result.Success = false;
                 result.Message = refundedBundle.Message;
+                result.StatusCode = refundedBundle.StatusCode;
                 return result;
 
             }
             catch (Exception ex) 
             {
+                result.StatusCode = StatusCodes.Status500InternalServerError;
                 result.Success = false;
                 result.Message = ex.Message;
                 return result;
@@ -281,16 +309,19 @@ namespace eSim.Implementations.Services.Middleware.Inventory
                 if (response.Status != null && response.Status.Contains("Successfully", StringComparison.OrdinalIgnoreCase)) 
                 { 
                     result.Message = response.Status;
+                    result.StatusCode = StatusCodes.Status200OK;
                     return result;
                 }
 
                 result.Success = false;
                 result.Message = response.Status;
+                result.StatusCode = StatusCodes.Status400BadRequest;
                 return result;
 
             }
             catch (Exception ex) 
             {
+                result.StatusCode = StatusCodes.Status500InternalServerError;
                 result.Success = false;
                 result.Message = ex.Message;
                 return result;
