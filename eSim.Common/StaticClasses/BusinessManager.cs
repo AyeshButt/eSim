@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using eSim.EF.Entities;
+using Microsoft.AspNetCore.Hosting.Server;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace eSim.Common.StaticClasses
@@ -15,14 +16,20 @@ namespace eSim.Common.StaticClasses
     {
         //middleware base url for 
         //public static string AuthToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnQtaWQiOiJlMzYwOTMzNy1hMTg4LTQzMWItYjg1NC02NjUwOGVkOTg2MzUiLCJleHAiOjE3NDc4NDQ5OTgsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTA1OCIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTA1OCJ9.VGnAzeKANa33Es8Tes8kqNo96chTj6sh79799WJYSTU";
-
+        public static string BundleError = "You can either send a single bundle OR multiple bundles, not both.";
+        public static string InvalidPayload = "Invalid payload. Provide either single bundle fields or a 'bundles' list.";
         public static string BaseURL = "https://api.esim-go.com/v2.4";
 
         public static string Exception = "Exception occured";
+        public static string NotFound = "Not Found";
+        public static string InternalServerError = "Internal Server Error";
+        public static string IncompatibleBundle = "Incompatible bundle profile combination";
+        public static string DataDumpingIssue = "Error occured while dumping data";
         public static string NoOrderPresent = "No order found";
         public static string QRFailed = "Failed to get QR code";
         public static string ImageMediaContentType = "image/png";
         public static string QRCode = "qr-code.png";
+        public static string InvalidIccid = "Invalid Iccid";
 
         public static string MdwBaseURL = "https://localhost:7264/";
         public static string Countries = "Countries";
@@ -38,8 +45,11 @@ namespace eSim.Common.StaticClasses
         public static string TicketDetail = "ticket/detail";
         public static string BundelRegion = "bundle/bundles";
         public static string Bundeldetail = "bundle/";
-        public static string EsimList = "esim/list";
+        public static string EsimList = "esims/list";
         public static string EsimHistory = "esim/history";
+        public static string SubscriberInventory = "inventory/subscriber";
+        //public static string SubscriberInventory = "inventory/subscriber";
+
 
 
         public static string OTPError = "Invalid User Id";

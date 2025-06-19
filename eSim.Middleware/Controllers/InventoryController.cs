@@ -36,7 +36,7 @@ namespace eSim.Middleware.Controllers
         }
 
         [HttpGet("subscriber")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<GetBundleInventoryResponse>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<SubscriberInventoryResponse>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
@@ -51,12 +51,13 @@ namespace eSim.Middleware.Controllers
 
             var response = await _inventory.GetSubscriberInventoryResponse(loggedUser);
 
+            //return Ok(response);
             return response.Success ? StatusCode(StatusCodes.Status200OK,response) : StatusCode(StatusCodes.Status400BadRequest,response);
         }
 
 
         [HttpPost("refund")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<GetBundleInventoryResponse>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<string>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]

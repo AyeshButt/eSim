@@ -1,5 +1,10 @@
-﻿@model IEnumerable<eSim.Infrastructure.DTOs.Esim.EsimDTO>
+﻿@using eSim.Infrastructure.DTOs.Global
+@using eSim.Infrastructure.DTOs.Middleware.Inventory
+@model List<SubscriberInventoryResponse>
 
+@{
+    var List = Model;
+}
 <div class="row">
     <div class="col-lg-12">
         <div class="card">
@@ -9,27 +14,35 @@
             <div class="card-body">
                 <table class="datatable-scroll table-hover table dt-responsive nowrap align-middle mdl-data-table" style="width:100%">
                     <thead>
-                        <tr>
-                            <th class="ps-5">ICCID</th>
-                            <th>Reference</th>
-                            <th>Last Action</th>
-                            <th>Last Action Date</th>
-                            <th>Assigned Date</th>
-                            <th>Action</th>
-                        </tr>
+                    <tr>
+                        <th>Bundle</th>
+                        <th>ID</th>
+                        <th>Country</th>
+                        <th>Data</th>
+                        <th>Local Calls</th>
+                        <th>Local SMS</th>
+                        <th>Duration</th>
+                        <th>Includes Number</th>
+                        <th>Remaining</th>
+                        <th>Action</th>
+                    </tr>
                     </thead>
                     <tbody>
                         @if (Model != null)
                         {
-                            @foreach (var item in Model)
+                            @foreach (var item in List)
                             {
-                                <tr class="View-Detail" data-iccid="@item" data-bs-toggle="modal" data-bs-target=".bs-example-modal-center">
-                                    <td> <i class="mdi mdi-qrcode mdi-24px" ></i>  @item.Iccid</td>
-                                    <td>@item.CustomerRef</td>
-                                    <td>@item.LastAction</td>
-                                    <td>$@item.ActionDate</td>
-                                    <td>$@item.AssignedDate</td>
-                                    <td><button class="btn btn-sm btn-soft-primary">!</button> <button class="btn btn-sm btn-soft-primary rounded-pill">+</button></td>
+                                <tr class="View-Detail" data-ID="@item.Item" data-bs-toggle="modal" data-bs-target=".bs-example-modal-center">
+                                    <td>@item.Description</td>
+                                    <td>@item.Item</td>
+                                    <td>@item.Country</td>
+                                    <td>@item.DataAmount</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>@item.Duration</td>
+                                    <td>*</td>
+                                    <td>@item.Quantity</td>
+                                    <td><button class="btn btn-sm btn-soft-primary">!</button></td>
                                 </tr>
                             }
                         }
@@ -40,7 +53,8 @@
     </div><!--end col-->
 </div><!--end row-->
 
-<div class="modal modal-xl fade bs-example-modal-center" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+
+<div class="modal modal-lg fade bs-example-modal-center" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body p-0">
@@ -51,20 +65,18 @@
                     <p class="mt-2">Loading bundle details...</p>
 
                 </div>
-                
+
                 <div id="bundleDetailModalBody">
-                    
                 </div>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-
 @section scripts {
-        <script>
+    <script>
         $(document).on('click', '.View-Detail', function()
             {
-                var simIccid = $(this).data('iccid');
+                var name = $(this).data('ID');
 
                      $('.bs-example-modal-center').modal('show');
 
@@ -75,7 +87,7 @@
                 $.ajax({
                     url: '@Url.Action("Detail", "Esim")',
                     type: 'GET',
-                    data: { iccid: simIccid },
+                    data: { ID: name },
                     success: function (html) {
                         $('#bundleDetailLoader').hide();
                         $('#bundleDetailModalBody').html(html); // inject partial view
@@ -87,7 +99,7 @@
                         $('#bundleDetailModalBody').html('<p class="text-danger">Failed to load bundle details.</p>');
                     }
                 });
-            });   
+            });
     </script>
     <!-- prismjs plugin -->
     <script src="~/assets/libs/prismjs/prism.js"></script>
