@@ -14,7 +14,6 @@ namespace eSim.Infrastructure.Interfaces.Middleware.Esim
     {
         Task<Result<IQueryable<EsimsDTO>>> GetListofEsimsAsync(string loggedUser);
         Task<Result<GetEsimHistoryResponseDTO>> GetEsimHistoryAsync(string iccid);
-        Task<Result<GetBundleInventoryDTORequest>> GetEsimBundleInventoryAsync();
         Task<Result<GetEsimInstallDetailReponseDTO>> GetEsimInstallDetailAsync(string reference);
         Task<Result<EsimCompatibilityResponseDTO>> CheckeSIMandBundleCompatibilityAsync(EsimCompatibilityRequestDto request);
         Task<Result<ListBundlesAppliedToESIMResponseDTO>> GetListBundlesappliedtoeSIMAsync(ListBundlesAppliedToESIMRequestDTO request);
