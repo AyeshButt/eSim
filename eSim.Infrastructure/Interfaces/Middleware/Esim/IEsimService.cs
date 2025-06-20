@@ -13,13 +13,13 @@ namespace eSim.Infrastructure.Interfaces.Middleware.Esim
     public interface IEsimService
     {
         Task<Result<IEnumerable<EsimsDTO>>> GetListofEsimsAsync(string loggedUser);
-        Task<Result<GetEsimHistoryResponseDTO>> GetEsimHistoryAsync(string iccid);
+        Task<Result<GetEsimHistoryResponse>> GetEsimHistoryAsync(string iccid);
         Task<Result<GetEsimInstallDetailReponseDTO>> GetEsimInstallDetailAsync(string reference);
         Task<Result<EsimCompatibilityResponseDTO>> CheckeSIMandBundleCompatibilityAsync(EsimCompatibilityRequestDto request);
         Task<Result<ListBundlesAppliedToESIMResponseDTO>> GetListBundlesappliedtoeSIMAsync(ListBundlesAppliedToESIMRequestDTO request);
-        Task<Result<GetAppliedBundleStatusResponseDTO>> GetAppliedBundleStatusAsync(GetAppliedBundleStatusRequestDTO request);
         Task<Result<byte[]>> DownloadQRAsync(string iccid);
         Task<Result<ApplyBundleToEsimResponse>> ApplyBundleToExistingEsimAsync(ApplyBundleToExistingEsimRequest input, string loggedUser);
         Task<Result<ApplyBundleToEsimResponse>> ApplyBundleToEsimAsync(ApplyBundleToEsimRequest input, string loggedUser);
+        Task<Result<GetEsimDetailsResponse>> GetEsimDetailsAsync(string iccid, string? additionalfields);
     }
 }

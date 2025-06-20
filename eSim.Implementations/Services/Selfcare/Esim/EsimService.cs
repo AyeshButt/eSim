@@ -16,25 +16,32 @@ namespace eSim.Implementations.Services.Selfcare.Esim
     {
         private readonly IMiddlewareConsumeApi _consumeApi = consumeApi;
 
-        public async Task<Result<IEnumerable<EsimDTO>?>> GetEsimList()
+        public async Task<Result<IEnumerable<EsimDTO>>> GetEsimListAsync()
         {
-            var url = $"{BusinessManager.MdwBaseURL}{BusinessManager.EsimList}";
+            var url = $"{BusinessManager.MdwBaseURL}/{BusinessManager.EsimList}";
 
             var request = await _consumeApi.Get<IEnumerable<EsimDTO>>(url);
 
             return request;
         }
 
-        public async Task<Result<GetEsimHistoryResponseDTO>> GetDetail(string Iccid)
+        public async Task<Result<GetEsimDetailsResponse>> GetEsimDetailsAsync(string iccid)
         {
-            var url = BusinessManager.MdwBaseURL + BusinessManager.EsimHistory;
-
+            var url = $"{BusinessManager.MdwBaseURL}/{BusinessManager.EsimDetails}/{Uri.EscapeDataString(iccid)}?additionalFields={BusinessManager.AppleInstallUrl}";
         
-            var FullURl = $"{url}?iccid={Uri.EscapeDataString(Iccid)}";
-
-            var request = await _consumeApi.Get<GetEsimHistoryResponseDTO>(FullURl);
+            var request = await _consumeApi.Get<GetEsimDetailsResponse>(url);
 
             return request;
         }
+
+        public async Task<Result<GetEsimHistoryResponse>> GetEsimHistoryAsync(string iccid)
+        {
+            var url = $"{BusinessManager.MdwBaseURL}/esims/{Uri.EscapeDataString(iccid)}/history";
+
+            var request = await _consumeApi.Get<GetEsimHistoryResponse>(url);
+
+            return request;
+        }
+
     }
 }
