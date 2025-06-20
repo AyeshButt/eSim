@@ -1,0 +1,49 @@
+﻿@model eSim.Infrastructure.DTOs.Esim.GetEsimDetailsResponse
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">SIM Data</h5>
+            </div>
+            <div class="card-body">
+                <table id="scroll-horizontal" class="table nowrap align-middle" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>QR Code</th>
+                            <th>Iccid</th>
+                            <th>PIN</th>
+                            <th>PUK</th>
+                            <th>Profile Status</th>
+                            <th>First Installed Date</th>
+                            <th>SMDP+ Address</th>
+                            <th>SMDP+ ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            <tr>
+                                <td><button id="fetchBtcn" type="button"><i class="mdi mdi-qrcode mdi-10px"></i></button></td>
+                                <td>@Model.Iccid</td>
+                                <td>@Model.Pin</td>
+                                <td>@Model.Puk</td>
+                                <td>@Model.ProfileStatus</td>
+                                <td>@Model.FirstInstalledDateTime</td>
+                                <td>@Model.SmdpAddress</td>
+                                <td>@Model.MatchingId</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button id="fetchBtn" type="button" class="btn btn-primary"
+        data-iccid="@Model.Iccid">
+    <i class="mdi mdi-qrcode mdi-10px"></i>
+</button>
+
+<div id="api-result" class="mt-3"></div>

@@ -16,7 +16,7 @@ namespace eSim.Implementations.Services.Selfcare.Esim
     {
         private readonly IMiddlewareConsumeApi _consumeApi = consumeApi;
 
-        public async Task<Result<IEnumerable<EsimDTO>?>> GetEsimListAsync()
+        public async Task<Result<IEnumerable<EsimDTO>>> GetEsimListAsync()
         {
             var url = $"{BusinessManager.MdwBaseURL}/{BusinessManager.EsimList}";
 
@@ -25,7 +25,7 @@ namespace eSim.Implementations.Services.Selfcare.Esim
             return request;
         }
 
-        public async Task<Result<GetEsimDetailsResponse?>> GetEsimDetailsAsync(string iccid)
+        public async Task<Result<GetEsimDetailsResponse>> GetEsimDetailsAsync(string iccid)
         {
             var url = $"{BusinessManager.MdwBaseURL}/{BusinessManager.EsimDetails}/{Uri.EscapeDataString(iccid)}?additionalFields={BusinessManager.AppleInstallUrl}";
         
@@ -34,7 +34,7 @@ namespace eSim.Implementations.Services.Selfcare.Esim
             return request;
         }
 
-        public async Task<Result<GetEsimHistoryResponse?>> GetEsimHistoryAsync(string iccid)
+        public async Task<Result<GetEsimHistoryResponse>> GetEsimHistoryAsync(string iccid)
         {
             var url = $"{BusinessManager.MdwBaseURL}/esims/{Uri.EscapeDataString(iccid)}/history";
 
@@ -42,5 +42,6 @@ namespace eSim.Implementations.Services.Selfcare.Esim
 
             return request;
         }
+
     }
 }

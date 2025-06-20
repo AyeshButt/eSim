@@ -4,6 +4,8 @@ using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.Interfaces.Selfcare.Esim;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using static Raven.Client.Linq.LinqPathProvider;
 
 namespace eSim.Selfcare.Controllers
 {
@@ -21,14 +23,23 @@ namespace eSim.Selfcare.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Detail(string iccid)
+        public IActionResult Details(string iccid)
         {
-            var result = new EsimDetailsPartialViewModel();
+            return View(model: iccid);
+        }
 
-            result.EsimDetails = await _esim.GetEsimDetailsAsync(iccid);
-            result.EsimHistory = await _esim.GetEsimHistoryAsync(iccid);
+        [HttpGet]
+        public async Task<IActionResult> EsimDetails(string iccid)
+        {
+            var response = await _esim.GetEsimDetailsAsync(iccid);
 
-            return PartialView("_EsimDetailPartial", result);
+            return PartialView("_EsimDetails", response.Data);
+        }
+        public async Task<IActionResult> EsimHistory(string iccid)
+        {
+            var response = await _esim.GetEsimHistoryAsync(iccid);
+
+            return PartialView("_EsimHistory",response.Data);
         }
 
     }

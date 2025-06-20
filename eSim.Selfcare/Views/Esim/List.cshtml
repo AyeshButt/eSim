@@ -1,21 +1,24 @@
 ﻿@model IEnumerable<eSim.Infrastructure.DTOs.Esim.EsimDTO>
+@{
+    ViewBag.Title = "Esim List";
+}
 
 <div class="row">
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title mb-0 d-inline">Your eSIMs</h5>
+                <h5 class="card-title mb-0">Your eSIMs</h5>
             </div>
             <div class="card-body">
-                <table class="datatable-scroll table-hover table dt-responsive nowrap align-middle mdl-data-table" style="width:100%">
+                <table id="scroll-horizontal" class="table nowrap align-middle" style="width:100%">
                     <thead>
                         <tr>
-                            <th class="ps-5">ICCID</th>
+                            <th>ICCID</th>
                             <th>Reference</th>
                             <th>Last Action</th>
                             <th>Last Action Date</th>
                             <th>Assigned Date</th>
-                            <th>Action</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -23,13 +26,13 @@
                         {
                             @foreach (var item in Model)
                             {
-                                <tr class="View-Detail" data-iccid="@item.Iccid" data-bs-toggle="modal" data-bs-target=".bs-example-modal-center">
-                                    <td> <i class="mdi mdi-qrcode mdi-24px" ></i>  @item.Iccid</td>
+                                <tr>
+                                    <td><i class="mdi mdi-qrcode mdi-24px"></i>  @item.Iccid</td>
                                     <td>@item.CustomerRef</td>
                                     <td>@item.LastAction</td>
                                     <td>@item.ActionDate</td>
                                     <td>@item.AssignedDate</td>
-                                    <td><button class="btn btn-sm btn-soft-primary">!</button> <button class="btn btn-sm btn-soft-primary rounded-pill">+</button></td>
+                                    <td><a class="btn btn-sm btn-soft-primary" asp-action="Details" asp-controller="Esim" asp-route-iccid="@item.Iccid"><i class="ri-eye-line"></i></a></td>
                                 </tr>
                             }
                         }
@@ -37,60 +40,5 @@
                 </table>
             </div>
         </div>
-    </div><!--end col-->
-</div><!--end row-->
-
-<div class="modal modal-xl fade bs-example-modal-center" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body p-0">
-                <div id="bundleDetailLoader" class="text-center my-5" style="display:none;">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <p class="mt-2">Loading bundle details...</p>
-
-                </div>
-                
-                <div id="bundleDetailModalBody">
-                    
-                </div>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-@section scripts {
-        <script>
-        $(document).on('click', '.View-Detail', function()
-            {
-                var simIccid = $(this).data('iccid');
-
-                     $('.bs-example-modal-center').modal('show');
-
-                    // Show loader and clear any previous data
-                $('#bundleDetailLoader').show();
-                    $('#bundleDetailModalBody').html('');
-
-                $.ajax({
-                    url: '@Url.Action("Detail", "Esim")',
-                    type: 'GET',
-                    data: { iccid: simIccid },
-                    success: function (html) {
-                        $('#bundleDetailLoader').hide();
-                        $('#bundleDetailModalBody').html(html); // inject partial view
-                        $('.bs-example-modal-center').modal('show'); // open modal
-                    },
-
-                     error: function () {
-                        $('#bundleDetailLoader').hide();
-                        $('#bundleDetailModalBody').html('<p class="text-danger">Failed to load bundle details.</p>');
-                    }
-                });
-            });   
-    </script>
-    <!-- prismjs plugin -->
-    <script src="~/assets/libs/prismjs/prism.js"></script>
-
-    <script src="~/assets/js/app.js"></script>
-    }
+    </div>
+</div>
