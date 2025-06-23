@@ -32,7 +32,7 @@
                         {
                             @foreach (var item in List)
                             {
-                                <tr class="View-Detail" data-ID="@item.Item" data-bs-toggle="modal" data-bs-target=".bs-example-modal-center">
+                                <tr>
                                     <td>@item.Description</td>
                                     <td>@item.Item</td>
                                     <td>@item.Country</td>
@@ -42,7 +42,7 @@
                                     <td>@item.Duration</td>
                                     <td>*</td>
                                     <td>@item.Quantity</td>
-                                    <td><button class="btn btn-sm btn-soft-primary">!</button></td>
+                                    <td class="View-Detail" data-id="@item.Item" data-bs-toggle="modal" data-bs-target=".bs-example-modal-center"><button class="btn btn-md btn-soft-primary">!</button></td>
                                 </tr>
                             }
                         }
@@ -52,6 +52,14 @@
         </div>
     </div><!--end col-->
 </div><!--end row-->
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            its working
+        </div>
+    </div>
+</div>
 
 
 <div class="modal modal-lg fade bs-example-modal-center" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
@@ -76,7 +84,7 @@
     <script>
         $(document).on('click', '.View-Detail', function()
             {
-                var name = $(this).data('ID');
+                var name = $(this).data('id');
 
                      $('.bs-example-modal-center').modal('show');
 
@@ -85,9 +93,9 @@
                     $('#bundleDetailModalBody').html('');
 
                 $.ajax({
-                    url: '@Url.Action("Detail", "Esim")',
+                    url: '@Url.Action("Detail", "Inventory")',
                     type: 'GET',
-                    data: { ID: name },
+                    data: { id: name },
                     success: function (html) {
                         $('#bundleDetailLoader').hide();
                         $('#bundleDetailModalBody').html(html); // inject partial view
