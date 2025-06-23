@@ -287,7 +287,13 @@ namespace eSim.Implementations.Services.Esim
             return result;
         }
 
-  
+        //public Task<Result<GetAppliedBundleStatusResponseDTO>> GetAppliedBundleStatusAsync(GetAppliedBundleStatusRequestDTO request)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+
+        #endregion
 
         #region Esim history
 

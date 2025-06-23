@@ -2,6 +2,18 @@
 @* @model eSim.Infrastructure.DTOs.Middleware.Bundle.GetBundleCatalogueDetailDTO.GetBundleCatalogueDetailsResponse *@
 @model SubscriberInventoryResponseViewModel
 
+
+@{
+    DateTime? createdDate = Model.CreatedDate;
+    int duration = Model.duration;
+    DateTime expiryDate = createdDate.HasValue
+        ? createdDate.Value.Date.AddDays(duration - 1)
+        : DateTime.MinValue;
+
+    string formattedExpiry = expiryDate.ToString("dd MMM yyyy");
+}
+
+
 <div class="row">
     <div class="col-5 ">
         <div class="p-4">
@@ -45,7 +57,7 @@
                     </span>
                 </h6>
             </div>
-            <div class="d-flex justify-content-around mt-2">
+            <div class="d-flex justify-content-around mt-3">
                 <h6 class="d-flex flex-column align-items-center">
                     <i class="mdi mdi-speedometer mdi-36px mb-1"></i>
 
@@ -65,6 +77,12 @@
                     </span>
                 </h6>
             </div>
+            <div class="d-flex justify-content-center mt-4">
+                <h6 class=" d-flex flex-column align-items-center">
+                    <i class="mdi mdi-dialpad mdi-36px mb-1"></i>
+                    <span> Number Not Included</span>
+                </h6>
+            </div>
         </div>
     </div>
 
@@ -81,13 +99,31 @@
                 {
                         <li>@item.country.name</li>
                 }
+            </ul> 
+            
+            <div class="d-flex justify-content-between">
+                <div>
+                    <h5 class="mt-1">Inventory</h5>
+                </div>
+                <div>
+                    <p class="mt-1"><b>Total:</b> @Model.Quantity</p>
+                </div>
+            </div>
+            <ul class="list-unstyled gap-2">
+                @for (int i = 0; i < (Model.Quantity ?? 0); i++)
+                {
+                    <li class="d-flex justify-content-between border border-1 rounded-4 mt-1 px-2 py-2">
+                        <span>1 Bundle</span>
+                        <span>Expiry: @formattedExpiry</span>
+                    </li>
+                }
             </ul>
 
             <h5 class="mt-3">Roaming Countries</h5>
             <ul class="list-unstyled d-flex flex-wrap gap-2">
                 @foreach (var item in Model.roamingEnabled)
                 {
-                        <li>@item.country.name</li>
+                    <li>@item.country.iso</li>
                 }
             </ul>
 

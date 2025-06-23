@@ -38,9 +38,9 @@ namespace eSim.Implementations.Services.Selfcare.Inventory
             {
                 var inventory = await GetListAsync();
 
-                var selectedBundle = inventory?.Data?.FirstOrDefault(x => x.Item == BundleID);
+                var selectedBundle = inventory.Data.FirstOrDefault(x => x.Item == BundleID);
 
-                if (selectedBundle != null)
+                if (selectedBundle == null)
                 {
                     result.Success = false;
                     result.Message = "No bundle Bundle Found in Inventory";
@@ -49,20 +49,23 @@ namespace eSim.Implementations.Services.Selfcare.Inventory
 
                 Result<GetBundleCatalogueDetailsResponse> bundle = await _bdService.BundleDetail(BundleID);
 
-                if (bundle.Success)
+                if (bundle.Success && bundle.Data != null)
                 {
-                    result.Data.Quantity = selectedBundle.Quantity;
-                    result.Data.CreatedDate = selectedBundle.CreatedDate;
-                    result.Data.name = bundle.Data.name;
-                    result.Data.roamingEnabled = bundle.Data.roamingEnabled;
-                    result.Data.countries = bundle.Data.countries;
-                    result.Data.DataAmount = bundle.Data.dataAmount;
-                    result.Data.autostart = bundle.Data.autostart;
-                    result.Data.description = bundle.Data.description;
-                    result.Data.duration = bundle.Data.duration;
-                    result.Data.autostart = bundle.Data.autostart;
-                    result.Data.Message = bundle.Data.Message;
+                    result.Data = new SubscriberInventoryResponseViewModel
+                    {
+                        Quantity = selectedBundle.Quantity,
+                        CreatedDate = selectedBundle.CreatedDate,
+                        name = bundle.Data.name,
+                        roamingEnabled = bundle.Data.roamingEnabled,
+                        countries = bundle.Data.countries,
+                        dataAmount = bundle.Data.dataAmount,
+                        autostart = bundle.Data.autostart,
+                        description = bundle.Data.description,
+                        duration = bundle.Data.duration,
+                        Message = bundle.Data.Message
+                    };
 
+                    result.Success = true;
                     return result;
                 }
                 result.Success = false;

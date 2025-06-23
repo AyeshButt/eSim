@@ -113,8 +113,8 @@ namespace eSim.Implementations.Services.Selfcare.Authentication
         public async Task<Result<string?>> OTPVarification(string input)
         {
             var url = BusinessManager.MdwBaseURL + BusinessManager.OTP;
-
-            var request = await _consumeApi.Post<string, string>(url, input);
+            var fulUrl = $"{url}?otp={input}";
+            var request = await _consumeApi.Get<string>(fulUrl);
 
             return request;
         }
