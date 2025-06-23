@@ -31,7 +31,7 @@ namespace eSim.Common.StaticClasses
         public static string QRCode = "qr-code.png";
         public static string InvalidIccid = "Invalid Iccid";
 
-        public static string MdwBaseURL = "https://localhost:7264/";
+        public static string MdwBaseURL = "https://localhost:7264";
         public static string Countries = "Countries";
         public static string MidlewareLogin = "auth/login";
         public static string CheckEmail = "Subscriber/check-email";
@@ -46,7 +46,9 @@ namespace eSim.Common.StaticClasses
         public static string BundelRegion = "bundle/bundles";
         public static string Bundeldetail = "bundle/";
         public static string EsimList = "esims/list";
-        public static string EsimHistory = "esim/history";
+        public static string EsimHistory = "esims/history";
+        public static string EsimDetails = "esims/details";
+        public static string AppleInstallUrl = "appleInstallUrl";
         public static string SubscriberInventory = "inventory/subscriber";
         //public static string SubscriberInventory = "inventory/subscriber";
 
