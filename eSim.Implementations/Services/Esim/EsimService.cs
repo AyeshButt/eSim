@@ -291,7 +291,7 @@ namespace eSim.Implementations.Services.Esim
         }
         #endregion
 
-        #endregion
+     
 
         #region Esim details
         public async Task<Result<GetEsimDetailsResponse>> GetEsimDetailsAsync(string iccid, string? additionalfields)
