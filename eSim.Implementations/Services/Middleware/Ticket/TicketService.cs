@@ -102,7 +102,7 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                     Subject = input.Subject,
                     Description = input.Description,
                     TicketType = input.TicketType,
-                    Status = (int)Common.Enums.TicketStatus.open,
+                    Status = (int)Common.Enums.TicketStatus.Open,
 
                     CreatedAt = BusinessManager.GetDateTimeNow()
                 };
@@ -143,33 +143,52 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                     return result;                }
                 ;
 
-                var ticketType = await _Db.TicketType
-                    .AsNoTracking()
-                    .Where(t => t.Id == ticket.TicketType)
-                    .Select(t => t.Type)
-                    .FirstOrDefaultAsync();
+                var ticketData = await (from t in _Db.Ticket
+                                        join tt in _Db.TicketType on t.TicketType equals tt.Id
+                                        where t.TRN == trn
+                                        select new
+                                        {
+                                            Ticket = t,
+                                            TicketType = tt.Type,
 
-                var attachments = await _Db.TicketAttachments
-                    .Where(a => a.TicketId == ticket.Id.ToString())
-                    .Select(a => a.Attachment)
-                    .ToListAsync();
+                                            Attachments = _Db.TicketAttachments
+                                                .Where(a => a.TicketId == t.Id.ToString())
+                                                .Select(a => a.Attachment)
+                                                .ToList(),
+
+                                            Activities = (from activity in _Db.TicketActivities
+                                                          join user in _Db.Subscribers
+                                                          on activity.ActivityBy equals user.Id.ToString()
+                                                          where activity.TicketId == t.Id.ToString()
+                                                          orderby activity.ActivityAt descending
+                                                          select new TicketActivityDTO
+                                                          {
+                                                              Comment = activity.Comment,
+                                                              ActivityBy = user.Email,
+                                                              ActivityAt = activity.ActivityAt
+                                                          }).ToList()
+                                        }).FirstOrDefaultAsync();
+
 
                 var detail = new TicketDTO
                 {
-                    TRN = ticket.TRN,
-                    Subject = ticket.Subject,
-                    Description = ticket.Description,
-                    TicketType = ticket.TicketType,
-                    Status = ticket.Status,
-                    CreatedAt = ticket.CreatedAt,
-                    Attachments = attachments
+                    TRN = ticketData.Ticket.TRN,
+                    Subject = ticketData.Ticket.Subject,
+                    Description = ticketData.Ticket.Description,
+                    TicketType = ticketData.Ticket.TicketType,
+                    Status = ticketData.Ticket.Status,
+                    CreatedAt = ticketData.Ticket.CreatedAt,
+                    Attachments = ticketData.Attachments,
+                    Comments = ticketData.Activities
                 };
 
-      
+
+
                 {
                     result.Success = true;
                     result.Message = BusinessManager.TicketdetailRetrieved;
-                    result.Data = detail;
+                    result.StatusCode = StatusCodes.Status200OK;
+                        result.Data = detail;
                    
                 };
             }

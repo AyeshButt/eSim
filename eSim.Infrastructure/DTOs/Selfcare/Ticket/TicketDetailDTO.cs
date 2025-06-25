@@ -9,6 +9,6 @@ namespace eSim.Infrastructure.DTOs.Selfcare.Ticket
 {
     public class TicketDetailDTO : TicketDTO
     {
-
+       
     }
 }

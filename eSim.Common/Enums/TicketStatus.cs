@@ -8,6 +8,9 @@ namespace eSim.Common.Enums
 {
     public enum TicketStatus
     {
-        open=1
+        Open = 1,
+        InProgress = 2,
+        Resolved = 3,
+        Closed = 4
     }
 }

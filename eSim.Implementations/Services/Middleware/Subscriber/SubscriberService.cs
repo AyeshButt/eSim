@@ -38,9 +38,8 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
         {
             var result = new Result<string>();
 
-            var isValidEmail = Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
-
-            if (!isValidEmail) 
+         
+            if (string.IsNullOrWhiteSpace(email) || !Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
             {
                 result.Success = false;
                 result.Message = BusinessManager.validemailaddress;
@@ -49,12 +48,21 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             }
 
             var exists = await _db.Subscribers.AnyAsync(x => x.Email == email);
-
-            result.Success = true;
-            result.Message = exists ? BusinessManager.EmailExist : BusinessManager.EmailAvailable;
-            result.StatusCode = StatusCodes.Status200OK;
-            return result;
+            if (exists)
+            {
+                result.Success = false;
+                result.Message = BusinessManager.EmailExist;
+                result.StatusCode = StatusCodes.Status400BadRequest;
+                return result;
+            }
+            else {
+                result.Success = true;
+                result.Message = BusinessManager.EmailAvailable;
+                result.StatusCode = StatusCodes.Status200OK;
+                return result;
+            }
         }
+
         public async Task<Result<string>> CreateSubscriber(SubscriberDTORequest input)
         {
             var result = new Result<string>();
@@ -81,7 +89,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                     ModifiedAt = BusinessManager.GetDateTimeNow(),
                     FirstName = input.FirstName,
                     LastName = input.LastName,
-                    Email = input.Email,
+                    Email = input.Email.ToLower(),
                     Hash = hashedPassword,
                     ClientId = client.Id,
                     Country = input.Country
