@@ -129,7 +129,7 @@ namespace eSim.Middleware.Controllers
             return Ok();
         }
 
-        //#endregion
+        #endregion
 
         #region Download QR
 
