@@ -116,17 +116,17 @@ namespace eSim.Middleware.Controllers
         }
 
         #endregion
-        #region GetappliedBundlestatus
-        [AllowAnonymous]
-        [HttpGet("appliedBundlestatus")]
-        public async Task<IActionResult> GetappliedBundlestatus([FromQuery] GetAppliedBundleStatusRequestDTO request)
-        {
-            var result = await _esimService.GetAppliedBundleStatusAsync(request);
+        //#region GetappliedBundlestatus
+        //[AllowAnonymous]
+        //[HttpGet("appliedBundlestatus")]
+        //public async Task<IActionResult> GetappliedBundlestatus([FromQuery] GetAppliedBundleStatusRequestDTO request)
+        //{
+        //    var result = await _esimService.GetAppliedBundleStatusAsync(request);
 
-            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
-        }
+        //    return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
+        //}
 
-        #endregion
+        //#endregion
 
         #region Download QR
 

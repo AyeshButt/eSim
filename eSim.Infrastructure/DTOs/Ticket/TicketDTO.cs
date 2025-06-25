@@ -22,6 +22,7 @@ namespace eSim.Infrastructure.DTOs.Ticket
         public DateTime CreatedAt { get; set; }
         public int Status { get; set; }
         public List<string> Attachments { get; set; }
+        public List<TicketActivityDTO> Comments { get; set; } = new();
     }
 }
 

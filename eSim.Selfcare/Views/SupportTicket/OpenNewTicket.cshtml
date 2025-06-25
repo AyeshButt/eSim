@@ -18,7 +18,7 @@
 
             <div class="card-body">
                 <div class="live-preview">
-                    <form asp-action="OpenNewTicket" asp-controller="SupportTicket" method="post">
+                    <form asp-action="OpenNewTicket" asp-controller="SupportTicket" method="post" enctype="multipart/form-data">
                         <div class="row">
 
                             <div class="col-md-12">
@@ -58,12 +58,14 @@
                             </div><!--end col-->
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label id="attachment-label" for="attachment" class="btn btn-outline-primary ">
+                                    <label id="attachment-label" for="attachment" class="btn btn-outline-primary">
                                         <i class="bi bi-paperclip"></i> Attachment
                                     </label>
-                                    <input id="attachment" type="file" hidden onchange="updateFileName()" />
+                                    <input asp-for="File" id="attachment" type="file" hidden onchange="updateFileName()" />
+                                    <span asp-validation-for="File" class="text-danger"></span>
                                 </div>
                             </div>
+
                             <!--end col-->
                             <div class="col-lg-12">
                                 <div class="text-end">

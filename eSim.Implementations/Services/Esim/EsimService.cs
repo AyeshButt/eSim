@@ -171,11 +171,11 @@ namespace eSim.Implementations.Services.Esim
                     result.Success = false;
                     result.Message = response.Message;
 
-                    if(result.Message == BusinessManager.IncompatibleBundle)
+                    if (result.Message == BusinessManager.IncompatibleBundle)
                     {
                         result.StatusCode = StatusCodes.Status400BadRequest;
                     }
-                    else if(result.Message == BusinessManager.NotFound)
+                    else if (result.Message == BusinessManager.NotFound)
                     {
                         result.StatusCode = StatusCodes.Status404NotFound;
                     }
@@ -209,6 +209,8 @@ namespace eSim.Implementations.Services.Esim
                 if (esim is not null)
                 {
                     await _db.AppliedEsimBundles.AddAsync(esim);
+
+
                     await _db.SaveChangesAsync();
                 }
 
@@ -286,8 +288,8 @@ namespace eSim.Implementations.Services.Esim
             }
             return result;
         }
+        #endregion
 
-  
 
         #region Esim history
 
@@ -319,7 +321,7 @@ namespace eSim.Implementations.Services.Esim
             if (string.IsNullOrWhiteSpace(reference))
             {
                 result.Success = false;
-                result.Message = BusinessManager.Missingreference; 
+                result.Message = BusinessManager.Missingreference;
                 return result;
             }
             string url = $"{BusinessManager.BaseURL}/esims/assignments?reference={reference}";
@@ -328,7 +330,7 @@ namespace eSim.Implementations.Services.Esim
             {
                 var response = await _consumeApi.GetApi<GetEsimInstallDetailReponseDTO>(url);
 
-                if (response == null )
+                if (response == null)
                 {
                     result.Success = false;
                     result.Message = BusinessManager.EsimInstallDetailNotFound;
@@ -427,8 +429,8 @@ namespace eSim.Implementations.Services.Esim
             return result;
         }
         #endregion
-
-        private async Task<bool> UpdateInventory(string subscriberId,string bundle)
+        #region UpdateInventory
+        private async Task<bool> UpdateInventory(string subscriberId, string bundle)
         {
             bool result = false;
 
@@ -452,11 +454,14 @@ namespace eSim.Implementations.Services.Esim
                 }
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                
+
             }
             return result;
         }
     }
+    #endregion
 }
+
+

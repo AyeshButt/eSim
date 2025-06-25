@@ -40,9 +40,10 @@ namespace eSim.Common.StaticClasses
         public static string OTP = "Subscriber/verify-otp";
         public static string resetPass = "Subscriber/reset-password";
         public static string SubscriberId = "SubscriberId";
-        public static string Ticekt = "Ticket";
+        public static string Ticekt = "Ticket/list";
         public static string TicketType = "Ticket/Types";
         public static string TicketDetail = "ticket/detail";
+        public static string Ticketcomment = "ticket/comment";
         public static string BundelRegion = "bundle/bundles";
         public static string Bundeldetail = "bundle/";
         public static string EsimList = "esims/list";
