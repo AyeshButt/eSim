@@ -21,10 +21,12 @@ namespace eSim.Selfcare.Controllers
 
         [HttpGet]
 
-        public async Task<IActionResult> Detail(string ID)
+        public async Task<IActionResult> Detail(string id)
         {
-            var response = await _service.DetailAsync(ID);
-            return PartialView("_InventoryDetailPartialView", response);
+            var response = await _service.DetailAsync(id);
+
+            //return View(response);
+            return PartialView("_InventoryDetailPartialView", response.Data);
         }
     }
 }

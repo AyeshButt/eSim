@@ -47,7 +47,9 @@ namespace eSim.Common.StaticClasses
         public static string BundelRegion = "bundle/bundles";
         public static string Bundeldetail = "bundle/";
         public static string EsimList = "esims/list";
-        public static string EsimHistory = "esim/history";
+        public static string EsimHistory = "esims/history";
+        public static string EsimDetails = "esims/details";
+        public static string AppleInstallUrl = "appleInstallUrl";
         public static string SubscriberInventory = "inventory/subscriber";
         //public static string SubscriberInventory = "inventory/subscriber";
 

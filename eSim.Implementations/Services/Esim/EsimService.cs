@@ -32,6 +32,7 @@ namespace eSim.Implementations.Services.Esim
             _consumeApi = consumeApi;
             _db = db;
         }
+
         #region Apply bundle to a new esim
         public async Task<Result<ApplyBundleToEsimResponse>> ApplyBundleToEsimAsync(ApplyBundleToEsimRequest input, string loggedUser)
         {
@@ -290,17 +291,39 @@ namespace eSim.Implementations.Services.Esim
         }
         #endregion
 
+        #endregion
+
+        #region Esim details
+        public async Task<Result<GetEsimDetailsResponse>> GetEsimDetailsAsync(string iccid, string? additionalfields)
+        {
+            var result = new Result<GetEsimDetailsResponse>();
+            
+            string url = additionalfields is not null ? $"{BusinessManager.BaseURL}/esims/{iccid}?additionalFields={additionalfields}" : $"{BusinessManager.BaseURL}/esims/{iccid}";
+
+            try
+            {
+                result = await _consumeApi.GetApii<GetEsimDetailsResponse>(url);
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.StatusCode = StatusCodes.Status500InternalServerError;
+                result.Message = ex.Message;
+            }
+            return result;
+        }
+        #endregion
 
         #region Esim history
 
-        public async Task<Result<GetEsimHistoryResponseDTO>> GetEsimHistoryAsync(string iccid)
+        public async Task<Result<GetEsimHistoryResponse>> GetEsimHistoryAsync(string iccid)
         {
-            var result = new Result<GetEsimHistoryResponseDTO>();
+            var result = new Result<GetEsimHistoryResponse>();
             string url = $"{BusinessManager.BaseURL}/esims/{iccid}/history";
 
             try
             {
-                result = await _consumeApi.GetApii<GetEsimHistoryResponseDTO>(url);
+                result = await _consumeApi.GetApii<GetEsimHistoryResponse>(url);
             }
             catch (Exception ex)
             {
@@ -463,5 +486,3 @@ namespace eSim.Implementations.Services.Esim
     }
     #endregion
 }
-
-

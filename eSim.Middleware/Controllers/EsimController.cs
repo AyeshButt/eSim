@@ -14,6 +14,7 @@ using System.Net;
 using eSim.Infrastructure.DTOs.Global;
 using eSim.Common.Extensions;
 using eSim.Infrastructure.DTOs;
+using eSim.Infrastructure.DTOs.Middleware.Order;
 namespace eSim.Middleware.Controllers
 {
     [Route("esims")]
@@ -50,11 +51,11 @@ namespace eSim.Middleware.Controllers
         }
         #endregion
 
-        #region Get eSIM history
+        #region Get Esim History
 
         [Authorize]
         [HttpGet("{iccid}/history")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK,Type = typeof(Result<GetEsimHistoryResponse>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -116,15 +117,17 @@ namespace eSim.Middleware.Controllers
         }
 
         #endregion
-        //#region GetappliedBundlestatus
-        //[AllowAnonymous]
-        //[HttpGet("appliedBundlestatus")]
-        //public async Task<IActionResult> GetappliedBundlestatus([FromQuery] GetAppliedBundleStatusRequestDTO request)
-        //{
-        //    var result = await _esimService.GetAppliedBundleStatusAsync(request);
 
-        //    return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
-        //}
+        #region GetappliedBundlestatus
+        [AllowAnonymous]
+        [HttpGet("appliedBundlestatus")]
+        public async Task<IActionResult> GetappliedBundlestatus([FromQuery] GetAppliedBundleStatusRequestDTO request)
+        {
+            //var result = await _esimService.GetAppliedBundleStatusAsync(request);
+
+            //return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
+            return Ok();
+        }
 
         //#endregion
 
@@ -196,6 +199,28 @@ namespace eSim.Middleware.Controllers
                 return Unauthorized();
 
             var response = await _esimService.ApplyBundleToEsimAsync(input, loggedUser);
+
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(response.StatusCode), response);
+        }
+
+        #endregion
+
+        #region Get esim details
+
+        [AllowAnonymous]
+        [HttpGet("details/{iccid}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<GetEsimDetailsResponse>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(Result<>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Result<>))]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Result<>))]
+        [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+
+        public async Task<IActionResult> GetEsimDetails([FromRoute] string iccid, [FromQuery] string? additionalFields)
+        {
+            var response = await _esimService.GetEsimDetailsAsync(iccid, additionalFields);
 
             return StatusCode(HttpStatusCodeMapper.FetchStatusCode(response.StatusCode), response);
         }

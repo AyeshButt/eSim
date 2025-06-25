@@ -36,7 +36,7 @@ namespace eSim.Implementations.Services.Selfcare.Authentication
         #region signIn 
         public async Task<string?> AuthenticateAsync(SignIn model)
         {
-            var url = BusinessManager.MdwBaseURL + BusinessManager.MidlewareLogin;
+            var url = $"{BusinessManager.MdwBaseURL}/{BusinessManager.MidlewareLogin}";
 
             var req = _httpClientFactory.CreateClient("ds");
             var ss = await req.PostAsJsonAsync(url,model);
@@ -113,8 +113,8 @@ namespace eSim.Implementations.Services.Selfcare.Authentication
         public async Task<Result<string?>> OTPVarification(string input)
         {
             var url = BusinessManager.MdwBaseURL + BusinessManager.OTP;
-
-            var request = await _consumeApi.Post<string, string>(url, input);
+            var fulUrl = $"{url}?otp={input}";
+            var request = await _consumeApi.Get<string>(fulUrl);
 
             return request;
         }
