@@ -154,7 +154,7 @@ namespace eSim.Middleware.Controllers
 
         #region Apply bundle to an existing esim
 
-        [AllowAnonymous]
+        [Authorize]
         [HttpPost("apply-bundle-existing-esim")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<string>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Result<string>))]
@@ -167,8 +167,8 @@ namespace eSim.Middleware.Controllers
         {
             Result<ApplyBundleToEsimResponse> response = new();
 
-            var loggedUser = "c595c0f5-9a8b-4cec-9733-08dda9a3fe55";
-
+            var loggedUser = User.SubscriberId();
+            
             if (loggedUser == null)
                 return Unauthorized();
 
@@ -181,6 +181,7 @@ namespace eSim.Middleware.Controllers
 
         #region Apply bundle to a new esim
 
+        [Authorize]
         [HttpPost("apply-bundle-new-esim")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<ApplyBundleToEsimResponse>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Result<ApplyBundleToEsimResponse>))]
@@ -192,7 +193,6 @@ namespace eSim.Middleware.Controllers
         public async Task<IActionResult> ApplyBundleToEsim(ApplyBundleToEsimRequest input)
         {
             var loggedUser = User.SubscriberId();
-            //var loggedUser = "c595c0f5-9a8b-4cec-9733-08dda9a3fe55";
 
             if (loggedUser == null)
                 return Unauthorized();

@@ -40,6 +40,7 @@ namespace eSim.Common.StaticClasses
                 var request = await _http.GetAsync(url);
 
                 var content = await request.Content.ReadAsStringAsync();
+                response = JsonConvert.DeserializeObject<Result<T?>>(content);
 
                 if (request.IsSuccessStatusCode) 
                 {

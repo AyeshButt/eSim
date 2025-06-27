@@ -21,6 +21,9 @@ namespace eSim.Common.StaticClasses
         public static string BaseURL = "https://api.esim-go.com/v2.4";
 
         public static string Exception = "Exception occured";
+        public static string BundleAppliedSuccessfully = "Bundle Applied Successfully";
+        public static string Validate = "validate";
+        public static string Transaction = "transaction";
         public static string NotFound = "Not Found";
         public static string InternalServerError = "Internal Server Error";
         public static string IncompatibleBundle = "Incompatible bundle profile combination";

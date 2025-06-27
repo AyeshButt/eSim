@@ -447,6 +447,7 @@ namespace eSim.Implementations.Services.Esim
                 result.Success = false;
                 result.Message = ex.Message;
                 result.StatusCode = (int)HttpStatusCode.InternalServerError;
+                result.Data = null;
             }
 
             return result;
