@@ -69,8 +69,8 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
         public async Task<Result<string>> Create(TicketRequestViewModel model)
         {
             string URL = BusinessManager.MdwBaseURL + "Ticket";
+            string attachmentUrl = BusinessManager.MdwBaseURL+"ticket/attachment";
             var token = _httpContext.HttpContext?.User?.FindFirst("Token")?.Value;
-
 
             try
             {
@@ -83,18 +83,59 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
 
                 _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                var req = await _http.PostAsJsonAsync(URL, dto);
-                var json = await req.Content.ReadAsStringAsync();
-                var resp = JsonConvert.DeserializeObject<Result<string>>(json);
-                return resp;
+                var ticketResponse = await _http.PostAsJsonAsync(URL, dto);
+                var ticketJson = await ticketResponse.Content.ReadAsStringAsync();
+                var ticketResult = JsonConvert.DeserializeObject<Result<string>>(ticketJson);
+
+                if (ticketResult == null || !ticketResult.Success)
+                {
+                    return new Result<string>
+                    {
+                        Success = false,
+                        Message = ticketResult?.Message ?? "Ticket creation failed"
+                    };
+                }
+
+                // Upload File
+                using var content = new MultipartFormDataContent();
+                content.Add(new StringContent(ticketResult.Data!), "TRN");
+                content.Add(new StreamContent(model.File.OpenReadStream()), "File", model.File.FileName);
+
+                var attachmentResponse = await _http.PostAsync(attachmentUrl, content);
+                var attachmentJson = await attachmentResponse.Content.ReadAsStringAsync();
+                var attachmentResult = JsonConvert.DeserializeObject<Result<string>>(attachmentJson);
+
+                if (attachmentResult != null && attachmentResult.Success)
+                {
+                    return new Result<string>
+                    {
+                        Success = true,
+                        Message = "Ticket and attachment uploaded successfully",
+                        Data = ticketResult.Data
+                    };
+                }
+                else
+                {
+                    return new Result<string>
+                    {
+                        Success = false,
+                        Message = "Ticket created but attachment failed: " + (attachmentResult?.Message ?? "")
+                    };
+                }
             }
-            catch (Exception ex)
+            catch
             {
-                return new Result<string>() { Success = false, Message = "Failed to Open New Ticket" };
+                return new Result<string>
+                {
+                    Success = false,
+                    Message = "Failed to create ticket or upload attachment"
+                };
             }
 
         }
+        #endregion
 
+        #region Detail
         public async Task<Result<TicketDetailDTO>> Detail(string trn)
         {
             var Url = BusinessManager.MdwBaseURL + BusinessManager.TicketDetail;
@@ -104,6 +145,13 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
             var request = await _consumeApi.Get<TicketDetailDTO>(fulUrl);
             
             return request;
+        }
+
+        public async Task<Result<bool>> PostCommentAsync(TicketCommentRequest request)
+        {
+            var url = BusinessManager.MdwBaseURL + BusinessManager.Ticketcomment;
+            var result = await _consumeApi.Post<bool,TicketCommentRequest>(url, request);
+            return result;
         }
 
         #endregion

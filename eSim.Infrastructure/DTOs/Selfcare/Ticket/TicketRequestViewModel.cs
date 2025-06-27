@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using eSim.Infrastructure.DTOs.Ticket;
+using Microsoft.AspNetCore.Http;
 
 namespace eSim.Infrastructure.DTOs.Selfcare.Ticket
 {
@@ -21,5 +22,8 @@ namespace eSim.Infrastructure.DTOs.Selfcare.Ticket
 
         [Required(ErrorMessage = "Description is Required")]
         public string Description { get; set; } = null!;
+
+        [Required(ErrorMessage = "File is required.")]
+        public IFormFile File { get; set; } = null!;
     }
 }

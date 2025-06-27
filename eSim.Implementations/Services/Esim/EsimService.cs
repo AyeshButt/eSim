@@ -210,6 +210,8 @@ namespace eSim.Implementations.Services.Esim
                 if (esim is not null)
                 {
                     await _db.AppliedEsimBundles.AddAsync(esim);
+
+
                     await _db.SaveChangesAsync();
                 }
 
@@ -287,8 +289,9 @@ namespace eSim.Implementations.Services.Esim
             }
             return result;
         }
-
         #endregion
+
+     
 
         #region Esim details
         public async Task<Result<GetEsimDetailsResponse>> GetEsimDetailsAsync(string iccid, string? additionalfields)
@@ -449,7 +452,7 @@ namespace eSim.Implementations.Services.Esim
             return result;
         }
         #endregion
-
+        #region UpdateInventory
         private async Task<bool> UpdateInventory(string subscriberId, string bundle)
         {
             bool result = false;
@@ -481,4 +484,5 @@ namespace eSim.Implementations.Services.Esim
             return result;
         }
     }
+    #endregion
 }

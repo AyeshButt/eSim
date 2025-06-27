@@ -48,12 +48,15 @@ namespace eSim.Selfcare.Controllers
 
         #endregion
 
+        #region TicketDetails
         [HttpGet]
         public async Task<IActionResult> TicketDetails(string trn)
         {
             var response = await _ts.Detail(trn);
             return View(response);
         }
+        #endregion
+
 
         #region Open new Ticket
         [HttpGet]
@@ -101,5 +104,14 @@ namespace eSim.Selfcare.Controllers
         }
 
         #endregion
+
+
+        [HttpPost]
+        public async Task<IActionResult> PostComment(TicketCommentRequest commentRequest)
+        {
+            await _ts.PostCommentAsync(commentRequest);
+            return RedirectToAction("TicketDetails", new { trn = commentRequest.TRN });
+        }
+
     }
 }
