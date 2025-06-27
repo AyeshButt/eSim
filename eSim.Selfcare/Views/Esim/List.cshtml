@@ -1,7 +1,19 @@
 ﻿@model IEnumerable<eSim.Infrastructure.DTOs.Esim.EsimDTO>
 @{
     ViewBag.Title = "Esim List";
+
+
+    var notifications = new List<(string Key, string Type)>
+    {
+        ("BundleAppliedSuccessfully", "success"),
+    };
 }
+
+@if (Model is null)
+{
+    <div class="alert alert-danger text-center">Exception occured</div>
+}
+
 
 <div class="row">
     <div class="col-lg-12">
@@ -22,7 +34,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if (Model != null)
+
+                        @if (Model != null && Model.Any())
                         {
                             @foreach (var item in Model)
                             {
@@ -32,7 +45,11 @@
                                     <td>@item.LastAction</td>
                                     <td>@item.ActionDate</td>
                                     <td>@item.AssignedDate</td>
-                                    <td><a class="btn btn-sm btn-soft-primary" asp-action="Details" asp-controller="Esim" asp-route-iccid="@item.Iccid"><i class="ri-eye-line"></i></a></td>
+                                    <td>
+                                        <a class="mx-2 btn-soft-primary" asp-action="Details" asp-controller="Esim" asp-route-iccid="@item.Iccid"><i class="ri-eye-line"></i></a>
+
+                                        <button class=" btn-soft-primary subscriber-inventory-form" data-iccid="@item.Iccid"><i class="ri-add-circle-line"></i></button>
+                                    </td>
                                 </tr>
                             }
                         }
@@ -42,3 +59,58 @@
         </div>
     </div>
 </div>
+
+<div>
+    <div class="modal fade bs-example-modal-center" id="inventoryModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center p-5" id="inventoryModalBody">
+
+                    <!-- Partial view will load here -->
+
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+
+
+
+@section scripts {
+    <script>
+        $('.subscriber-inventory-form').click(function () 
+{
+            var iccid = $(this).data('iccid');
+
+            $.ajax({
+                url: '@Url.Action("GetSubscriberInventory", "Esim")',  // adjust to your action
+                data: { iccid: iccid },
+                success: function (html) {
+
+                $('#inventoryModalBody').html(html);
+                $('#inventoryModal').modal('show');
+
+                },
+                 error: function (xhr) {
+                    var msg = "Failed to load form.";
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+           msg = xhr.responseJSON.message;
+                        }
+           ToastNotification(msg, "error");
+        }
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        @foreach (var (key, type) in notifications)
+        {
+            if (TempData[key] != null)
+            {
+                <text>ToastNotification("@TempData[key]", "@type");</text>
+            }
+        }
+        });
+    </script>
+}

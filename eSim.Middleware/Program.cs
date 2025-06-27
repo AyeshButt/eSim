@@ -33,20 +33,6 @@ using eSim.Implementations.Services.Esim;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//builder.Services.
-//    AddIdentity<ApplicationUser, ApplicationRole>(options =>
-//    {
-//        /// password options and other here!
-//        options.Password.RequireNonAlphanumeric = false;
-//        options.Password.RequiredLength = 3;
-//        options.Password.RequireDigit = false;
-//        options.Password.RequireUppercase = false;
-//        options.Password.RequireLowercase = false;
-//        options.SignIn.RequireConfirmedEmail = true;
-
-//    }).
-//    AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
-
 // Retrieve connection string from appsettings.json
 var connectionString = builder.Configuration.GetConnectionString("AppDbConnection");
 
@@ -80,6 +66,8 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(options =>
 {
+    //options.UseAllOfToExtendReferenceSchemas(); // optional but good for model clarity
+    //options.SupportNonNullableReferenceTypes(); // recommended
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "Esim API", Version = "v1" });
 
     // Add JWT Bearer Token Authentication
@@ -113,10 +101,6 @@ builder.Services.AddSwaggerGen(options =>
 
 
 });
-
-//builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-//    .AddEntityFrameworkStores<ApplicationDbContext>()
-//    .AddDefaultTokenProviders();
 
 //services registration
 builder.Services.AddHttpClient();

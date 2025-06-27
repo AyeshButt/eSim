@@ -1,4 +1,5 @@
-﻿using System;
+﻿using eSim.Infrastructure.DTOs.Middleware.Order;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -8,32 +9,7 @@ using System.Threading.Tasks;
 
 namespace eSim.Infrastructure.DTOs.Middleware.Order
 {
-    public class CreateOrderListRequest
-    {
-        public string Type { get; set; }
-        public int Quantity { get; set; }
-        public string Item { get; set; }
-        public List<string> Iccids { get; set; } = new();
-        public bool AllowReassign { get; set; }
-    }
-
-    public class CreateOrderRequest
-    {
-        [Required(ErrorMessage = "Type is required")]
-        public string Type { get; set; } = null!;
-        public bool? Assign { get; set; }
-        [Required(ErrorMessage = "Order is required")]
-        public List<CreateOrderListRequest> Order { get; set; } = new();
-        public string? ProfileID { get; set; }
-    }
-
-    public class CreateOrderEsimResponse
-    {
-        public string Iccid { get; set; } = null!;
-        public string MatchingId { get; set; } = null!;
-        public string SmdpAddress { get; set; } = null!;
-    }
-
+    #region Create Order Response Payload
     public class CreateOrderListResponse
     {
         public string Type { get; set; } = null!;
@@ -45,7 +21,6 @@ namespace eSim.Infrastructure.DTOs.Middleware.Order
         public List<Esim> Esims { get; set; } = new();
         public List<string> Iccids { get; set; } = new();
     }
-
     public class CreateOrderResponse
     {
         public List<CreateOrderListResponse> Order { get; set; } = new();
@@ -60,5 +35,28 @@ namespace eSim.Infrastructure.DTOs.Middleware.Order
         public string Message { get; set; } = null!;
     }
 
+    #endregion
 
+    #region Create Order Request Payload
+    public class CreateOrderDTO
+    {
+        public required string Type { get; set; } = null!;
+        public bool? Assign { get; set; } = false;
+        public required List<CreateOrderDetailDTO> Order { get; set; } = new();
+    }
+    public class CreateOrderRequest
+    {
+        [Required]
+        public List<CreateOrderDetailDTO> Order { get; set; } = new List<CreateOrderDetailDTO>();
+    }
+    public class CreateOrderDetailDTO
+    {
+        [Required]
+        public string Item { get; set; } = null!;
+        public int Quantity { get; set; } = 1;
+        [Required]
+        public string Type { get; set; } = null!;
+    }
+
+    #endregion
 }
