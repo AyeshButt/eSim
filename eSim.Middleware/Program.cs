@@ -31,6 +31,7 @@ using eSim.Implementations.Services.Esim;
 using eSim.Middleware.Filters;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
 
 
 
@@ -171,6 +172,7 @@ var app = builder.Build();
 app.MapControllers();
 
 app.UseStaticFiles();
+
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.Use(async (context, next) =>
