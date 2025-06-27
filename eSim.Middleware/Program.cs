@@ -28,6 +28,10 @@ using eSim.Infrastructure.Interfaces.Middleware.Inventory;
 using eSim.Implementations.Services.Middleware.Inventory;
 using eSim.Infrastructure.Interfaces.Middleware.Esim;
 using eSim.Implementations.Services.Esim;
+using eSim.Middleware.Filters;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
 
 
 
@@ -49,7 +53,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailConfiguration"));
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
-
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
 builder.Services.AddControllers(config =>
 {
     var policy = new AuthorizationPolicyBuilder()
@@ -58,6 +65,7 @@ builder.Services.AddControllers(config =>
 
     .Build();
     config.Filters.Add(new AuthorizeFilter(policy));
+    config.Filters.Add<ValidateModelFilter>();
 });
 
 
@@ -145,8 +153,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 var app = builder.Build();
+app.MapControllers();
 
 app.UseStaticFiles();
+
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.Use(async (context, next) =>

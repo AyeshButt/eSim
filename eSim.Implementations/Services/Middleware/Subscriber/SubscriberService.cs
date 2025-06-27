@@ -25,22 +25,21 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
     public class SubscriberService : ISubscriberService
     {
         private readonly ApplicationDbContext _db;
-         private readonly IEmailService _emailService;
+        private readonly IEmailService _emailService;
 
         // Constructor
-        public SubscriberService(ApplicationDbContext db ,IEmailService email)
+        public SubscriberService(ApplicationDbContext db, IEmailService email)
         {
             _db = db;
-             _emailService = email;
+            _emailService = email;
         }
 
         public async Task<Result<string>> SubscriberEmailExists(string email)
         {
             var result = new Result<string>();
 
-            var isValidEmail = Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
 
-            if (!isValidEmail) 
+            if (string.IsNullOrWhiteSpace(email) || !Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
             {
                 result.Success = false;
                 result.Message = BusinessManager.validemailaddress;
@@ -49,18 +48,28 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             }
 
             var exists = await _db.Subscribers.AnyAsync(x => x.Email == email);
-
-            result.Success = true;
-            result.Message = exists ? BusinessManager.EmailExist : BusinessManager.EmailAvailable;
-            result.StatusCode = StatusCodes.Status200OK;
-            return result;
+            if (exists)
+            {
+                result.Success = false;
+                result.Message = BusinessManager.EmailExist;
+                result.StatusCode = StatusCodes.Status400BadRequest;
+                return result;
+            }
+            else
+            {
+                result.Success = true;
+                result.Message = BusinessManager.EmailAvailable;
+                result.StatusCode = StatusCodes.Status200OK;
+                return result;
+            }
         }
+
         public async Task<Result<string>> CreateSubscriber(SubscriberDTORequest input)
         {
             var result = new Result<string>();
 
             await using var transaction = await _db.Database.BeginTransactionAsync();
-            
+
             try
             {
                 var client = await _db.Client.FirstOrDefaultAsync(c => c.Name == input.MerchantId);
@@ -71,17 +80,25 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                     result.StatusCode = StatusCodes.Status400BadRequest;
                     return result;
                 }
+                if (!Regex.IsMatch(input.FirstName, @"^[A-Za-z]+$") || !Regex.IsMatch(input.LastName, @"^[A-Za-z]+$"))
+                {
+                    result.Success = false;
+                    result.Message = !Regex.IsMatch(input.FirstName, @"^[A-Za-z]+$") ? BusinessManager.FirstName: BusinessManager.LastName;
+                    result.StatusCode = StatusCodes.Status400BadRequest;
+                    return result;
+                }
+
 
                 string hashedPassword = PasswordHasher.HashPassword(input.Password);
 
                 var subscriber = new Subscribers
                 {
                     Active = true,
-                    CreatedAt =BusinessManager.GetDateTimeNow(),
+                    CreatedAt = BusinessManager.GetDateTimeNow(),
                     ModifiedAt = BusinessManager.GetDateTimeNow(),
                     FirstName = input.FirstName,
                     LastName = input.LastName,
-                    Email = input.Email,
+                    Email = input.Email.ToLower(),
                     Hash = hashedPassword,
                     ClientId = client.Id,
                     Country = input.Country
@@ -89,23 +106,24 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
 
                 await _db.Subscribers.AddAsync(subscriber);
                 await _db.SaveChangesAsync();
-             
-                try {
-                    var emailResult = _emailService.SendEmail( new EmailDTO
+
+                try
+                {
+                    var emailResult = _emailService.SendEmail(new EmailDTO
                     {
                         To = input.Email,
                         Subject = BusinessManager.SubscriberSubject,
                         Body = BusinessManager.GetSubscriberBody(input.FirstName)
                     });
 
-                 
+
                     await transaction.CommitAsync();
-                 
-               //     result.Message = emailResult.Success ? BusinessManager.EmailSendSuccessfully : BusinessManager.EmailNotSend;
-                
+
+                    //     result.Message = emailResult.Success ? BusinessManager.EmailSendSuccessfully : BusinessManager.EmailNotSend;
+
                 }
-                catch (Exception ex) 
-                
+                catch (Exception ex)
+
                 {
                     await transaction.RollbackAsync();
                     result.Success = false;
@@ -117,16 +135,16 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 finally
                 {
                     result.Message = BusinessManager.SubscriberCreatedSuccessfully;
-                    result.StatusCode=StatusCodes.Status200OK;
+                    result.StatusCode = StatusCodes.Status200OK;
                 }
-              
+
 
                 return result;
 
             }
             catch (Exception ex)
             {
-              
+
                 try
                 {
                     await transaction.RollbackAsync();
@@ -141,7 +159,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 return result;
             }
         }
-        
+
 
         public async Task<Result<string>> UpdateSubscriberAsync(Guid id, UpdateSubscriberDTORequest request)
         {
@@ -149,16 +167,16 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             var transaction = await _db.Database.BeginTransactionAsync();
             try
             {
-             
+
                 var subscriber = await _db.Subscribers.FirstOrDefaultAsync(x => x.Id == id);
 
                 if (subscriber is null)
                 {
                     result.Success = false;
                     result.Message = BusinessManager.SubscriberNotFound;
-                    result.StatusCode = StatusCodes.Status400BadRequest; 
+                    result.StatusCode = StatusCodes.Status400BadRequest;
                     return result;
-                   
+
                 }
 
                 subscriber.FirstName = request.FirstName;
@@ -171,7 +189,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
 
                 result.Success = true;
                 result.Message = BusinessManager.Subscriberupdated;
-           
+
             }
             catch (Exception ex)
             {
@@ -182,44 +200,45 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                     result.StatusCode = StatusCodes.Status500InternalServerError;
                     return result;
                 }
-                
+
             }
-           return result;
+            return result;
         }
 
 
-        public async Task<Result<string?>> 
-            
+        public async Task<Result<string?>>
+
             UploadProfileImageAsync(IFormFile file, ProfileImageDTORequest dto)
         {
-           
+
             var result = new Result<string?>();
             if (file == null || file.Length == 0)
             {
-              
+
                 {
                     result.Success = false;
 
-                     result.Message =BusinessManager.Noimagefileprovided;
+                    result.Message = BusinessManager.Noimagefileprovided;
                     result.StatusCode = StatusCodes.Status400BadRequest;
                     return result;
-                };
+                }
+                ;
             }
             try
             {
-               
+
 
                 var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
                 var ext = Path.GetExtension(file.FileName).ToLower();
 
-                if (!allowedExtensions.Contains(ext)|| file.Length > 5 * 1024 * 1024)
+                if (!allowedExtensions.Contains(ext) || file.Length > 5 * 1024 * 1024)
                 {
                     result.Success = false;
-                    result.Message = !allowedExtensions.Contains(ext)  ? BusinessManager.FileAllowed: BusinessManager.FileSize;
+                    result.Message = !allowedExtensions.Contains(ext) ? BusinessManager.FileAllowed : BusinessManager.FileSize;
                     return result;
                 }
 
-             
+
 
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
                 if (!Directory.Exists(uploadsFolder))
@@ -249,13 +268,13 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
 
                 result.Success = true;
                 result.Message = BusinessManager.ImageUploaded;
-                result.StatusCode = StatusCodes.Status200OK; 
+                result.StatusCode = StatusCodes.Status200OK;
                 return result;
             }
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message =ex.Message ;
+                result.Message = ex.Message;
                 result.StatusCode = StatusCodes.Status500InternalServerError;
             }
 

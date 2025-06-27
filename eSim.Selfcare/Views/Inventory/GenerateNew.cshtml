@@ -1,0 +1,14 @@
+﻿@using eSim.Infrastructure.DTOs.Esim
+@using eSim.Infrastructure.DTOs.Global
+@model Result<ApplyBundleToEsimResponse>
+
+<div class="row">
+    <div class="col-lg-10 offset-1">
+        <div class="card p-2 text-center">
+            @if(Model.Success == true)
+            {
+                <h2>@Model.Data.Esims.FirstOrDefault().Iccid</h2>
+            }
+        </div>
+    </div>
+</div>

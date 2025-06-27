@@ -34,7 +34,7 @@ namespace eSim.Common.StaticClasses
         public static string QRCode = "qr-code.png";
         public static string InvalidIccid = "Invalid Iccid";
 
-        public static string MdwBaseURL = "https://localhost:7264";
+        public static string MdwBaseURL = "https://localhost:7264/";
         public static string Countries = "Countries";
         public static string MidlewareLogin = "auth/login";
         public static string CheckEmail = "Subscriber/check-email";
@@ -43,9 +43,10 @@ namespace eSim.Common.StaticClasses
         public static string OTP = "Subscriber/verify-otp";
         public static string resetPass = "Subscriber/reset-password";
         public static string SubscriberId = "SubscriberId";
-        public static string Ticekt = "Ticket";
+        public static string Ticekt = "Ticket/list";
         public static string TicketType = "Ticket/Types";
         public static string TicketDetail = "ticket/detail";
+        public static string Ticketcomment = "ticket/comment";
         public static string BundelRegion = "bundle/bundles";
         public static string Bundeldetail = "bundle/";
         public static string EsimList = "esims/list";
@@ -53,6 +54,8 @@ namespace eSim.Common.StaticClasses
         public static string EsimDetails = "esims/details";
         public static string AppleInstallUrl = "appleInstallUrl";
         public static string SubscriberInventory = "inventory/subscriber";
+        public static string ApplyNewBundle = "esims/apply-bundle-new-esim";
+        public static string QRPath(string input) => $"esims/{input}/qr";
         //public static string SubscriberInventory = "inventory/subscriber";
 
 
@@ -117,6 +120,9 @@ namespace eSim.Common.StaticClasses
         public static string EmailExist = "Email already exists.";
         public static string EmailAvailable = "Email is available.";
         public static string InvalidMerchant = "Invalid Merchant Details";
+        public static string FirstName = "First name must contain English letters only.";
+        public static string LastName = "Last name must contain English letters only.";
+
         public static string Invalidemailformat = "Invalid email format";
         public static string SubscriberSubject = "Welcome to eSim";
         public static string OTPVerified = "OTP verified successfully.";
