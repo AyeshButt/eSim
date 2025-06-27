@@ -11,5 +11,10 @@ namespace eSim.Selfcare.Controllers
         {
             return View();
         }
+        public IActionResult Detail()
+        {
+            return View();
+        }
+
     }
 }
