@@ -9,7 +9,7 @@ namespace eSim.Middleware.Filters
     {
         public void OnActionExecuted(ActionExecutedContext filterContext)
         {
-            throw new NotImplementedException();
+           
         }
 
         public void OnActionExecuting(ActionExecutingContext filterContext)
