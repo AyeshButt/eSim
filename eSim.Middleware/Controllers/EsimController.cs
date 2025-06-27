@@ -181,7 +181,6 @@ namespace eSim.Middleware.Controllers
 
         #region Apply bundle to a new esim
 
-        [AllowAnonymous]
         [HttpPost("apply-bundle-new-esim")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<ApplyBundleToEsimResponse>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Result<ApplyBundleToEsimResponse>))]
@@ -192,8 +191,8 @@ namespace eSim.Middleware.Controllers
         [ProducesResponseType(StatusCodes.Status503ServiceUnavailable, Type = typeof(Result<ApplyBundleToEsimResponse>))]
         public async Task<IActionResult> ApplyBundleToEsim(ApplyBundleToEsimRequest input)
         {
-            //var loggedUser = User.SubscriberId();
-            var loggedUser = "c595c0f5-9a8b-4cec-9733-08dda9a3fe55";
+            var loggedUser = User.SubscriberId();
+            //var loggedUser = "c595c0f5-9a8b-4cec-9733-08dda9a3fe55";
 
             if (loggedUser == null)
                 return Unauthorized();
