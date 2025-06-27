@@ -115,6 +115,9 @@ namespace eSim.Common.StaticClasses
         public static string EmailExist = "Email already exists.";
         public static string EmailAvailable = "Email is available.";
         public static string InvalidMerchant = "Invalid Merchant Details";
+        public static string FirstName = "First name must contain English letters only.";
+        public static string LastName = "Last name must contain English letters only.";
+
         public static string Invalidemailformat = "Invalid email format";
         public static string SubscriberSubject = "Welcome to eSim";
         public static string OTPVerified = "OTP verified successfully.";

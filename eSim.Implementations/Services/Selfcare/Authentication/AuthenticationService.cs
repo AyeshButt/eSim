@@ -36,7 +36,7 @@ namespace eSim.Implementations.Services.Selfcare.Authentication
         #region signIn 
         public async Task<string?> AuthenticateAsync(SignIn model)
         {
-            var url = $"{BusinessManager.MdwBaseURL}/{BusinessManager.MidlewareLogin}";
+            var url = BusinessManager.MdwBaseURL + BusinessManager.MidlewareLogin;
 
             var req = _httpClientFactory.CreateClient("ds");
             var ss = await req.PostAsJsonAsync(url,model);
