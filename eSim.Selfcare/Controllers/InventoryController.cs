@@ -26,7 +26,33 @@ namespace eSim.Selfcare.Controllers
             var response = await _service.DetailAsync(id);
 
             //return View(response);
-            return PartialView("_InventoryDetailPartialView", response.Data);
+            return View( response.Data);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GenerateNew(string id)
+        {
+            var request = await _service.GenrateAsync(id);
+
+            Console.WriteLine("IccdOf Esim" + request);
+
+            return View(request);
+        }
+        [HttpGet]
+        public async Task<IActionResult> DownloadQr(string iccid)
+        {
+            var QrCode = await _service.GenrateQR(iccid);
+
+            return File(QrCode.Data, "image/png", $"qr_{iccid}.png");
+        }
+        
+        [HttpGet]
+        public async Task<IActionResult> ApplyToExisting(string id)
+        {
+            return View();
+        }
+
+        
+
     }
 }

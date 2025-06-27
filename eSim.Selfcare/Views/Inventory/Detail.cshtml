@@ -1,0 +1,200 @@
+﻿@using eSim.Infrastructure.DTOs.Selfcare.Inventory
+@* @model eSim.Infrastructure.DTOs.Middleware.Bundle.GetBundleCatalogueDetailDTO.GetBundleCatalogueDetailsResponse *@
+@model SubscriberInventoryResponseViewModel
+
+
+@{
+    DateTime? createdDate = Model.CreatedDate;
+    int duration = Model.duration;
+    DateTime expiryDate = createdDate.HasValue
+        ? createdDate.Value.Date.AddDays(duration - 1)
+        : DateTime.MinValue;
+
+    string formattedExpiry = expiryDate.ToString("dd MMM yyyy");
+}
+
+<div class="row">
+    <div class="col-lg-10 offset-1">
+        <div class="card p-2">
+            <div class="card-header">
+                <h5 class="card-title mb-0 d-inline">@Model.name</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-4">
+                        <div class="p-5">
+                            @* <h4>@Model.name</h4> *@
+                            <div class="d-flex mt-3 justify-content-between">
+                                <h6 class="d-flex flex-column align-items-center">
+                                    @if (Model.dataAmount != 0)
+                                    {
+                                        var GB = Math.Round((double)Model.dataAmount / 1024);
+                                                <i class="mdi mdi-database mdi-36px mb-1"></i>
+                                                <span>@($"{GB} GB")</span>
+                                    }
+                                </h6>
+                                <h6 class="d-flex text-muted flex-column align-items-center">
+
+                                    <i class="mdi mdi-phone mdi-36px mb-1"></i>
+                                    <span >NONE</span>
+
+                                </h6>
+                                <h6 class="d-flex text-muted flex-column align-items-center">
+                                    <i class="mdi mdi-message-processing mdi-36px mb-1"></i>
+                                    <span >NONE</span>
+                                </h6>
+                            </div>
+                            <div class="d-flex justify-content-around mt-5">
+                                <h6 class="d-flex flex-column align-items-center">
+                                    <i class="mdi mdi-clock-outline mdi-36px mb-1"></i>
+                                    <span> @Model.duration Days </span>
+                                </h6>
+                                <h6 class="d-flex flex-column align-items-center">
+                                    <i class="mdi mdi-earth mdi-36px mb-1"></i>
+                                    <span>
+                                        @if (Model.roamingEnabled?.Count() > 0)
+                                        {
+                                            <text>@Model.roamingEnabled?.Count() Countries</text>
+                                        }
+                                        else
+                                        {
+                                            <text>No</text>
+                                        }
+                                    </span>
+                                </h6>
+                            </div>
+                            <div class="d-flex justify-content-around mt-3">
+                                <h6 class="d-flex flex-column align-items-center">
+                                    <i class="mdi mdi-speedometer mdi-36px mb-1"></i>
+
+                                    <span> Unknown </span>
+                                </h6>
+                                <h6 class="d-flex flex-column align-items-center">
+                                    <i class="mdi mdi-play-circle-outline mdi-36px mb-1"></i>
+                                    <span>
+                                        @if (Model.autostart == true)
+                                        {
+                                            <text>AutoStart Enabled</text>
+                                        }
+                                        else
+                                        {
+                                            <text>AutoStart Disabled</text>
+                                        }
+                                    </span>
+                                </h6>
+                            </div>
+                            <div class="d-flex justify-content-center mt-4">
+                                <h6 class=" d-flex flex-column align-items-center">
+                                    <i class="mdi mdi-dialpad mdi-36px mb-1"></i>
+                                    <span> Number Not Included</span>
+                                </h6>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-5 p-5">
+                       @*  <div class="d-flex justify-content-between">
+                            <h4 class="modal-title" id="exampleModalgridLabel">Bundle Details</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div> *@
+                        <div class="mt-3">
+                            <p>@Model.description</p>
+                            <h5 class="mt-3">Base Country</h5> 
+                            <ul class="list-unstyled d-flex flex-wrap gap-2">
+                                @foreach (var item in Model.countries)
+                                {
+                                            <li>@item.country.name</li>
+                                }
+                            </ul> 
+
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h5 class="mt-1">Inventory</h5>
+                                </div>
+                                <div>
+                                    <p class="mt-1"><b>Total:</b> @Model.Quantity</p>
+                                </div>
+                            </div>
+                            <ul class="list-unstyled gap-2">
+                                @for (int i = 0; i < (Model.Quantity ?? 0); i++)
+                                {
+                                        <li class="d-flex justify-content-between border border-1 rounded-4 mt-1 px-2 py-2">
+                                            <span>1 Bundle</span>
+                                            <span>Expiry: @formattedExpiry</span>
+                                        </li>
+                                }
+                            </ul>
+
+                            <h5 class="mt-3">Roaming Countries</h5>
+                            <ul class="list-unstyled d-flex flex-wrap gap-2">
+                                @foreach (var item in Model.roamingEnabled)
+                                {
+                                        <li>@item.country.iso</li>
+                                }
+                            </ul>
+
+                        </div>
+                    </div>
+                    <div class="col-3 p-5"></div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-end py-2">
+                    <div class="px-2">
+                        <button class="btn btn-primary redirect-btn" id="sa-success"
+                                data-url="@Url.Action("GenerateNew", "Inventory", new { id = Model.name })">
+                            Assign New eSIM
+                        </button>
+                    </div>
+                    <div>
+                        <button class="btn btn-success open-modal"
+                                data-action="@Url.Action("ApplyToExisting", "Inventory")"
+                                data-id="@Model.name"
+                                data-title="Apply to Existing eSIM">
+                            Assign To Existing eSIM
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script src="~/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+
+    <!-- Sweet alert init js-->
+    <script src="~/assets/js/pages/sweetalerts.init.js"></script>
+
+
+    <script>
+             $(document).on('click', '.redirect-btn', function () {
+            const url = $(this).data('url');
+            window.location.href = url;
+        });
+    </script>
+    @* <script>
+        $(document).on('click', '.open-modal', function () {
+            const actionUrl = $(this).data('action');
+            const id = $(this).data('id');
+            const title = $(this).data('title');
+
+            $('#esimModalTitle').text(title);
+            $('#esimModalBody').html('<p class="text-muted">Loading...</p>');
+
+            $.ajax({
+                url: actionUrl,
+                type: 'GET',
+                data: { id: id },
+                success: function (response) {
+                    $('#esimModalBody').html(response);
+                    $('#esimModal').modal('show');
+                },
+                error: function () {
+                    $('#esimModalBody').html('<p class="text-danger">Failed to load content.</p>');
+                }
+            });
+        });
+    </script> *@
+}

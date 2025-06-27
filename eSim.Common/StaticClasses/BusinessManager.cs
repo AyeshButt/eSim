@@ -50,6 +50,8 @@ namespace eSim.Common.StaticClasses
         public static string EsimDetails = "esims/details";
         public static string AppleInstallUrl = "appleInstallUrl";
         public static string SubscriberInventory = "inventory/subscriber";
+        public static string ApplyNewBundle = "esims/apply-bundle-new-esim";
+        public static string QRPath(string input) => $"esims/{input}/qr";
         //public static string SubscriberInventory = "inventory/subscriber";
 
 
