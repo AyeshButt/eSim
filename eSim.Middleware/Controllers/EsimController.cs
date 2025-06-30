@@ -143,9 +143,9 @@ namespace eSim.Middleware.Controllers
         public async Task<IActionResult> DownloadQR([FromRoute] string iccid)
         {
             var response = await _esimService.DownloadQRAsync(iccid);
-
+            
             if (response.Data is not null)
-                return File(response.Data, BusinessManager.ImageMediaContentType, BusinessManager.QRCode);
+                return File(response.Data, BusinessManager.ImageMediaContentType, $"{BusinessManager.QRCode}_{iccid}.png");
 
             return StatusCode(HttpStatusCodeMapper.FetchStatusCode(response.StatusCode), response);
         }
@@ -206,7 +206,7 @@ namespace eSim.Middleware.Controllers
 
         #region Get esim details
 
-        [AllowAnonymous]
+        [Authorize]
         [HttpGet("details/{iccid}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<GetEsimDetailsResponse>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

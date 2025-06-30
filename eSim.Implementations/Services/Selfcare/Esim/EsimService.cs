@@ -8,6 +8,7 @@ using eSim.Common.StaticClasses;
 using eSim.Infrastructure.DTOs.Esim;
 using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.DTOs.Middleware.Inventory;
+using eSim.Infrastructure.DTOs.QRDownload;
 using eSim.Infrastructure.Interfaces.ConsumeApi;
 using eSim.Infrastructure.Interfaces.Selfcare.Esim;
 
@@ -27,7 +28,7 @@ namespace eSim.Implementations.Services.Selfcare.Esim
         }   
 
         public async Task<Result<GetEsimDetailsResponse>> GetEsimDetailsAsync(string iccid)
-        {
+            {
             var url = $"{BusinessManager.MiddlewareBaseURL}/{BusinessManager.EsimDetails}/{Uri.EscapeDataString(iccid)}?additionalFields={BusinessManager.AppleInstallUrl}";
         
             var request = await _consumeApi.Get<GetEsimDetailsResponse>(url);
@@ -37,7 +38,7 @@ namespace eSim.Implementations.Services.Selfcare.Esim
 
         public async Task<Result<GetEsimHistoryResponse>> GetEsimHistoryAsync(string iccid)
         {
-            var url = $"{BusinessManager.MiddlewareBaseURL}/inventory/{Uri.EscapeDataString(iccid)}/history";
+            var url = $"{BusinessManager.MiddlewareBaseURL}/esims/{Uri.EscapeDataString(iccid)}/history";
 
             var request = await _consumeApi.Get<GetEsimHistoryResponse>(url);
 
@@ -68,5 +69,14 @@ namespace eSim.Implementations.Services.Selfcare.Esim
                 
             return request;
         }
+
+        public async Task<FileDownloadResult> DownloadEsimQRAsync(string iccid)
+        {
+            var url = $"{BusinessManager.MiddlewareBaseURL}/esims/{iccid}/qr";
+           
+            var request = await _consumeApi.DownloadQrCodeAsync(url);
+                        
+            return request;         
+        }           
     }
 }

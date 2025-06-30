@@ -31,6 +31,7 @@ namespace eSim.Middleware.Controllers
         }
 
         #endregion
+
         #region GetBundleDetailsFromCatalogue
         [AllowAnonymous]
         [HttpGet("{name}")]

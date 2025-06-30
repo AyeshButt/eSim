@@ -34,7 +34,7 @@
 
 
         $.ajax({
-            url: '@Url.Action("ApplyBundleToEsim","Esim")',
+            url: '@Url.Action("ApplyBundleToEsim","Esim")', 
             type: 'POST',
                 data: {BundleName: bundleName},
             success: function (response) {

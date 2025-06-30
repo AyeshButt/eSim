@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using eSim.Infrastructure.DTOs.Global;
+using eSim.Infrastructure.DTOs.QRDownload;
 
 namespace eSim.Infrastructure.Interfaces.ConsumeApi
 {
@@ -11,6 +12,7 @@ namespace eSim.Infrastructure.Interfaces.ConsumeApi
     {
         Task<Result<T?>> Get<T>(string url);
         Task<Result<T?>> Post<T, I>(string url, I? data);
+        Task<FileDownloadResult> DownloadQrCodeAsync(string url);
        
     }
 }

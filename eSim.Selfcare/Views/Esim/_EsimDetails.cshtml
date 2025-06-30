@@ -1,6 +1,6 @@
 ﻿@model eSim.Infrastructure.DTOs.Esim.GetEsimDetailsResponse
 @if(Model is not null)
-{
+{   
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
@@ -25,7 +25,7 @@
                             @if (Model != null)
                             {
                                 <tr>
-                                    <td><button id="fetchBtcn" type="button"><i class="mdi mdi-qrcode mdi-10px"></i></button></td>
+                                    <td><a asp-action="DownloadEsimQR" asp-controller="Esim" asp-route-iccid="@Model.Iccid"><i class="mdi mdi-qrcode mdi-15px"></i></a></td>
                                     <td>@Model.Iccid</td>
                                     <td>@Model.Pin</td>
                                     <td>@Model.Puk</td>
@@ -41,15 +41,10 @@
             </div>
         </div>
     </div>
-
 }
 else
 {
-    
+    <div class="alert alert-danger text-center">
+        No details available
+    </div>
 }
-<button id="fetchBtn" type="button" class="btn btn-primary"
-        data-iccid="@Model.Iccid">
-    <i class="mdi mdi-qrcode mdi-10px"></i>
-</button>
-
-<div id="api-result" class="mt-3"></div>

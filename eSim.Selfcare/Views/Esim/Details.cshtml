@@ -5,7 +5,7 @@
     var iccid = Model;
 }
 
-<div id="loader" style="display:none;" class="spinner-border text-danger" role="status">
+@* <div id="loader" style="display:none;" class="spinner-border text-danger" role="status">
     <span class="sr-only">Loading...</span>
 </div>
 <!-- Tabs -->
@@ -100,6 +100,77 @@
                     }
                 });
             }
+        });
+    </script>
+}
+ *@
+
+
+<!-- Tabs -->
+<ul class="nav nav-tabs" id="detailsTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" data-tab="detail" type="button">Detail</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" data-tab="appliedBundle" type="button">Applied Bundles</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" data-tab="history" type="button">History</button>
+    </li>
+</ul>
+
+<!-- Tab Content -->
+<div class="tab-content border p-3" id="tabContent">
+    <div id="tabLoader" class="text-center my-5" style="display: none;">
+        <div class="spinner-border text-primary" role="status"></div>
+        <div class="mt-2">Loading...</div>
+    </div>
+    <div id="tabPane"></div>
+</div>
+
+@section Scripts {
+    <script>
+        let currentTabRequest = null;
+        var iccid = '@iccid';
+
+        function loadTab(tabName) {
+            $('#tabPane').empty();
+            $('#tabLoader').show();
+
+            // Abort previous request if still pending
+            if (currentTabRequest && currentTabRequest.readyState !== 4) {
+                currentTabRequest.abort();
+            }
+
+            currentTabRequest = $.ajax({
+            url: '@Url.Action("LoadEsimPartialViews", "Esim")',
+            type: 'POST',
+            data: { tab: tabName,iccid: iccid},
+                success: function (html) {
+                    $('#tabLoader').hide();
+                    $('#tabPane').html(html);
+                },
+                error: function (xhr, status) {
+                    if (status !== 'abort') {
+                        $('#tabLoader').hide();
+                        $('#tabPane').html('<div class="text-danger text-center">Failed to load tab.</div>');
+                    }
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            // Initial load
+            loadTab('detail');
+
+            // On tab click
+            $('#detailsTabs button').click(function () {
+                $('#detailsTabs .nav-link').removeClass('active');
+                $(this).addClass('active');
+
+                const tab = $(this).data('tab');
+                loadTab(tab);
+            });
         });
     </script>
 }

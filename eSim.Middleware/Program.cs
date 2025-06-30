@@ -168,7 +168,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
         }
         await next();
     });
-    app.UseSwagger();
+    app.UseSwagger();   
     //app.UseSwaggerUI(options =>
     //{
     //    options.SwaggerEndpoint("/swagger/v1/swagger.json", "JWT API v1");
@@ -176,7 +176,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     //    options.OAuthAppName("JWT API - Swagger");
     //    options.OAuthUsePkce();
     //    options.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
-
+            
     //});
     app.UseSwaggerUI(c =>
     {

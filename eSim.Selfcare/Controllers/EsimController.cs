@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using Azure;
 using eSim.Common.StaticClasses;
 using eSim.Infrastructure.DTOs.Esim;
 using eSim.Infrastructure.DTOs.Global;
@@ -28,27 +29,46 @@ namespace eSim.Selfcare.Controllers
         }
 
         #endregion
-        
+
+        #region Esim partial view tabs
+
         [HttpGet]
         public IActionResult Details(string iccid)
         {
             return View(model: iccid);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> EsimDetails(string iccid)
-        {
-            var response = await _esim.GetEsimDetailsAsync(iccid);
+        #endregion
 
-            return PartialView("_EsimDetails", response.Data);
+        #region Loading esim partial views
+
+        [HttpPost]
+        public async Task<IActionResult> LoadEsimPartialViews(string tab, string iccid)
+        {
+            switch (tab?.ToLower())
+            {
+                case "detail":
+
+                    var esimDetails = await _esim.GetEsimDetailsAsync(iccid);
+
+                    return PartialView("_EsimDetails", esimDetails.Data);
+
+                case "appliedBundle":
+
+                    var esimAppliedBundles = await _esim.GetEsimHistoryAsync(iccid);
+
+                    return PartialView("_EsimHistory", esimAppliedBundles.Data);
+
+                default:
+
+                    var esimHistory = await _esim.GetEsimHistoryAsync(iccid);
+
+                    return PartialView("_EsimHistory", esimHistory.Data);
+
+            }
         }
 
-        public async Task<IActionResult> EsimHistory(string iccid)
-        {
-            var response = await _esim.GetEsimHistoryAsync(iccid);
-
-            return PartialView("_EsimHistory", response.Data);
-        }
+        #endregion
 
         #region Get subscriber inventory for the bundles dropdown
 
@@ -58,11 +78,11 @@ namespace eSim.Selfcare.Controllers
             var response = await _esim.GetSubscriberInventoryAsync();
 
             if (!response.Success)
-                return BadRequest(response);    
+                return BadRequest(response);
 
             SubscriberInventoryViewModel model = new SubscriberInventoryViewModel()
             {
-                Iccid = iccid,  
+                Iccid = iccid,
                 Inventory = response?.Data?.Select(p => new SelectListItem
                 {
                     Value = p.Item,
@@ -107,7 +127,7 @@ namespace eSim.Selfcare.Controllers
         [HttpGet]
         public IActionResult IncompatibleBundleModal(string bundleName)
         {
-            return PartialView("_ApplyBundleToEsim", new IncompatibleBundleToNewEsimViewModel() { BundleName = bundleName});
+            return PartialView("_ApplyBundleToEsim", new IncompatibleBundleToNewEsimViewModel() { BundleName = bundleName });
         }
 
         #endregion
@@ -133,13 +153,31 @@ namespace eSim.Selfcare.Controllers
             }
 
             TempData["SuccessMessage"] = result.Message;
-            
+
             return Json(new { redirectUrl = Url.Action("List") });
         }
 
         #endregion
+
+        #region Download qr code
+
+        [HttpGet]
+        public async Task<IActionResult> DownloadEsimQR(string iccid)
+        {
+            var result = await _esim.DownloadEsimQRAsync(iccid);
+
+            if (!result.Success || result.FileBytes == null)
+            {
+                TempData["Error"] = result.Message;
+                return RedirectToAction("List");
+            }
+
+            return File(result.FileBytes, result.ContentType ?? "application/octet-stream", result.FileName ?? "download.png");
+        }
+
     }
 
+    #endregion
 }
 
 
