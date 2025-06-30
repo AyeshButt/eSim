@@ -35,6 +35,7 @@ namespace eSim.Common.StaticClasses
         public static string InvalidIccid = "Invalid Iccid";
 
         public static string MdwBaseURL = "https://localhost:7264/";
+        public static string MiddlewareBaseURL = "https://localhost:7264";
         public static string Countries = "Countries";
         public static string MidlewareLogin = "auth/login";
         public static string CheckEmail = "Subscriber/check-email";
