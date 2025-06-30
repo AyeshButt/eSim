@@ -19,16 +19,16 @@ namespace eSim.Implementations.Services.Selfcare.Esim
 
         public async Task<Result<IEnumerable<EsimDTO>>> GetEsimListAsync()
         {
-            var url = $"{BusinessManager.MdwBaseURL}/{BusinessManager.EsimList}";
+            var url = $"{BusinessManager.MiddlewareBaseURL}/{BusinessManager.EsimList}";
 
             var request = await _consumeApi.Get<IEnumerable<EsimDTO>>(url);
 
             return request;
-        }
+        }   
 
         public async Task<Result<GetEsimDetailsResponse>> GetEsimDetailsAsync(string iccid)
         {
-            var url = $"{BusinessManager.MdwBaseURL}/{BusinessManager.EsimDetails}/{Uri.EscapeDataString(iccid)}?additionalFields={BusinessManager.AppleInstallUrl}";
+            var url = $"{BusinessManager.MiddlewareBaseURL}/{BusinessManager.EsimDetails}/{Uri.EscapeDataString(iccid)}?additionalFields={BusinessManager.AppleInstallUrl}";
         
             var request = await _consumeApi.Get<GetEsimDetailsResponse>(url);
 
@@ -37,7 +37,7 @@ namespace eSim.Implementations.Services.Selfcare.Esim
 
         public async Task<Result<GetEsimHistoryResponse>> GetEsimHistoryAsync(string iccid)
         {
-            var url = $"{BusinessManager.MdwBaseURL}/inventory/{Uri.EscapeDataString(iccid)}/history";
+            var url = $"{BusinessManager.MiddlewareBaseURL}/inventory/{Uri.EscapeDataString(iccid)}/history";
 
             var request = await _consumeApi.Get<GetEsimHistoryResponse>(url);
 
@@ -46,7 +46,7 @@ namespace eSim.Implementations.Services.Selfcare.Esim
 
         public async Task<Result<List<SubscriberInventoryResponse>>> GetSubscriberInventoryAsync()
         {
-            var url = $"{BusinessManager.MdwBaseURL}/inventory/subscriber";
+            var url = $"{BusinessManager.MiddlewareBaseURL}/inventory/subscriber";
 
             var request = await _consumeApi.Get<List<SubscriberInventoryResponse>>(url);
 
@@ -55,10 +55,17 @@ namespace eSim.Implementations.Services.Selfcare.Esim
 
         public async Task<Result<ApplyBundleToEsimResponse>> ApplyBundleToExistingEsimAsync(ApplyBundleToExistingEsimRequest input)
         {
-            var url = $"{BusinessManager.MdwBaseURL}/esims/apply-bundle-existing-esim";
-
+            var url = $"{BusinessManager.MiddlewareBaseURL}/esims/apply-bundle-existing-esim";
             var request = await _consumeApi.Post<ApplyBundleToEsimResponse, ApplyBundleToExistingEsimRequest>(url,input);
 
+            return request;     
+        }
+
+        public async Task<Result<ApplyBundleToEsimResponse>> ApplyBundleToEsimAsync(ApplyBundleToEsimRequest input)
+        {
+            var url = $"{BusinessManager.MiddlewareBaseURL}/esims/apply-bundle-new-esim";
+            var request = await _consumeApi.Post<ApplyBundleToEsimResponse, ApplyBundleToEsimRequest>(url, input);
+                
             return request;
         }
     }

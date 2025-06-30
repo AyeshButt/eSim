@@ -57,7 +57,7 @@ namespace eSim.Common.StaticClasses
             catch (Exception ex)
             {
                 return new Result<T?>() { Message = "Unable to fetch", Success = false };
-            }
+            }   
 
             return response;
         }

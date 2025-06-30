@@ -17,16 +17,18 @@ namespace eSim.Selfcare.Controllers
     {
         private readonly IEsimService _esim = esim;
 
+        #region Esim list
+
         [HttpGet]
         public async Task<IActionResult> List()
         {
             var response = await _esim.GetEsimListAsync();
 
-            ViewBag.Message = TempData["BundleAppliedSuccessfully"] ?? null;
-
             return View(response.Data);
         }
 
+        #endregion
+        
         [HttpGet]
         public IActionResult Details(string iccid)
         {
@@ -48,17 +50,19 @@ namespace eSim.Selfcare.Controllers
             return PartialView("_EsimHistory", response.Data);
         }
 
+        #region Get subscriber inventory for the bundles dropdown
+
         [HttpGet]
         public async Task<IActionResult> GetSubscriberInventory(string iccid)
         {
             var response = await _esim.GetSubscriberInventoryAsync();
 
             if (!response.Success)
-                return BadRequest(response);
+                return BadRequest(response);    
 
             SubscriberInventoryViewModel model = new SubscriberInventoryViewModel()
             {
-                Iccid = iccid,
+                Iccid = iccid,  
                 Inventory = response?.Data?.Select(p => new SelectListItem
                 {
                     Value = p.Item,
@@ -69,28 +73,73 @@ namespace eSim.Selfcare.Controllers
             return PartialView("_BundleSelectionPartial", model);
         }
 
+        #endregion
+
+        #region Apply bundle to existing esim if possible
+
         [HttpPost]
         public async Task<IActionResult> ApplyBundleToExistingEsim(SubscriberInventoryViewModel model)
         {
             var request = new ApplyBundleToExistingEsimRequest()
             {
-                Iccid = model.Iccid,
-                Name = model.Bundle
+                Iccid = model.Iccid, /*"8932042000007856141"*/
+                Name = model.Bundle /*"esim_1GB_7D_AU_U"*/
             };
+            if (!ModelState.IsValid)
+                return Json(new { showModal = false });
 
-            request.Name = "3243";
+            var result = await _esim.ApplyBundleToExistingEsimAsync(request);
 
-            var response = await _esim.ApplyBundleToExistingEsimAsync(request);
-            
-            //not yet completed
-            if (!response.Success)
-                return BadRequest(response);
+            if (!result.Success)
+            {
+                return Json(new { showModal = true, url = Url.Action("IncompatibleBundleModal") });
+            }
 
             TempData["BundleAppliedSuccessfully"] = BusinessManager.BundleAppliedSuccessfully;
 
-            return RedirectToAction("List");
+            return Json(new { redirectUrl = Url.Action("List") });
         }
 
+        #endregion
+
+        #region Partial view for incompatible bundle
+
+        [HttpGet]
+        public IActionResult IncompatibleBundleModal(string bundleName)
+        {
+            return PartialView("_ApplyBundleToEsim", new IncompatibleBundleToNewEsimViewModel() { BundleName = bundleName});
+        }
+
+        #endregion
+
+        #region Apply bundle to new esim where required
+
+        [HttpPost]
+        public async Task<IActionResult> ApplyBundleToEsim(IncompatibleBundleToNewEsimViewModel model)
+        {
+            var request = new ApplyBundleToEsimRequest
+            {
+                Name = model.BundleName,
+            };
+
+            var result = await _esim.ApplyBundleToEsimAsync(request);
+
+            if (!result.Success)
+            {
+                TempData["ErrorMessage"] = result.Message;
+
+                // Still redirect, so toast shows after reload
+                return Json(new { redirectUrl = Url.Action("List") });
+            }
+
+            TempData["SuccessMessage"] = result.Message;
+            
+            return Json(new { redirectUrl = Url.Action("List") });
+        }
+
+        #endregion
     }
 
 }
+
+

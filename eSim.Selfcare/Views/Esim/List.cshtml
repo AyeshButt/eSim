@@ -2,10 +2,11 @@
 @{
     ViewBag.Title = "Esim List";
 
-
     var notifications = new List<(string Key, string Type)>
     {
         ("BundleAppliedSuccessfully", "success"),
+        ("SuccessMessage", "success"),
+        ("ErrorMessage", "danger"),
     };
 }
 
@@ -60,8 +61,10 @@
     </div>
 </div>
 
+<!-- First Modal (Select a bundle from the dropdown)-->
 <div>
-    <div class="modal fade bs-example-modal-center" id="inventoryModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal fade bs-example-modal-center" id="inventoryModal" data-bs-backdrop="static"
+         data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-body text-center p-5" id="inventoryModalBody">
@@ -74,34 +77,96 @@
     </div><!-- /.modal -->
 </div>
 
+<!-- Second Modal (Incase if bundle is incompatible with the esim) -->
+<div>
+    <div class="modal fade bs-example-modal-center"
+         id="responseModal"
+         data-bs-backdrop="static"
+         data-bs-keyboard="false"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="mySmallModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center p-5" id="responseModalContent">
 
+                    <!-- Partial view will load here -->
+
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
 
 @section scripts {
+    <!--Inventory Dropdown-->
     <script>
-        $('.subscriber-inventory-form').click(function () 
-{
-            var iccid = $(this).data('iccid');
+                $('.subscriber-inventory-form').click(function ()
+        {
+                    var iccid = $(this).data('iccid');
+
+                    $.ajax({
+                        url: '@Url.Action("GetSubscriberInventory", "Esim")',
+                        data: { iccid: iccid },
+                        success: function (html) {
+
+                        $('#inventoryModalBody').html(html);
+
+                        $('#inventoryModal').modal('show');
+
+                        },
+                         error: function (xhr) {
+                         var msg = "Failed to load form.";
+                         if (xhr.responseJSON && xhr.responseJSON.message) {
+                         msg = xhr.responseJSON.message;
+                         }
+                         ToastNotification(msg, "error");
+                }
+                    });
+                });
+    </script>
+    <!--Applying Bundle-->
+    <script>
+        $(document).on("submit", "#inventoryForm", function (e) {
+            e.preventDefault();
+
+            var form = $(this);
+            console.log(form);
+        var selectedBundleName = form.find("select").val(); // this gives the actual bundle value (code/id)
+                    var selectedIccid = form.find("input[name='ICCID']").val();
+            console.log(selectedBundleName,selectedIccid);
+            // Hide first modal form, show loader
+            $('#modalFormContainer').addClass('d-none');
+            $('#modalLoader').removeClass('d-none');
 
             $.ajax({
-                url: '@Url.Action("GetSubscriberInventory", "Esim")',  // adjust to your action
-                data: { iccid: iccid },
-                success: function (html) {
-
-                $('#inventoryModalBody').html(html);
-                $('#inventoryModal').modal('show');
-
+                url: form.attr('action'),
+                type: form.attr('method'),
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.showModal && response.url) {
+                        // Load _ApplyBundleToNewEsim.cshtml partial view dynamically
+                        $.get(response.url, { bundleName: selectedBundleName }, function (html) {
+                            $('#inventoryModal').modal('hide');
+                            $('#responseModalContent').html(html);
+                            $('#responseModal').modal('show');
+                        });
+                    } else if (response.redirectUrl) {
+                        window.location.href = response.redirectUrl;
+                    } else {
+                        location.reload();
+                    }
                 },
-                 error: function (xhr) {
-                    var msg = "Failed to load form.";
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-           msg = xhr.responseJSON.message;
-                        }
-           ToastNotification(msg, "error");
-        }
+                error: function () {
+                    $('#modalLoader').addClass('d-none');
+                    $('#modalFormContainer').removeClass('d-none');
+                    ToastNotification("Something went wrong.", "error");
+                }
             });
         });
     </script>
-
+    <!--Notification-->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
         @foreach (var (key, type) in notifications)
