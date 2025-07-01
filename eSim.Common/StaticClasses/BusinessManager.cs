@@ -171,6 +171,8 @@ namespace eSim.Common.StaticClasses
         }
 
         public static string SubscriberNotFound  = "Subscriber not found";
+        public static string Subscriberdetail  = "Subscriber detail fetched successfully.";
+
         public static string SubscriberCreatedSuccessfully = "Subscriber Created successfully";
         public static string Subscriberupdated = "Subscriber updated successfully";
         public static string Error = "An error occurred: ";
