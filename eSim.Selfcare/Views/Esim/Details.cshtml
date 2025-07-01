@@ -5,106 +5,11 @@
     var iccid = Model;
 }
 
-@* <div id="loader" style="display:none;" class="spinner-border text-danger" role="status">
-    <span class="sr-only">Loading...</span>
+<div class="row my-2">
+    <a asp-controller="Esim" asp-action="List">
+        <i class=" ri-arrow-left-line fs-3"></i>
+    </a>
 </div>
-<!-- Tabs -->
-<ul class="nav nav-tabs" id="myTabs">
-    <li class="nav-item">
-        <a class="nav-link active" data-url="/Esim/EsimDetails" href="#tab1">Sim Data</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" data-url="/Esim/PartialView1" href="#tab2">Applied Bundles</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" data-url="/Esim/EsimHistory" href="#tab3">History</a>
-    </li>
-</ul>
-
-<!-- Tab content area -->
-<div id="tab-content" class="mt-3">
-    <!-- Loaded partial view goes here -->
-</div>
-
-@section Scripts {
-    <script>
-            var iccid = '@Model';
-
-        $(document).ready(function () {
-            // Load default tab content
-            loadPartial($('.nav-link.active').data('url'));
-
-            // Handle tab click
-            $('.nav-link').on('click', function (e) {
-                e.preventDefault();
-                $('.nav-link').removeClass('active');           
-                $(this).addClass('active');
-
-                const url = $(this).data('url');
-                loadPartial(url);
-            });
-
-            function loadPartial(url) {
-                $('#loader').show(); // Show loader
-                $('#tab-content').empty(); // Clear content area
-
-                $.ajax({
-                    url: url,
-                    data: { iccid: iccid }, // passing string here
-                    type: 'GET',
-                    success: function (data) {
-                        $('#tab-content').html(data);
-
-                         // ✅ Bind fetch button after partial is loaded
-            const fetchBtn = document.getElementById("fetchBtn");
-            const iccid = fetchBtn?.getAttribute("data-iccid");
-            if (fetchBtn && iccid) {
-                fetchBtn.addEventListener("click", function (e) {
-                    e.preventDefault();
-
-                    fetch(`https://localhost:7264/esims/${iccid}/qr`)
-                .then(response => {
-                    if (!response.ok) throw new Error("Failed to fetch file");
-                    const contentDisposition = response.headers.get("Content-Disposition");
-                    const filename = contentDisposition
-                        ? contentDisposition.split("filename=")[1]?.replace(/"/g, '') || 'download.png'
-                        : `qr_${iccid}.png`;
-                    return response.blob().then(blob => ({ blob, filename }));
-                })
-                .then(({ blob, filename }) => {
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = filename;
-                    document.body.appendChild(a);
-                    a.click();
-                    a.remove();
-                    window.URL.revokeObjectURL(url);
-                })
-                .catch(err => {
-                    alert("Download failed: " + err.message);
-                })
-                        .catch(err => {
-                            document.getElementById("api-result").innerHTML =
-                                `<div class="text-danger">Error: ${err.message}</div>`;
-                        });
-                });
-            }
-
-                    },
-                    error: function () {
-                        $('#tab-content').html('<div class="alert alert-danger">Error loading content.</div>');
-                    },
-                    complete: function () {
-                        $('#loader').hide(); // Hide loader
-                    }
-                });
-            }
-        });
-    </script>
-}
- *@
-
 
 <!-- Tabs -->
 <ul class="nav nav-tabs" id="detailsTabs" role="tablist">
