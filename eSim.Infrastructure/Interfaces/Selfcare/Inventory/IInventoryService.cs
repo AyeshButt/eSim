@@ -15,6 +15,7 @@ namespace eSim.Infrastructure.Interfaces.Selfcare.Inventory
         public Task<Result<List<SubscriberInventoryResponse>>> GetListAsync();
         public Task<Result<SubscriberInventoryResponseViewModel>> DetailAsync(string BundleID);
         public Task<Result<ApplyBundleToEsimResponse>> GenrateAsync(string input);
-        public Task<Result<byte[]>> GenrateQR(string input);
+        public Task<byte[]> GenrateQR(string input);
+
     }
 }

@@ -1,0 +1,28 @@
+﻿@using eSim.Infrastructure.DTOs.Esim
+
+@model IEnumerable<EsimDTO>
+
+@{
+	var bName = ViewBag.BundleName;
+}
+<div class="row p-5">
+	<div class="text-center mb-5">
+		<h3>Available eSIMs</h3>
+	</div>
+	<form action="/Inventory/ApplyToExisting" method="post">
+		<input value="@bName" name="bundleName" type="hidden" />
+		<select class="form-select" name="iccid">
+			<option selected> Select eSIM</option>
+			@foreach (var item in Model)
+			{
+				<option value="@item.Iccid">
+					<i class="mdi mdi-sim-outline mdi-24px"></i>
+					@item.Iccid
+				</option>
+			}
+		</select>
+		<div class="text-center mt-5">
+			<button class="btn btn-primary" type="submit">Apply</button>
+		</div>
+	</form>
+</div>

@@ -12,7 +12,11 @@ namespace eSim.Infrastructure.Interfaces.ConsumeApi
     {
         Task<Result<T?>> Get<T>(string url);
         Task<Result<T?>> Post<T, I>(string url, I? data);
+        Task<Result<T?>> Put<T, I>(string url, I? data);
         Task<FileDownloadResult> DownloadQrCodeAsync(string url);
        
+        Task<byte[]> GetQR(string url);
+
+
     }
 }
