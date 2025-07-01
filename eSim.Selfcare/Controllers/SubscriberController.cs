@@ -1,5 +1,7 @@
 ﻿using eSim.Common.StaticClasses;
+using eSim.Infrastructure.DTOs.Account;
 using eSim.Infrastructure.Interfaces.Middleware;
+using eSim.Infrastructure.Interfaces.Selfcare.Subscriber;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,8 +10,8 @@ namespace eSim.Selfcare.Controllers
 {
     [Authorize]
     public class SubscriberController : Controller
-    { private readonly ISubscriberService _Subscriber;
-        public SubscriberController(ISubscriberService Subscriber)
+    { private readonly ISubscriber _Subscriber;
+        public SubscriberController(ISubscriber Subscriber)
         {
             _Subscriber = Subscriber;
         }
@@ -17,11 +19,19 @@ namespace eSim.Selfcare.Controllers
         {
             return View();
         }
-        public async  Task<IActionResult> Detail(Guid subscriberId)
+        public async  Task<IActionResult> Detail()
         {
-            var result = await _Subscriber.GetSubscriberDetailAsync(subscriberId);
+            var result = await _Subscriber.SubscriberDetailAsync();
             return View(result);
-            //return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
+
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateSubscriber(UpdateSubscriberDTORequest request)
+        {
+            var result = await _Subscriber.UpdateSubscriberAsync(request);
+            return RedirectToAction(nameof(Detail));
 
         }
 
