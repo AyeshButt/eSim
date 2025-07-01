@@ -1,4 +1,5 @@
-﻿using eSim.Common.StaticClasses;
+﻿using eSim.Common.Extensions;
+using eSim.Common.StaticClasses;
 using eSim.Implementations.Services.Middleware.Subscriber;
 using eSim.Infrastructure.DTOs.Account;
 using eSim.Infrastructure.DTOs.Email;
@@ -76,19 +77,28 @@ namespace eSim.Middleware.Controllers
             var result = await _password.ChangePasswordAsync(input);
             return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
-        [AllowAnonymous]
+
         [HttpGet("detail")]
-        public async Task<IActionResult> GetSubscriberDetail(Guid subscriberId)
-        {
-            var result = await _subscriber.GetSubscriberDetailAsync(subscriberId);
+        public async Task<IActionResult> GetSubscriberDetail()
+        {   
+            var loggedUser=User.SubscriberId();
+
+            if (loggedUser is null)
+                return Unauthorized();
+
+            var result = await _subscriber.GetSubscriberDetailAsync(Guid.Parse(loggedUser));
             return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
 
-        [AllowAnonymous]
-        [HttpPut("update/{id}")]
-        public async Task<IActionResult> UpdateSubscriber(Guid id, [FromBody] UpdateSubscriberDTORequest input)
+        
+        [HttpPatch("update")]
+        public async Task<IActionResult> UpdateSubscriber([FromBody] UpdateSubscriberDTORequest input)
+
         {
-            var result = await _subscriber.UpdateSubscriberAsync(id, input);
+            var loggeduser=User.SubscriberId();
+            if(loggeduser is null)
+                return Unauthorized();
+            var result = await _subscriber.UpdateSubscriberAsync(Guid.Parse(loggeduser), input);
             return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
 

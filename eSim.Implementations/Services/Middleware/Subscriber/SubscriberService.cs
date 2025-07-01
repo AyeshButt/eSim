@@ -52,7 +52,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             {
                 result.Success = false;
                 result.Message = BusinessManager.EmailExist;
-                result.StatusCode = StatusCodes.Status400BadRequest;
+                result.StatusCode = StatusCodes.Status200OK;
                 return result;
             }
             else
@@ -161,14 +161,14 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
         }
 
 
-        public async Task<Result<string>> UpdateSubscriberAsync(Guid id, UpdateSubscriberDTORequest request)
+        public async Task<Result<string>> UpdateSubscriberAsync(Guid loggeduser, UpdateSubscriberDTORequest request)
         {
             var result = new Result<string>();
             var transaction = await _db.Database.BeginTransactionAsync();
             try
             {
 
-                var subscriber = await _db.Subscribers.FirstOrDefaultAsync(x => x.Id == id);
+                var subscriber = await _db.Subscribers.FirstOrDefaultAsync(x => x.Id == loggeduser);
 
                 if (subscriber is null)
                 {
@@ -189,6 +189,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
 
                 result.Success = true;
                 result.Message = BusinessManager.Subscriberupdated;
+                result.StatusCode = StatusCodes.Status200OK;
 
             }
             catch (Exception ex)
@@ -326,11 +327,11 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             return await Task.FromResult(model);
         }
         #region SubscriberDetail
-        public async Task<Result<SubscriberDTO>> GetSubscriberDetailAsync(Guid subscriberId)
+        public async Task<Result<SubscriberDTO>> GetSubscriberDetailAsync(Guid loggedUser)
         {
             var result = new Result<SubscriberDTO?>();
             try
-            { var subscriber = await _db.Subscribers.AsNoTracking().FirstOrDefaultAsync(s => s.Id == subscriberId);
+            { var subscriber = await _db.Subscribers.AsNoTracking().FirstOrDefaultAsync(s => s.Id == loggedUser);
 
                 if(subscriber is null)
                 {
