@@ -45,7 +45,7 @@ namespace eSim.Selfcare.Controllers
         [HttpPost]
         public async Task<IActionResult> LoadEsimPartialViews(string tab, string iccid)
         {
-            switch (tab?.ToLower())
+            switch (tab)
             {
                 case "detail":
 
@@ -55,9 +55,9 @@ namespace eSim.Selfcare.Controllers
 
                 case "appliedBundle":
 
-                    var esimAppliedBundles = await _esim.GetEsimHistoryAsync(iccid);
+                    var esimAppliedBundles = await _esim.GetEsimAppliedBundlesAsync(iccid);
 
-                    return PartialView("_EsimHistory", esimAppliedBundles.Data);
+                    return PartialView("_EsimAppliedBundles", esimAppliedBundles.Data);
 
                 default:
 
