@@ -287,57 +287,48 @@
                             @* Attachments list from model *@
                             @if (Model.Data.Attachments != null && Model.Data.Attachments.Any())
                             {
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h6 class="card-title fw-semibold mb-0">Files Attachment</h6>
-                                    </div>
-                                    <div class="card-body">
-                                        @foreach (var fileUrl in Model.Data.Attachments)
+                                <div class="card-body">
+                                    @foreach (var fileUrl in Model.Data.Attachments)
+                                    {
+                                        var fileName = System.IO.Path.GetFileName(fileUrl);
+                                        var fileExt = System.IO.Path.GetExtension(fileUrl).ToLower();
+                                        var baseUrl = "https://localhost:7264/uploads/";
+
+
+                                        var encodedFileName = Uri.EscapeDataString(fileName); // ✅ Important line
+                                        var fullUrl = $"{baseUrl}{encodedFileName}";
+
+                                        var originalFileName = fileName.Contains("_") ? fileName.Split('_', 2)[1] : fileName;
+
+                                        string icon = fileExt switch
                                         {
-                                            var fileName = System.IO.Path.GetFileName(fileUrl);
-                                            var fileExt = System.IO.Path.GetExtension(fileUrl).ToLower();
-                                            var baseUrl = "https://localhost:5001/uploads/";
+                                            ".pdf" => "ri-file-pdf-line text-danger",
+                                            ".doc" or ".docx" => "ri-file-word-2-line text-primary",
+                                            ".ppt" or ".pptx" => "ri-file-ppt-2-line text-warning",
+                                            ".xls" or ".xlsx" => "ri-file-excel-2-line text-success",
+                                            ".zip" or ".rar" => "ri-file-zip-line text-secondary",
+                                            _ => "ri-attachment-line text-muted"
+                                        };
 
-                                            
-                                            var fullUrl = $"{baseUrl}{fileName}";
-                                            var originalFileName = fileName.Contains("_") ? fileName.Split('_', 2)[1] : fileName;
-                                            string icon = fileExt switch
-                                          
-
-                                            {
-                                                ".pdf" => "ri-file-pdf-line text-danger",
-                                                ".doc" or ".docx" => "ri-file-word-2-line text-primary",
-                                                ".ppt" or ".pptx" => "ri-file-ppt-2-line text-warning",
-                                                ".xls" or ".xlsx" => "ri-file-excel-2-line text-success",
-                                                ".zip" or ".rar" => "ri-file-zip-line text-secondary",
-                                                _ => "ri-attachment-line text-muted"
-                                            };
-
-                                            <div class="d-flex align-items-center border border-dashed p-2 rounded mt-2">
-                                                <div class="flex-shrink-0 avatar-sm">
-                                                    <div class="avatar-title bg-light rounded">
-                                                        <i class="@icon fs-20"></i>
-                                                    </div>
-                                                </div>
-                                                <div class="flex-grow-1 ms-3">
-                                                    <h6 class="mb-1">
-                                                        <a href="@fullUrl" target="_blank">@originalFileName</a>
-                                                    </h6>
-                                                </div>
-                                                <div class="hstack gap-3 fs-16">
-                                                    <a href="@fullUrl" class="text-muted" download="@originalFileName">
-                                                        <i class="ri-download-2-line"></i>
-                                                    </a>
-
+                                        <div class="d-flex align-items-center border border-dashed p-2 rounded mt-2">
+                                            <div class="flex-shrink-0 avatar-sm">
+                                                <div class="avatar-title bg-light rounded">
+                                                    <i class="@icon fs-20"></i>
                                                 </div>
                                             </div>
-                                        }
-                                    </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <h6 class="mb-1">
+                                                    <a href="@fullUrl" target="_blank">@originalFileName</a>
+                                                </h6>
+                                            </div>
+                                            <div class="hstack gap-3 fs-16">
+                                                <a href="@fullUrl" class="text-muted" download="@originalFileName">
+                                                    <i class="ri-download-2-line"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    }
                                 </div>
-                            }
-                            else
-                            {
-                                <p class="text-muted">No attachments found.</p>
                             }
 
                         </div><!--end col-->

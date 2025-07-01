@@ -31,24 +31,11 @@ using eSim.Implementations.Services.Esim;
 using eSim.Middleware.Filters;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
 
 
 
 var builder = WebApplication.CreateBuilder(args);
-
-//builder.Services.
-//    AddIdentity<ApplicationUser, ApplicationRole>(options =>
-//    {
-//        /// password options and other here!
-//        options.Password.RequireNonAlphanumeric = false;
-//        options.Password.RequiredLength = 3;
-//        options.Password.RequireDigit = false;
-//        options.Password.RequireUppercase = false;
-//        options.Password.RequireLowercase = false;
-//        options.SignIn.RequireConfirmedEmail = true;
-
-//    }).
-//    AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
 // Retrieve connection string from appsettings.json
 var connectionString = builder.Configuration.GetConnectionString("AppDbConnection");
@@ -87,6 +74,8 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(options =>
 {
+    //options.UseAllOfToExtendReferenceSchemas(); // optional but good for model clarity
+    //options.SupportNonNullableReferenceTypes(); // recommended
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "Esim API", Version = "v1" });
 
     // Add JWT Bearer Token Authentication
@@ -120,10 +109,6 @@ builder.Services.AddSwaggerGen(options =>
 
 
 });
-
-//builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-//    .AddEntityFrameworkStores<ApplicationDbContext>()
-//    .AddDefaultTokenProviders();
 
 //services registration
 builder.Services.AddHttpClient();
@@ -171,6 +156,7 @@ var app = builder.Build();
 app.MapControllers();
 
 app.UseStaticFiles();
+
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.Use(async (context, next) =>
@@ -182,7 +168,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
         }
         await next();
     });
-    app.UseSwagger();
+    app.UseSwagger();   
     //app.UseSwaggerUI(options =>
     //{
     //    options.SwaggerEndpoint("/swagger/v1/swagger.json", "JWT API v1");
@@ -190,7 +176,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     //    options.OAuthAppName("JWT API - Swagger");
     //    options.OAuthUsePkce();
     //    options.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
-
+            
     //});
     app.UseSwaggerUI(c =>
     {

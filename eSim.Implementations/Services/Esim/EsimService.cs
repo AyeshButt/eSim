@@ -229,7 +229,7 @@ namespace eSim.Implementations.Services.Esim
             return result;
         }
 
-        #endregion
+        #endregion  
 
         #region  CheckeSIMandBundleCompatibility
         public async Task<Result<EsimCompatibilityResponseDTO>> CheckeSIMandBundleCompatibilityAsync(EsimCompatibilityRequestDto request)
@@ -290,8 +290,6 @@ namespace eSim.Implementations.Services.Esim
             return result;
         }
         #endregion
-
-     
 
         #region Esim details
         public async Task<Result<GetEsimDetailsResponse>> GetEsimDetailsAsync(string iccid, string? additionalfields)
@@ -447,11 +445,13 @@ namespace eSim.Implementations.Services.Esim
                 result.Success = false;
                 result.Message = ex.Message;
                 result.StatusCode = (int)HttpStatusCode.InternalServerError;
+                result.Data = null;
             }
 
             return result;
         }
         #endregion
+        
         #region UpdateInventory
         private async Task<bool> UpdateInventory(string subscriberId, string bundle)
         {

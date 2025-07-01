@@ -1,0 +1,60 @@
+﻿@using eSim.Infrastructure.DTOs.Esim
+@model IncompatibleBundleToNewEsimViewModel
+
+<div class="modal-header justify-content-center">
+    <h5 class="modal-title text-center">Bundle Not Compatible</h5>
+</div>
+
+<div class="modal-body text-center">
+    <p>The bundle that has been selected is not compatible with this eSIM. Would you like to assign to a new eSIM instead?
+</div>
+
+<input type="hidden" id="selectedBundleName" value="@Model.BundleName" />
+
+<div class="modal-footer justify-content-center">
+    <button type="button" class="btn btn-secondary" id="back-confirmActionBtn" data-bs-dismiss="modal">Cancel</button>
+    <button type="button" class="btn btn-danger" id="confirmActionBtn">Generate new eSIM</button>
+</div>
+
+<div id="secondModalLoader" class="d-none d-flex flex-column align-items-center justify-content-center my-3">
+    <div class="spinner-border text-danger mb-2" role="status"></div>
+    <div class="text-danger">Generating new eSIM...</div>
+</div>
+
+<script>
+    $(document).off("click", "#confirmActionBtn").on("click", "#confirmActionBtn", function () {
+        var $btn = $(this);
+        var $backbtn = $("#back-confirmActionBtn");
+        var bundleName = $("#selectedBundleName").val();
+        
+        $btn.addClass("d-none");
+        $backbtn.addClass("d-none");
+        $btn.prop("disabled", true); // prevent double-clicks
+        $("#secondModalLoader").removeClass("d-none"); // Show loader
+
+
+        $.ajax({
+            url: '@Url.Action("ApplyBundleToEsim","Esim")', 
+            type: 'POST',
+                data: {BundleName: bundleName},
+            success: function (response) {
+                $('#responseModal').modal('hide');
+                if (response.redirectUrl) {
+            window.location.href = response.redirectUrl;
+        }
+
+                location.reload();
+            },
+            error: function (xhr) {
+                $('#responseModal').modal('hide');
+                var msg = "Something went wrong.";
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    msg = xhr.responseJSON.message;
+                }
+                $("#secondModalLoader").addClass("d-none"); // Hide loader
+                $btn.prop("disabled", false); // Re-enable button
+                ToastNotification(msg, "error");
+            }
+        });
+    });
+</script>

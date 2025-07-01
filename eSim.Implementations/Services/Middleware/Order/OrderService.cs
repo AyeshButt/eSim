@@ -7,10 +7,12 @@ using eSim.Infrastructure.DTOs.Email;
 using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.DTOs.Middleware.Bundle;
 using eSim.Infrastructure.DTOs.Middleware.Order;
+using eSim.Infrastructure.DTOs.Subscribers;
 using eSim.Infrastructure.Interfaces.Admin.Email;
 using eSim.Infrastructure.Interfaces.ConsumeApi;
 using eSim.Infrastructure.Interfaces.Middleware.Inventory;
 using eSim.Infrastructure.Interfaces.Middleware.Order;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Raven.Client.Linq;
 using System;
@@ -35,80 +37,75 @@ namespace eSim.Implementations.Services.Middleware.Order
             _email = email;
             _inventory = inventory;
         }
-        public async Task<Result</*CreateOrderResponse*/ GetOrderDetailResponse>> CreateOrderAsync(CreateOrderRequest input,string subscriberId)
+        public async Task<Result<CreateOrderResponse>> CreateOrderAsync(CreateOrderDTO input, string subscriberId)
         {
-            var result = new Result</*CreateOrderResponse*/ GetOrderDetailResponse>();
-            var orderRefId = "5a38e795-0112-42dd-8b13-af95c49d3370";
+            var result = new Result<CreateOrderResponse>();
 
             string url = $"{BusinessManager.BaseURL}/orders";
 
             Orders order = new();
             OrderDetail orderDetail = new();
-            GetOrderDetailResponse orderDetailResponse = new();
+            CreateOrderResponse? response = new();
 
             try
             {
-                //var response = await _consume.PostApi<CreateOrderResponse, CreateOrderRequest>(url, input);
+                response = await _consume.PostApi<CreateOrderResponse, CreateOrderDTO>(url, input);
 
-                order.SubscriberId = Guid.Parse(subscriberId);
-                order.Id = Guid.NewGuid();
-                order.OrderReferenceId = orderRefId;
-
-                await _db.Orders.AddAsync(order);
-                await _db.SaveChangesAsync();
-
-                var response = await GetOrderDetailAsync(orderRefId);
-                
-                
                 if (response is null)
                 {
                     result.Success = false;
                     result.Message = BusinessManager.Exception;
+                    result.StatusCode = StatusCodes.Status500InternalServerError;
 
                     return result;
                 }
 
-                //if (!response.Order.Any())
-                if (!response.Data.Order.Any())
+                order.OrderReferenceId = response?.OrderReference ?? string.Empty;
+                order.SubscriberId = Guid.Parse(subscriberId);
+                order.Id = Guid.NewGuid();
+
+                await _db.Orders.AddAsync(order);
+                await _db.SaveChangesAsync();
+
+                if (!response.Order.Any())
                 {
                     result.Success = false;
                     result.Message = response.Message;
+                    result.StatusCode = StatusCodes.Status400BadRequest;
+
+                    return result;
                 }
-                else
+
+                order.Total = response.Total;
+                order.Assigned = response.Assigned;
+                order.CreatedDate = response.CreatedDate;
+                order.Currency = response.Currency;
+                order.SourceIP = response.SourceIP;
+                order.Status = response.Status;
+                order.StatusMessage = response.StatusMessage;
+
+                _db.Orders.Update(order);
+                await _db.SaveChangesAsync();
+
+                var orderDetails = response.Order.Select(u => new OrderDetail()
                 {
-                    orderDetailResponse = response.Data;
+                    Id = Guid.NewGuid(),
+                    OrderReferenceId = response.OrderReference,
+                    Type = u.Type,
+                    Item = u.Item,
+                    Quantity = u.Quantity,
+                    SubTotal = u.SubTotal,
+                    PricePerUnit = u.PricePerUnit,
+                    AllowReassign = u.AllowReassign,
+                });
 
-                    order.Total = response.Data.Total;
-                    order.Assigned = response.Data.Assigned ?? false;
-                    order.CreatedDate = response.Data.CreatedDate;
-                    order.Currency = response.Data.Currency;
-                    order.SourceIP = response.Data.SourceIP;
-                    order.Status = response.Data.Status;
-                    order.StatusMessage = response.Data.StatusMessage;
+                await _db.OrderDetails.AddRangeAsync(orderDetails);
+                await _db.SaveChangesAsync();
 
-                    _db.Orders.Update(order);
-                    await _db.SaveChangesAsync();
+                await _inventory.AddBundleInventoryAsync(response, subscriberId);
 
-                    var orderDetails = response.Data.Order.Select(u => new OrderDetail()
-                    {
-                        Id = Guid.NewGuid(),
-                        OrderReferenceId = response.Data.OrderReference,
-                        Type = u.Type,
-                        Item = u.Item,
-                        Quantity = u.Quantity,
-                        SubTotal = u.SubTotal,
-                        PricePerUnit = u.PricePerUnit,
-                        AllowReassign = u.AllowReassign,
-                    });
-
-                    await _db.OrderDetails.AddRangeAsync(orderDetails);
-                    
-                    await _db.SaveChangesAsync();
-
-                    await _inventory.AddBundleInventoryAsync(orderDetailResponse, subscriberId);
-
-                    result.Data = response.Data;
-                }
+                result.Data = response;
+                result.StatusCode = StatusCodes.Status200OK;
             }
             catch (Exception ex)
             {
@@ -116,12 +113,14 @@ namespace eSim.Implementations.Services.Middleware.Order
                 {
                     To = "ayeshbutt4321@gmail.com",
                     Subject = "Exception while dumping db data",
-                    Body = GeneratePlainTextOrderSummary(orderDetailResponse)
+                    Body = GeneratePlainTextOrderSummary(response ?? new CreateOrderResponse())
                 };
                 _email.SendEmail(email);
-                result.Message = ex.Message;
-            }
 
+                result.Message = ex.Message;
+                result.StatusCode = StatusCodes.Status500InternalServerError;
+                result.Success = false;
+            }
             return result;
         }
         public async Task<Result<GetOrderDetailResponse>> GetOrderDetailAsync(string orderReferenceId)
@@ -137,7 +136,7 @@ namespace eSim.Implementations.Services.Middleware.Order
                 {
                     //perform db related operations
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -190,8 +189,8 @@ namespace eSim.Implementations.Services.Middleware.Order
             return result;
         }
 
-        #region Order response mapped to email body (to be refined)
-        public string GeneratePlainTextOrderSummary(GetOrderDetailResponse response)
+        #region Create Order Response mapped to email body (to be refined)
+        public string GeneratePlainTextOrderSummary(CreateOrderResponse response)
         {
             var sb = new StringBuilder();
 
