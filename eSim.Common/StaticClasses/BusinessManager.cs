@@ -48,6 +48,8 @@ namespace eSim.Common.StaticClasses
         public static string TicketType = "Ticket/Types";
         public static string TicketDetail = "ticket/detail";
         public static string Ticketcomment = "ticket/comment";
+        public static string SubscriberDetail = "subscriber/detail";
+        public static string Subscriberupdate = "subscriber/update";
         public static string BundelRegion = "bundle/bundles";
         public static string Bundeldetail = "bundle/";
         public static string EsimList = "esims/list";
@@ -175,6 +177,8 @@ namespace eSim.Common.StaticClasses
         }
 
         public static string SubscriberNotFound  = "Subscriber not found";
+        public static string Subscriberdetail  = "Subscriber detail fetched successfully.";
+
         public static string SubscriberCreatedSuccessfully = "Subscriber Created successfully";
         public static string Subscriberupdated = "Subscriber updated successfully";
         public static string Error = "An error occurred: ";
