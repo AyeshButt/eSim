@@ -1,0 +1,33 @@
+﻿@using eSim.Infrastructure.DTOs.Selfcare.Bundles
+@model OrderModalViewModel
+
+<form id="configureBundleForm">
+
+    <input type="hidden" name="Price" value="@Model.Price" />
+    <input type="hidden" name="BundleName" value="@Model.BundleName" />
+
+    <h5>@Model.BundleName</h5>
+    <p><strong>Price per unit:</strong> $<span id="unitPrice"   >@Model.Price</span></p>
+
+    <div class="mb-3">
+        <label>Quantity</label>
+        <input type="number" name="Quantity" id="quantityInput" class="form-control" min="1" value="1" required />
+    </div>
+
+    <p><strong>Total:</strong> $<span id="totalPrice">@Model.Price</span></p>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<script>
+    $(document).ready(function () {
+        function updateTotal() {
+            const qty = parseInt($('#quantityInput').val(), 10) || 0;
+            const unit = parseFloat($('#unitPrice').text());
+            const total = (qty * unit).toFixed(2);
+            $('#totalPrice').text(total);
+        }
+
+        $('#quantityInput').on('input', updateTotal);
+    });
+</script>

@@ -10,6 +10,6 @@ namespace eSim.Infrastructure.Interfaces.Selfcare.Subscriber
 {  
     public interface ISubscriber
     {
-        Task<Result<SubscriberDTO>> SubscriberDetail(Subscriber)
+        //Task<Result<SubscriberDTO>> SubscriberDetail(Subscriber)
     }
 }
