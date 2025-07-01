@@ -89,7 +89,7 @@ namespace eSim.Common.StaticClasses
                 var content = await request.Content.ReadAsStringAsync();
                 response = JsonConvert.DeserializeObject<Result<T?>>(content);
 
-                if (request.IsSuccessStatusCode) 
+                if (request.IsSuccessStatusCode)
                 {
                     response = JsonConvert.DeserializeObject<Result<T?>>(content);
                 }
@@ -132,7 +132,7 @@ namespace eSim.Common.StaticClasses
 
                 _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                var jsonResponse  = await _http.PostAsJsonAsync(url, input);
+                var jsonResponse = await _http.PostAsJsonAsync(url, input);
 
                 Console.WriteLine("Bundle Detail" + await jsonResponse.Content.ReadAsStringAsync());
 
@@ -174,6 +174,32 @@ namespace eSim.Common.StaticClasses
             return response;
         }
         #endregion
+
+
+
+        public async Task<byte[]> GetQR(string url)
+        {
+            byte[] response = default;
+
+            try
+            {
+                var token = _httpContext.HttpContext?.User?.FindFirst("Token")?.Value;
+
+                _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var request = await _http.GetAsync(url);
+
+                var content = await request.Content.ReadAsByteArrayAsync();
+
+                response = content;
+            }
+            catch (Exception ex)
+            {
+                return response;
+            }
+
+            return response;
+        }
     }
 }
     
