@@ -1,0 +1,51 @@
+﻿@model eSim.Infrastructure.DTOs.Esim.SubscriberInventoryViewModel
+
+@if (!Model.Inventory.Any())
+{
+    <h5 class="modal-title my-3">Inventory Check</h5>
+
+    <div class="alert alert-danger">
+        Your inventory is currently empty
+    </div>
+
+    <div class="text-center mt-3 float-right">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    </div>
+}
+else
+{
+    <div id="modalFormContainer">
+
+        <form id="inventoryForm" asp-action="ApplyBundleToExistingEsim" method="post" asp-controller="Esim">
+            <input type="hidden" asp-for="@Model.Iccid" />
+
+            <div class="mb-3">
+                <label asp-for="@Model.Bundle" class="form-label">Select Bundle</label>
+                <select asp-for="@Model.Bundle" asp-items="@Model.Inventory" class="form-select" required>
+                    <option value="">-- Select a bundle --</option>
+                </select>
+                <span asp-validation-for="@Model.Bundle" class="text-danger"></span>
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </form>
+
+    </div>
+    <div id="modalLoader"
+         class="d-none d-flex flex-column align-items-center justify-content-center"
+         style="height: 200px; display: none;">
+        <div class="spinner-border text-danger mb-2" role="status"></div>
+        <div class="text-danger">Applying bundle...</div>
+    </div>
+
+    <script>
+        // Ensure loader is hidden and form is shown when partial loads
+        $(function () {
+            $('#modalFormContainer').show();
+            $('#modalLoader').hide();
+        });
+    </script>
+}

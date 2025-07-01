@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
-using eSim.Infrastructure.DTOs.Global;
+﻿using eSim.Infrastructure.DTOs.Global;
+using eSim.Infrastructure.DTOs.QRDownload;
 using eSim.Infrastructure.Interfaces.ConsumeApi;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 
 namespace eSim.Common.StaticClasses
 {
@@ -18,8 +13,60 @@ namespace eSim.Common.StaticClasses
         private readonly HttpClient _http = http;
         private readonly IHttpContextAccessor _httpContext = httpContext;
 
+        #region QR code consumption
+        public async Task<FileDownloadResult> DownloadQrCodeAsync(string url)
+        {
+            var result = new FileDownloadResult();
+
+            try
+            {
+                var token = _httpContext.HttpContext?.User?.FindFirst("Token")?.Value;
+                _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var response = await _http.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    result.Message = "QR code download failed.";
+                    result.Success = false;
+                    return result;
+                }
+
+                var fileBytes = await response.Content.ReadAsByteArrayAsync();
+                var contentType = response.Content.Headers.ContentType?.ToString();
+                var contentDisposition = response.Content.Headers.ContentDisposition?.FileName ??
+                                         response.Content.Headers.ContentDisposition?.FileNameStar;
+
+                // Extract filename manually if not found
+                if (string.IsNullOrEmpty(contentDisposition) &&
+                    response.Content.Headers.Contains("Content-Disposition"))
+                {
+                    var disposition = response.Content.Headers.GetValues("Content-Disposition").FirstOrDefault();
+                    if (disposition != null && disposition.Contains("filename="))
+                    {
+                        var match = System.Text.RegularExpressions.Regex.Match(disposition, "filename[^;=]*=['\"]?([^'\"]+)");
+                        contentDisposition = match.Success ? match.Groups[1].Value : "download.png";
+                    }
+                }
+
+                result.FileBytes = fileBytes;
+                result.ContentType = contentType ?? "application/octet-stream";
+                result.FileName = contentDisposition ?? "download.png";
+                result.Success = true;
+            }
+            catch (Exception ex)
+            {
+                result.Message = "An error occurred while downloading the QR code. " + ex.Message;
+                result.Success = false;
+            }
+
+            return result;
+        }
+
+        #endregion
+
         #region Get Request
-        
+
         /// <summary>
         /// Get Api Consumption for any type of get requests
         /// </summary>
@@ -28,7 +75,7 @@ namespace eSim.Common.StaticClasses
         /// <returns></returns>
 
         public async Task<Result<T?>> Get<T>(string url)
-        {
+        {   
             Result<T?> response = default;
 
             try
@@ -40,6 +87,7 @@ namespace eSim.Common.StaticClasses
                 var request = await _http.GetAsync(url);
 
                 var content = await request.Content.ReadAsStringAsync();
+                response = JsonConvert.DeserializeObject<Result<T?>>(content);
 
                 if (request.IsSuccessStatusCode) 
                 {
@@ -56,7 +104,7 @@ namespace eSim.Common.StaticClasses
             catch (Exception ex)
             {
                 return new Result<T?>() { Message = "Unable to fetch", Success = false };
-            }
+            }   
 
             return response;
         }
@@ -101,3 +149,4 @@ namespace eSim.Common.StaticClasses
         #endregion
     }
 }
+    

@@ -51,7 +51,6 @@ namespace eSim.Middleware.Controllers
 
             var response = await _inventory.GetSubscriberInventoryResponse(loggedUser);
 
-            //return Ok(response);
             return response.Success ? StatusCode(StatusCodes.Status200OK,response) : StatusCode(StatusCodes.Status400BadRequest,response);
         }
 

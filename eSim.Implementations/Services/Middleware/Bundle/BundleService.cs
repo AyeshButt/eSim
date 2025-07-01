@@ -38,8 +38,6 @@ namespace eSim.Implementations.Services.Middleware.Bundle
             try
             {
                 result = await _consumeApi.GetApii<GetBundleCatalogueDetailsResponse>(url);
-
-              
             }
             catch (Exception ex)
             {

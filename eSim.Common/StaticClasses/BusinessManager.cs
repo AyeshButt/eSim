@@ -21,6 +21,9 @@ namespace eSim.Common.StaticClasses
         public static string BaseURL = "https://api.esim-go.com/v2.4";
 
         public static string Exception = "Exception occured";
+        public static string BundleAppliedSuccessfully = "Bundle Applied Successfully";
+        public static string Validate = "validate";
+        public static string Transaction = "transaction";
         public static string NotFound = "Not Found";
         public static string InternalServerError = "Internal Server Error";
         public static string IncompatibleBundle = "Incompatible bundle profile combination";
@@ -28,10 +31,11 @@ namespace eSim.Common.StaticClasses
         public static string NoOrderPresent = "No order found";
         public static string QRFailed = "Failed to get QR code";
         public static string ImageMediaContentType = "image/png";
-        public static string QRCode = "qr-code.png";
+        public static string QRCode = "qr-code";
         public static string InvalidIccid = "Invalid Iccid";
 
         public static string MdwBaseURL = "https://localhost:7264/";
+        public static string MiddlewareBaseURL = "https://localhost:7264";
         public static string Countries = "Countries";
         public static string MidlewareLogin = "auth/login";
         public static string CheckEmail = "Subscriber/check-email";
