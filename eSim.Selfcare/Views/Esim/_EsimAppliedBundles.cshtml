@@ -1,0 +1,106 @@
+﻿@model eSim.Infrastructure.DTOs.Esim.ListBundlesAppliedToEsimResponse
+@{
+    int id = 1;
+}
+
+@if (Model is not null && Model.Bundles.Any())
+{
+    <div class="row">
+        <div class="col-xxl-12">
+            <div class="card">
+                <div class="card-header align-items-center d-flex">
+                    <h4 class="card-title mb-0 flex-grow-1">SIM Data</h4>
+                </div>
+                <div class="card-body">
+                    
+                    <div class="live-preview">
+                        <div class="accordion custom-accordionwithicon custom-accordion-border accordion-border-box accordion-success" id="accordionBordered">
+                            @foreach (var item in Model.Bundles)
+                            {
+                                var accordionId = $"accordion_{item.Name}";
+                                var headerId = $"accordionHeader_{item.Name}";
+                                var collapseId = $"accordionCollapse_{item.Name}";
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="@headerId">
+                                        <button class="accordion-button collapsed" type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#@collapseId"
+                                                aria-expanded="false"
+                                                aria-controls="@collapseId">
+                                            <strong>Name: &nbsp;</strong>@item.Name &nbsp; <strong>Description: &nbsp;</strong>@item.Description
+                                        </button>
+                                    </h2>
+                                    <div id="@collapseId"
+                                         class="accordion-collapse collapse"
+                                         aria-labelledby="@headerId"
+                                         data-bs-parent="#@accordionId">
+                                        <div class="accordion-body">
+                                            @if (item.Assignments is not null)
+                                            {
+
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <h5 class="card-title mb-0">Assignments</h5>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <table id="scroll-horizontal" class="table nowrap align-middle" style="width:100%">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>Id</th>
+                                                                                <th>Call Type Group</th>
+                                                                                <th>Initial Quantity</th>
+                                                                                <th>Remaining Quantity</th>
+                                                                                <th>Assignment DateTime</th>
+                                                                                <th>Assignment Reference</th>
+                                                                                <th>Bundle State</th>
+                                                                                <th>Unlimited</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            @foreach (var test in @item.Assignments)
+                                                                            {
+                                                                            <tr>
+                                                                                <td>@test.Id</td>
+                                                                                <td>@test.CallTypeGroup</td>
+                                                                                <td>@test.InitialQuantity</td>
+                                                                                <td>@test.RemainingQuantity</td>
+                                                                                <td>@test.AssignmentDateTime</td>
+                                                                                <td>@test.AssignmentReference</td>
+                                                                                <td>@test.BundleState</td>
+                                                                                <td>@test.Unlimited</td>
+                                                                            </tr>
+                                                                            }
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                            }
+                                            else
+                                            {
+                                                <p>No details found</p>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+
+                </div><!-- end card-body -->
+            </div><!-- end card -->
+        </div><!--end col-->
+    </div>
+}
+else
+{
+    <div class="alert alert-danger text-center">
+        No details available
+    </div>
+}

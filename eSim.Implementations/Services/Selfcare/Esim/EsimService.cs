@@ -44,7 +44,14 @@ namespace eSim.Implementations.Services.Selfcare.Esim
 
             return request;
         }
+        public async Task<Result<ListBundlesAppliedToEsimResponse>> GetEsimAppliedBundlesAsync(string iccid)
+        {
+            var url = $"{BusinessManager.MiddlewareBaseURL}/esims/{Uri.EscapeDataString(iccid)}/bundles";
 
+            var request = await _consumeApi.Get<ListBundlesAppliedToEsimResponse>(url);
+
+            return request;
+        }
         public async Task<Result<List<SubscriberInventoryResponse>>> GetSubscriberInventoryAsync()
         {
             var url = $"{BusinessManager.MiddlewareBaseURL}/inventory/subscriber";
