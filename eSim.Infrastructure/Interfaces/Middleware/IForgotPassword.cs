@@ -15,6 +15,7 @@ namespace eSim.Infrastructure.Interfaces.Middleware
         Task<Result<string>> VerifyOTPAsync(string otp);
         Task<Result<string>> ResetPasswordAsync(SubscriberResetPasswordDTORequest input);
         Task<Result<string>> ChangePasswordAsync(ChangePasswordDTORequest input);
+ 
 
 
 
