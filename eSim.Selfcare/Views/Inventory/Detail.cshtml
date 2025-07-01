@@ -150,27 +150,6 @@
             </div>
         </div>
     </div>
-    @* <div class="col-lg-4">
-        <div class="card p-2">
-            <div class="card-header">
-                <h5 class="card-title mb-0 d-inline">Available eSIMs</h5>
-            </div>
-            <div class="card-body">
-                <div>
-                    <ul class="list list-unstyled">
-                        <li><i class="mdi mdi-sim-outline mdi-24px"></i><b>8932042000007892043</b></li>
-                        <li><i class="mdi mdi-sim-outline mdi-24px"></i><b>8932042000007892043</b></li>
-                        <li><i class="mdi mdi-sim-outline mdi-24px"></i><b>8932042000007892043</b></li>
-                        <li><i class="mdi mdi-sim-outline mdi-24px"></i><b>8932042000007892043</b></li>
-                        <li><i class="mdi mdi-sim-outline mdi-24px"></i><b>8932042000007892043</b></li>
-                        <li><i class="mdi mdi-sim-outline mdi-24px"></i><b>8932042000007892043</b></li>
-                        <li><i class="mdi mdi-sim-outline mdi-24px"></i><b>8932042000007892043</b></li>
-
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div> *@
 </div>
 
 <!--Modal-->
@@ -192,10 +171,17 @@
 </div><!-- /.modal -->
 
 @section scripts{
+
     <script src="~/assets/libs/sweetalert2/sweetalert2.min.js"></script>
 
     <!-- Sweet alert init js-->
     <script src="~/assets/js/pages/sweetalerts.init.js"></script>
+
+    <!-- App js -->
+    <script src="~/assets/js/app.js"></script>
+    <!-- Add SweetAlert2 CSS -->
+@* 
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet" /> *@
 
 
     <script>
@@ -204,7 +190,6 @@
             window.location.href = url;
         });
     </script>
-
 
     <script>
         $(document).on('click', '.apply-Bundle', function()
@@ -232,6 +217,53 @@
                     error: function () {
                     $('#bundleDetailLoader').hide();
                     $('#bundleDetailModalBody').html('<p class="text-danger">Failed to load bundle details.</p>');
+                }
+            });
+        });
+    </script>
+
+    <script>
+                $(document).on('submit', '#applyBundleForm', function (e) {
+            e.preventDefault();
+
+            var $form = $(this);
+            var formData = $form.serialize();
+
+            $.ajax({
+                url: $form.attr('action'), // Use the form's action attribute
+                type: 'POST',
+                data: formData,
+                success: function (response) {
+                    $('.bs-example-modal-center').modal('hide');
+
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: response.message,
+                            icon: 'success',
+                            confirmButtonText: 'Go to Dashboard'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '@Url.Action("Index", "Dashboard")';
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: response.message || 'Something went wrong.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                },
+                error: function () {
+                    $('.bs-example-modal-center').modal('hide');
+                    Swal.fire({
+                        title: 'Server Error',
+                        text: 'An error occurred while processing your request.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 }
             });
         });

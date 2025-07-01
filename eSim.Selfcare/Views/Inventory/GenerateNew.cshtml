@@ -1,11 +1,13 @@
 ﻿@using eSim.Infrastructure.DTOs.Esim
 @using eSim.Infrastructure.DTOs.Global
 @* @model Result<ApplyBundleToEsimResponse> *@
-@model ApplyBundleToEsimResponse
+@model Result<ApplyBundleToEsimResponse>
 
 
 @{
-    var iccid = ViewBag.Iccid;
+
+    // var iccid = ViewBag.Iccid;
+    var iccid = Model.Data.Esims.FirstOrDefault().Iccid;
 }
 
 <div class="row">

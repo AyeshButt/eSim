@@ -6,10 +6,10 @@
 	var bName = ViewBag.BundleName;
 }
 <div class="row p-5">
-	<div class="text-center">
+	<div class="text-center mb-5">
 		<h3>Available eSIMs</h3>
 	</div>
-	<form asp-action="OpenNewTicket" asp-controller="Inventory" method="post">
+	<form action="/Inventory/ApplyToExisting" method="post">
 		<input value="@bName" name="bundleName" type="hidden" />
 		<select class="form-select" name="iccid">
 			<option selected> Select eSIM</option>
@@ -21,6 +21,8 @@
 				</option>
 			}
 		</select>
-		<button class="btn btn-primary" type="submit" >Apply</button>
+		<div class="text-center mt-5">
+			<button class="btn btn-primary" type="submit">Apply</button>
+		</div>
 	</form>
 </div>

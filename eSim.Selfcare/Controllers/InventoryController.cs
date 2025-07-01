@@ -35,9 +35,9 @@ namespace eSim.Selfcare.Controllers
         [HttpGet]
         public async Task<IActionResult> GenerateNew(string id)
         {
-            //var request = await _service.GenrateAsync(id);
-            ViewBag.Iccid = "8932042000007892043";
-            ApplyBundleToEsimResponse request = new();
+            var request = await _service.GenrateAsync(id);
+            //ViewBag.Iccid = "8932042000007892043";
+            //ApplyBundleToEsimResponse request = new();
             return View(request);
         }
 
@@ -59,12 +59,24 @@ namespace eSim.Selfcare.Controllers
         }
 
         [HttpPost]
-        public Task<IActionResult> ApplyToExisting(string iccid, string bundleName) 
+        public async Task<IActionResult> ApplyToExisting(string iccid, string bundleName)
         {
-            
+            ApplyBundleToExistingEsimRequest model = new ApplyBundleToExistingEsimRequest()
+            {
+                Iccid = iccid,
+                Name = bundleName
+            };
+            var applyBundle = await _esimService.ApplyBundleToExistingEsimAsync(model);
+            //return RedirectToAction("Dashboard", "Index");
+            if (applyBundle.Success)
+            {
+                return Json(new { success = true, message = "Bundle applied successfully!" });
+            }
+
+            return Json(new { success = false, message = "Failed to apply bundle." });
         }
 
-        
+
 
     }
 }
