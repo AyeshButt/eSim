@@ -325,6 +325,53 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
 
             return await Task.FromResult(model);
         }
+        #region SubscriberDetail
+        public async Task<Result<SubscriberDTO>> GetSubscriberDetailAsync(Guid subscriberId)
+        {
+            var result = new Result<SubscriberDTO?>();
+            try
+            { var subscriber = await _db.Subscribers.AsNoTracking().FirstOrDefaultAsync(s => s.Id == subscriberId);
+
+                if(subscriber is null)
+                {
+                    result.Success = false;
+                    result.Message = BusinessManager.Subscribernotfound;
+                    result.StatusCode = StatusCodes.Status400BadRequest;
+                    return result;
+
+                }
+                var dto = new SubscriberDTO
+                {
+                    Id = subscriber.Id,
+                    FirstName = subscriber.FirstName,
+                    LastName = subscriber.LastName,
+                    Email = subscriber.Email,
+                    Country = subscriber.Country,
+                    ProfileImage = subscriber.ProfileImage,
+                    IsEmailVerifired = subscriber.IsEmailVerifired,
+                    TermsAndConditions = subscriber.TermsAndConditions
+                };
+                result.Data = dto;
+                result.Success = true;
+                result.Message = BusinessManager.Subscriberdetail;
+                result.StatusCode = StatusCodes.Status200OK;
+                return result;
+
+
+
+
+            }
+            catch (Exception ex) { 
+                result.Success = false;
+                result.Message = ex.Message;
+                result.StatusCode = StatusCodes.Status500InternalServerError;
+                return result;
+            
+            
+            }
+            return result;
+        }
     }
+    #endregion
 }
 

@@ -22,6 +22,7 @@ namespace eSim.Infrastructure.Interfaces.Middleware
 
         public Task<IQueryable<SubscriberDTO>> GetClient_SubscribersListAsync(string id);
         public Task<IQueryable<SubscriberDTO>> GetSubscribersListAsync();
+        Task<Result<SubscriberDTO>> GetSubscriberDetailAsync(Guid subscriberId);
 
 
     }

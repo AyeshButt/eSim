@@ -76,6 +76,13 @@ namespace eSim.Middleware.Controllers
             var result = await _password.ChangePasswordAsync(input);
             return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
+        [AllowAnonymous]
+        [HttpGet("detail")]
+        public async Task<IActionResult> GetSubscriberDetail(Guid subscriberId)
+        {
+            var result = await _subscriber.GetSubscriberDetailAsync(subscriberId);
+            return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
+        }
 
         [AllowAnonymous]
         [HttpPut("update/{id}")]
