@@ -14,15 +14,15 @@
 }
 
 <div class="row">
-    <div class="col-lg-10 offset-1">
+    <div class="col-lg-8 offset-2">
         <div class="card p-2">
             <div class="card-header">
                 <h5 class="card-title mb-0 d-inline">@Model.name</h5>
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-4">
-                        <div class="p-5">
+                    <div class="col-6">
+                        <div class="p-3">
                             @* <h4>@Model.name</h4> *@
                             <div class="d-flex mt-3 justify-content-between">
                                 <h6 class="d-flex flex-column align-items-center">
@@ -92,11 +92,7 @@
                         </div>
                     </div>
 
-                    <div class="col-5 p-5">
-                       @*  <div class="d-flex justify-content-between">
-                            <h4 class="modal-title" id="exampleModalgridLabel">Bundle Details</h4>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div> *@
+                    <div class="col-6 p-3">
                         <div class="mt-3">
                             <p>@Model.description</p>
                             <h5 class="mt-3">Base Country</h5> 
@@ -135,31 +131,65 @@
 
                         </div>
                     </div>
-                    <div class="col-3 p-5"></div>
                 </div>
             </div>
             <div class="card-footer">
                 <div class="d-flex justify-content-end py-2">
                     <div class="px-2">
-                        <button class="btn btn-primary redirect-btn" id="sa-success"
+                        <button class="btn btn-outline-primary redirect-btn"
                                 data-url="@Url.Action("GenerateNew", "Inventory", new { id = Model.name })">
-                            Assign New eSIM
+                            Generate eSIM
                         </button>
                     </div>
                     <div>
-                        <button class="btn btn-success open-modal"
-                                data-action="@Url.Action("ApplyToExisting", "Inventory")"
-                                data-id="@Model.name"
-                                data-title="Apply to Existing eSIM">
-                            Assign To Existing eSIM
+                        <button class="btn btn-outline-primary apply-Bundle" data-name="@Model.name">
+                            Assign To eSIMs
                         </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    @* <div class="col-lg-4">
+        <div class="card p-2">
+            <div class="card-header">
+                <h5 class="card-title mb-0 d-inline">Available eSIMs</h5>
+            </div>
+            <div class="card-body">
+                <div>
+                    <ul class="list list-unstyled">
+                        <li><i class="mdi mdi-sim-outline mdi-24px"></i><b>8932042000007892043</b></li>
+                        <li><i class="mdi mdi-sim-outline mdi-24px"></i><b>8932042000007892043</b></li>
+                        <li><i class="mdi mdi-sim-outline mdi-24px"></i><b>8932042000007892043</b></li>
+                        <li><i class="mdi mdi-sim-outline mdi-24px"></i><b>8932042000007892043</b></li>
+                        <li><i class="mdi mdi-sim-outline mdi-24px"></i><b>8932042000007892043</b></li>
+                        <li><i class="mdi mdi-sim-outline mdi-24px"></i><b>8932042000007892043</b></li>
+                        <li><i class="mdi mdi-sim-outline mdi-24px"></i><b>8932042000007892043</b></li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div> *@
 </div>
 
+<!--Modal-->
+<div class="modal modal-lg fade bs-example-modal-center" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <div id="bundleDetailLoader" class="text-center my-4" style="display:none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading bundle details...</p>
+
+                </div>
+                <div id="bundleDetailModalBody"></div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 @section scripts{
     <script src="~/assets/libs/sweetalert2/sweetalert2.min.js"></script>
@@ -174,27 +204,36 @@
             window.location.href = url;
         });
     </script>
-    @* <script>
-        $(document).on('click', '.open-modal', function () {
-            const actionUrl = $(this).data('action');
-            const id = $(this).data('id');
-            const title = $(this).data('title');
 
-            $('#esimModalTitle').text(title);
-            $('#esimModalBody').html('<p class="text-muted">Loading...</p>');
+
+    <script>
+        $(document).on('click', '.apply-Bundle', function()
+        {
+            var bundleName = $(this).data('name');
+
+                    $('.bs-example-modal-center').modal('show');
+
+                // Show loader and clear any previous data
+            $('#bundleDetailLoader').show();
+                $('#bundleDetailModalBody').html('');
 
             $.ajax({
-                url: actionUrl,
+                url: '@Url.Action("ApplyToExisting", "Inventory")',
                 type: 'GET',
-                data: { id: id },
-                success: function (response) {
-                    $('#esimModalBody').html(response);
-                    $('#esimModal').modal('show');
+                data: { name: bundleName },
+
+                    data: { name: bundleName },
+                success: function (html) {
+                    $('#bundleDetailLoader').hide();
+                    $('#bundleDetailModalBody').html(html); // inject partial view
+                    $('.bs-example-modal-center').modal('show'); // open modal
                 },
-                error: function () {
-                    $('#esimModalBody').html('<p class="text-danger">Failed to load content.</p>');
+
+                    error: function () {
+                    $('#bundleDetailLoader').hide();
+                    $('#bundleDetailModalBody').html('<p class="text-danger">Failed to load bundle details.</p>');
                 }
             });
         });
-    </script> *@
+    </script>
 }

@@ -1,0 +1,26 @@
+﻿@using eSim.Infrastructure.DTOs.Esim
+
+@model IEnumerable<EsimDTO>
+
+@{
+	var bName = ViewBag.BundleName;
+}
+<div class="row p-5">
+	<div class="text-center">
+		<h3>Available eSIMs</h3>
+	</div>
+	<form asp-action="OpenNewTicket" asp-controller="Inventory" method="post">
+		<input value="@bName" name="bundleName" type="hidden" />
+		<select class="form-select" name="iccid">
+			<option selected> Select eSIM</option>
+			@foreach (var item in Model)
+			{
+				<option value="@item.Iccid">
+					<i class="mdi mdi-sim-outline mdi-24px"></i>
+					@item.Iccid
+				</option>
+			}
+		</select>
+		<button class="btn btn-primary" type="submit" >Apply</button>
+	</form>
+</div>
