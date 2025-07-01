@@ -10,8 +10,6 @@ namespace eSim.Middleware.Controllers
     [ApiController]
     public class BundleController : ControllerBase
     {
-
-
         private readonly IBundleService _bundle;
         public BundleController(IBundleService bundle)
         {

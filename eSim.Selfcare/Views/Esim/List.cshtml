@@ -2,13 +2,13 @@
 @{
     ViewBag.Title = "Esim List";
 
-    var notifications = new List<(string Key, string Type)>
-    {
-        ("BundleAppliedSuccessfully", "success"),
-        ("SuccessMessage", "success"),
-        ("ErrorMessage", "danger"),
-        ("Error", "danger"),
-    };
+            var notifications = new List<(string Key, string Type)>
+            {
+                ("BundleAppliedSuccessfully", "success"),
+                ("SuccessMessage", "success"),
+                ("ErrorMessage", "danger"),
+                ("Error", "danger"),
+            };
 }
 
 @if (Model is null)

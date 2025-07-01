@@ -58,6 +58,7 @@ namespace eSim.Common.StaticClasses
         public static string AppleInstallUrl = "appleInstallUrl";
         public static string SubscriberInventory = "inventory/subscriber";
         public static string ApplyNewBundle = "esims/apply-bundle-new-esim";
+        public static string OrderBundleType = "bundle";
         public static string QRPath(string input) => $"esims/{input}/qr";
         //public static string SubscriberInventory = "inventory/subscriber";
 
@@ -155,7 +156,13 @@ namespace eSim.Common.StaticClasses
 
 
 
-
+        public static string StandardEsimBundles = "Standard eSIM Bundles";
+        public static string HajjPromo = "Hajj Promo";
+        public static string StandardFixed = "Standard Fixed";
+        public static string StandardLongDuration = "Standard Long Duration";
+        public static string StandardUnlimitedEssesntial = "Standard Unlimited Essential";
+        public static string StandardUnlimitedLite = "Standard Unlimited Lite";
+        public static string StandardUnlimitedPlus = "Standard Unlimited Plus";
 
 
 
