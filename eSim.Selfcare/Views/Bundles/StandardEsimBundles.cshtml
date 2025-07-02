@@ -2,79 +2,35 @@
 @using eSim.Infrastructure.DTOs.Middleware.Bundle
 
 @model Result<GetBundleCatalogueResponse>
-
-@* @{ *@
-@*     ViewBag.pTitle = "Standard eSIM Bundles"; *@
-@*     ViewBag.pageTitle = "Buy Bundles"; *@
-@* } *@
-
-
+@{
+    var notifications = new List<(string Key, string Type)>
+    {
+        ("Success", "success"),
+        ("Error", "success"),
+    };
+}
+<!-- Filters -->
 <div class="row">
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header">
                 <h4 class="card-title mb-0">Choices</h4>
-            </div><!-- end card header -->
-
+            </div>
             <div class="card-body">
                 <div>
-                    <div>
-
-
-                        <div class="row">
-                            <div class="col-lg-3 col-md-6">
-                                <div class="mb-3">
-                                    <label for="choices-single-default" class="form-label text-muted">Filter By Region</label>
-                                    @*   <p class="text-muted">Set <code>data-choices</code> attribute to set a default single select.</p> *@
-                                    <select class="form-control" data-choices name="choices-single-default"
-                                    id="choices-single-default">
-                                        <option value="">Select Region</option>
-                                        <option value="Choice 1">Choice 1</option>
-                                        <option value="Choice 2">Choice 2</option>
-                                        <option value="Choice 3">Choice 3</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6">
-                                <div class="mb-3">
-                                    <label for="choices-single-default" class="form-label text-muted">Filter By Country</label>
-                                    @*                                   <p class="text-muted">Set <code>data-choices</code> attribute to set a default single select.</p> *@
-                                    <select class="form-control" data-choices name="choices-single-default"
-                                    id="choices-single-default">
-                                        <option value="">Select Country</option>
-                                        <option value="Choice 1">Choice 1</option>
-                                        <option value="Choice 2">Choice 2</option>
-                                        <option value="Choice 3">Choice 3</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6">
-                                <div class="mb-3">
-                                    <label for="choices-single-default" class="form-label text-muted">Filter By State</label>
-                                    @*                                   <p class="text-muted">Set <code>data-choices</code> attribute to set a default single select.</p> *@
-                                    <select class="form-control" data-choices name="choices-single-default"
-                                    id="choices-single-default">
-                                        <option value="">Select State</option>
-                                        <option value="Choice 1">Choice 1</option>
-                                        <option value="Choice 2">Choice 2</option>
-                                        <option value="Choice 3">Choice 3</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6">
-                                <div class="mb-3">
-                                    <label for="choices-single-default" class="form-label text-muted">Filter By Plane</label>
-                                    @*                                   <p class="text-muted">Set <code>data-choices</code> attribute to set a default single select.</p> *@
-                                    <select class="form-control" data-choices name="choices-single-default"
-                                    id="choices-single-default">
-                                        <option value="">Select Plane</option>
-                                        <option value="Choice 1">Choice 1</option>
-                                        <option value="Choice 2">Choice 2</option>
-                                        <option value="Choice 3">Choice 3</option>
-                                    </select>
-                                </div>
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Filter By Region</label>
+                                <select class="form-control" data-choices name="choices-single-default" id="choices-single-default">
+                                    <option value="">Select Region</option>
+                                    <option value="Choice 1">Choice 1</option>
+                                    <option value="Choice 2">Choice 2</option>
+                                    <option value="Choice 3">Choice 3</option>
+                                </select>
                             </div>
                         </div>
+                        <!-- Repeat for Country, State, Plane -->
                     </div>
                 </div>
             </div>
@@ -82,6 +38,7 @@
     </div>
 </div>
 
+<!-- Bundle List -->
 <div class="row">
     <div class="col-lg-12">
         <div class="card">
@@ -105,15 +62,15 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if(Model != null)
+                        @if (Model != null)
                         {
                             @foreach (var item in Model.Data.bundles)
                             {
-                                <tr class="View-Bundle" data-name="@item.name" data-bs-toggle="modal" data-bs-target=".bs-example-modal-center">
+                                <tr class="View-Bundle" data-name="@item.name" style="cursor: pointer;">
                                     <td>@item.name</td>
                                     <td>@item.countries?.FirstOrDefault()?.name</td>
                                     <td class="text-center">
-                                        @if(item.dataAmount != 0)
+                                        @if (item.dataAmount != 0)
                                         {
                                             var GB = Math.Round((double)item.dataAmount / 1024);
                                             @($"{GB} GB")
@@ -124,7 +81,6 @@
                                     <td class="text-center">@item.duration Days</td>
                                     <td> X </td>
                                     <td class="text-start">
-
                                         @if (item.roamingEnabled?.Count() > 0)
                                         {
                                             <text>Yes (@item.roamingEnabled?.Count() Countries)</text>
@@ -135,19 +91,21 @@
                                         }
                                     </td>
                                     <td>$@item.price</td>
-                                    <td><button class="btn btn-sm btn-soft-info">+</button></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-secondary open-bundle-form btn-stop-click" data-name="@item.name" data-price="@item.price">⚙️</button>
+                                    </td>
                                 </tr>
                             }
                         }
-                   
                     </tbody>
                 </table>
             </div>
         </div>
-    </div><!--end col-->
-</div><!--end row-->
+    </div>
+</div>
 
-<div class="modal modal-lg fade bs-example-modal-center" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+<!-- Detail Modal -->
+<div class="modal modal-lg fade bs-example-modal-center" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body p-0">
@@ -156,48 +114,113 @@
                         <span class="visually-hidden">Loading...</span>
                     </div>
                     <p class="mt-2">Loading bundle details...</p>
-
                 </div>
                 <div id="bundleDetailModalBody"></div>
             </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+        </div>
+    </div>
+</div>
 
+<!-- Settings Modal -->
+<div class="modal fade" id="bundleFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content">
+            <div class="modal-body" id="bundleFormModalBody">
+                <!-- Form loaded via AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
 
 @section scripts {
-        <script>
-            $(document).on('click', '.View-Bundle', function()
-            {
-                var bundleName = $(this).data('name');
+    <script>
+        // Handle row click except buttons
+        $(document).on('click', '.View-Bundle', function (e) {
+            if ($(e.target).closest('.btn-stop-click').length) return;
 
-                     $('.bs-example-modal-center').modal('show');
+            const bundleName = $(this).data('name');
 
-                    // Show loader and clear any previous data
-                $('#bundleDetailLoader').show();
-                    $('#bundleDetailModalBody').html('');
+            $('#bundleDetailLoader').show();
+            $('#bundleDetailModalBody').html('');
 
-                $.ajax({
-                    url: '@Url.Action("Detail", "Bundles")',
-                    type: 'GET',
-                    data: { name: bundleName },
+            const modal = new bootstrap.Modal(document.querySelector('.bs-example-modal-center'));
+            modal.show();
 
-                     data: { name: bundleName },
-                    success: function (html) {
-                        $('#bundleDetailLoader').hide();
-                        $('#bundleDetailModalBody').html(html); // inject partial view
-                        $('.bs-example-modal-center').modal('show'); // open modal
-                    },
+            $.ajax({
+                url: '@Url.Action("Detail", "Bundles")',
+                type: 'GET',
+                data: { name: bundleName },
+                success: function (html) {
+                    $('#bundleDetailLoader').hide();
+                    $('#bundleDetailModalBody').html(html);
+                },
+                error: function () {
+                    $('#bundleDetailLoader').hide();
+                    $('#bundleDetailModalBody').html('<p class="text-danger">Failed to load bundle details.</p>');
+                }
+            });
+        });
 
-                     error: function () {
-                        $('#bundleDetailLoader').hide();
-                        $('#bundleDetailModalBody').html('<p class="text-danger">Failed to load bundle details.</p>');
-                    }
-                });
-            });   
+        // Open form via ⚙️ button
+        $(document).on('click', '.open-bundle-form', function () {
+            const name = $(this).data('name');
+            const price = $(this).data('price');
+
+            $.ajax({
+                url: '@Url.Action("OrderModal", "Bundles")',
+                data: { name: name, price: price },
+                success: function (html) {
+                    $('#bundleFormModalBody').html(html);
+                    const modal = new bootstrap.Modal(document.getElementById('bundleFormModal'));
+                    modal.show();
+                },
+                error: function () {
+                    alert("Failed to load form.");
+                }
+            });
+        });
+
+        // Handle form submission inside settings modal
+        $(document).on('submit', '#configureBundleForm', function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: '@Url.Action("CreateOrder", "Bundles")',
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (response) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('bundleFormModal'));
+                    modal.hide();
+
+                    // Redirect to List where TempData["Success"] will be shown
+                        if (response.redirectUrl) {
+                window.location.href = response.redirectUrl;
+            } else {
+                alert("No redirect URL provided.");
+            }  
+                },
+                 error: function () {
+            // On error, redirect and show error via TempData
+            window.location.href = '@Url.Action("StandardEsimBundles", "Bundles")';
+        }
+            });
+        });
     </script>
-    <!-- prismjs plugin -->
-    <script src="~/assets/libs/prismjs/prism.js"></script>
 
+    <!-- Notification Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        @foreach (var (key, type) in notifications)
+        {
+            if (TempData[key] != null)
+            {
+                <text>ToastNotification("@TempData[key]", "@type");</text>
+            }
+        }
+        });
+    </script>
+
+    <!-- Required libraries -->
+    <script src="~/assets/libs/prismjs/prism.js"></script>
     <script src="~/assets/js/app.js"></script>
 }

@@ -20,7 +20,8 @@ namespace eSim.Implementations.Services.Selfcare.Esim
 
         public async Task<Result<IEnumerable<EsimDTO>>> GetEsimListAsync()
         {
-            var url = $"{BusinessManager.MiddlewareBaseURL}/{BusinessManager.EsimList}";
+            //var url = $"{BusinessManager.MdwBaseURL}/{BusinessManager.EsimList}";
+            var url = BusinessManager.MdwBaseURL + BusinessManager.EsimList;
 
             var request = await _consumeApi.Get<IEnumerable<EsimDTO>>(url);
 

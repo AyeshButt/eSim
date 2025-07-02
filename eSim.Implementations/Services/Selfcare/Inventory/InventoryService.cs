@@ -21,6 +21,7 @@ namespace eSim.Implementations.Services.Selfcare.Inventory
     {
         private readonly IMiddlewareConsumeApi _consumeApi = consumeApi;
         private readonly IBundleService _bdService = bdService;
+     
 
         #region Get iNventory List
 
@@ -139,13 +140,13 @@ namespace eSim.Implementations.Services.Selfcare.Inventory
         #endregion
 
         #region Detail of bundle from inventory
-        public async Task<Result<byte[]>> GenrateQR(string input)
+        public async Task<byte[]> GenrateQR(string input)
         {
             string QrCode = BusinessManager.QRPath(input);
 
             var url = $"{BusinessManager.MdwBaseURL}{QrCode}";
 
-            var QrCodeRequest = await _consumeApi.Get<byte[]>(url);
+            var QrCodeRequest = await _consumeApi.GetQR(url);
 
             return QrCodeRequest;
         }
