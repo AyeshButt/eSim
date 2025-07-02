@@ -49,6 +49,7 @@ namespace eSim.Common.StaticClasses
         public static string TicketDetail = "ticket/detail";
         public static string Ticketcomment = "ticket/comment";
         public static string SubscriberDetail = "subscriber/detail";
+        public static string ChangePassword = "subscriber/change-password";
         public static string Subscriberupdate = "subscriber/update";
         public static string BundelRegion = "bundle/bundles";
         public static string Bundeldetail = "bundle/";
