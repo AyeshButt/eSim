@@ -160,7 +160,7 @@ namespace eSim.Common.StaticClasses
 
                 _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                var jsonResponse = await _http.PutAsJsonAsync(url, input);
+                var jsonResponse = await _http.PatchAsJsonAsync(url, input);
 
                 Console.WriteLine("Bundle Detail: " + await jsonResponse.Content.ReadAsStringAsync());
 

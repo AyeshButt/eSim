@@ -207,9 +207,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
         }
 
 
-        public async Task<Result<string?>>
-
-            UploadProfileImageAsync(IFormFile file, ProfileImageDTORequest dto)
+        public async Task<Result<string?>>UploadProfileImageAsync(Guid loggeduser,IFormFile file, ProfileImageDTORequest dto)
         {
 
             var result = new Result<string?>();
@@ -253,7 +251,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
 
                 dto.ProfileImage = $"/uploads/{fileName}";
 
-                var subscriber = await _db.Subscribers.FindAsync(dto.SubscriberId);
+                var subscriber = await _db.Subscribers.FindAsync(loggeduser);
                 if (subscriber == null)
                 {
                     result.Success = false;
