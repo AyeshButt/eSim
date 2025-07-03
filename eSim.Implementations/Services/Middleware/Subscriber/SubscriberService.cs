@@ -87,6 +87,13 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                     result.StatusCode = StatusCodes.Status400BadRequest;
                     return result;
                 }
+                if (!Regex.IsMatch(input.Country, @"^[A-Za-z]+$"))
+                {
+                    result.Success = false;
+                    result.Message = BusinessManager.InvalidCountryFormat;
+                    result.StatusCode = StatusCodes.Status400BadRequest;
+                    return result;
+                }
 
 
                 string hashedPassword = PasswordHasher.HashPassword(input.Password);
@@ -207,9 +214,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
         }
 
 
-        public async Task<Result<string?>>
-
-            UploadProfileImageAsync(IFormFile file, ProfileImageDTORequest dto)
+        public async Task<Result<string?>>UploadProfileImageAsync(Guid loggeduser,IFormFile file, ProfileImageDTORequest dto)
         {
 
             var result = new Result<string?>();
@@ -253,7 +258,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
 
                 dto.ProfileImage = $"/uploads/{fileName}";
 
-                var subscriber = await _db.Subscribers.FindAsync(dto.SubscriberId);
+                var subscriber = await _db.Subscribers.FindAsync(loggeduser);
                 if (subscriber == null)
                 {
                     result.Success = false;

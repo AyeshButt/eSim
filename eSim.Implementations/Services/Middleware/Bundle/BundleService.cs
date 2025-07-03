@@ -11,6 +11,7 @@ using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.DTOs.Middleware.Bundle;
 using eSim.Infrastructure.Interfaces.ConsumeApi;
 using eSim.Infrastructure.Interfaces.Middleware;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static eSim.Infrastructure.DTOs.Middleware.Bundle.GetBundleCatalogueDetailDTO;
 
@@ -54,11 +55,19 @@ namespace eSim.Implementations.Services.Middleware.Bundle
         public async Task<Result<GetBundleCatalogueResponse>> GetBundlesAsync(BundleRequest request)
         {
             var result = new Result<GetBundleCatalogueResponse>();
-          
+            if (string.IsNullOrWhiteSpace(request.Region) && string.IsNullOrWhiteSpace(request.Countries))
+            {
+                result.Success = false;
+                result.Message = BusinessManager.RegionorCountriesmustbeprovided;
+                result.StatusCode = StatusCodes.Status400BadRequest;
+                return result;
+            }
+
             var url = $"{BusinessManager.BaseURL}/catalogue?page={request.Page}&perPage={request.PerPage}&direction={request.Direction}&orderBy={request.OrderBy}&region={request.Region}";
 
-            // Only add countries if it's not null or empty ali
-            if (!string.IsNullOrWhiteSpace(request.Countries) && request.Countries.ToLower() != "string")
+
+
+            if (!string.IsNullOrWhiteSpace(request.Countries))
             {
                 url += $"&countries={request.Countries}";   
             }

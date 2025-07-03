@@ -9,8 +9,8 @@ namespace eSim.Infrastructure.DTOs.Middleware.Bundle
 {
     public class BundleRequest
     {
-        [Required(ErrorMessage = "Region is required.")]    
-        public string Region { get; set; }
+       
+        public string? Region { get; set; }
 
         public string? Countries { get; set; } 
 

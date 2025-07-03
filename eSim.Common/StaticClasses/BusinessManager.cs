@@ -33,6 +33,8 @@ namespace eSim.Common.StaticClasses
         public static string ImageMediaContentType = "image/png";
         public static string QRCode = "qr-code";
         public static string InvalidIccid = "Invalid Iccid";
+        public static string RegionorCountriesmustbeprovided = "Either Region or Countries must be provided.";
+        public static string InvalidCountryFormat = "Country must contain only English Letters.";
 
         public static string MdwBaseURL = "https://localhost:7264/";
         public static string MiddlewareBaseURL = "https://localhost:7264";
@@ -49,6 +51,7 @@ namespace eSim.Common.StaticClasses
         public static string TicketDetail = "ticket/detail";
         public static string Ticketcomment = "ticket/comment";
         public static string SubscriberDetail = "subscriber/detail";
+        public static string ChangePassword = "subscriber/change-password";
         public static string Subscriberupdate = "subscriber/update";
         public static string BundelRegion = "bundle/bundles";
         public static string Bundeldetail = "bundle/";
@@ -58,6 +61,7 @@ namespace eSim.Common.StaticClasses
         public static string AppleInstallUrl = "appleInstallUrl";
         public static string SubscriberInventory = "inventory/subscriber";
         public static string ApplyNewBundle = "esims/apply-bundle-new-esim";
+        public static string OrderBundleType = "bundle";
         public static string QRPath(string input) => $"esims/{input}/qr";
         //public static string SubscriberInventory = "inventory/subscriber";
 
@@ -155,7 +159,13 @@ namespace eSim.Common.StaticClasses
 
 
 
-
+        public static string StandardEsimBundles = "Standard eSIM Bundles";
+        public static string HajjPromo = "Hajj Promo";
+        public static string StandardFixed = "Standard Fixed";
+        public static string StandardLongDuration = "Standard Long Duration";
+        public static string StandardUnlimitedEssesntial = "Standard Unlimited Essential";
+        public static string StandardUnlimitedLite = "Standard Unlimited Lite";
+        public static string StandardUnlimitedPlus = "Standard Unlimited Plus";
 
 
 

@@ -7,6 +7,8 @@ using System.Web;
 using eSim.Common.StaticClasses;
 using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.DTOs.Middleware.Bundle;
+using eSim.Infrastructure.DTOs.Middleware.Order;
+using eSim.Infrastructure.DTOs.Selfcare.Bundles;
 using eSim.Infrastructure.Interfaces.ConsumeApi;
 using eSim.Infrastructure.Interfaces.Selfcare.Bundles;
 using static eSim.Infrastructure.DTOs.Middleware.Bundle.GetBundleCatalogueDetailDTO;
@@ -44,6 +46,28 @@ namespace eSim.Implementations.Services.Selfcare.Bundle
             var response = await _consumeApi.Get<GetBundleCatalogueDetailsResponse>(FullURl);
 
             return response;
+        }
+
+        public async Task<Result<CreateOrderResponse>> CreateOrderAsync(OrderModalViewModel input)
+        {
+            var model = new CreateOrderRequest();
+
+            model.Order = new List<CreateOrderDetailDTO>()
+            {
+               new CreateOrderDetailDTO()
+               {
+                   Type = BusinessManager.OrderBundleType,
+                   Item = input.BundleName,
+                   Quantity = input.Quantity,
+               }
+            };
+
+            var url = $"{BusinessManager.MiddlewareBaseURL}/orders";
+
+            var response = await _consumeApi.Post<CreateOrderResponse, CreateOrderRequest>(url, model);
+
+            return response;
+
         }
     }
 }

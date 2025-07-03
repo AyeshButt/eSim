@@ -20,6 +20,16 @@ namespace eSim.Implementations.Services.Selfcare.Subscriber
         {
             _consumeApi = consumeApi;
         }
+
+        public async Task<Result<string>> ChangePasswordAsync(ChangePasswordDTORequest request)
+        {
+            var url = BusinessManager.MdwBaseURL + BusinessManager.ChangePassword;
+            var result= await _consumeApi.Put<string,ChangePasswordDTORequest>(url, request);
+            return result;
+
+
+        }
+
         public async Task<Result<SubscriberDTO>> SubscriberDetailAsync()
         {
             var url = BusinessManager.MdwBaseURL + BusinessManager.SubscriberDetail;
@@ -33,6 +43,11 @@ namespace eSim.Implementations.Services.Selfcare.Subscriber
           var url= BusinessManager.MdwBaseURL+BusinessManager.Subscriberupdate;
             var result= await _consumeApi.Put<string, UpdateSubscriberDTORequest>(url,request);
             return result;
+        }
+
+        public Task<Result<string>> UploadProfileImage()
+        {
+            throw new NotImplementedException();
         }
     }
 }
