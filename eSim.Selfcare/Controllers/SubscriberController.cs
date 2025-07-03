@@ -44,11 +44,24 @@ namespace eSim.Selfcare.Controllers
             return RedirectToAction(nameof(Detail));
         }
         [HttpPost]
-        public async Task<IActionResult> UploadProfileImage()
+        public async Task<IActionResult> UploadProfileImage(IFormFile file)
         {
-            var result = await _Subscriber.UploadProfileImage();
+            if (file == null || file.Length == 0)
+            {
+                TempData["Error"] = "Please upload a valid image.";
+                return RedirectToAction(nameof(Detail)); 
+            }
+
+            var result = await _Subscriber.UploadProfileImage(file); 
+
+            if (result.Success)
+                TempData["Success"] = "Image uploaded successfully!";
+            else
+                TempData["Error"] = result.Message;
+
             return RedirectToAction(nameof(Detail));
         }
+
 
 
     }

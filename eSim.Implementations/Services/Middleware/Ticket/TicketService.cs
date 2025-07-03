@@ -79,7 +79,7 @@ namespace eSim.Implementations.Services.Middleware.Ticket
         #endregion
 
         #region CreateTicket
-        public async Task<Result<string?>> CreateTicketAsync(TicketRequest input)
+        public async Task<Result<string?>> CreateTicketAsync(TicketRequest input, Guid loggeruser)
         {
             var result = new Result<string?>();
 
@@ -102,8 +102,9 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                     Subject = input.Subject,
                     Description = input.Description,
                     TicketType = input.TicketType,
+                    CreatedBy = loggeruser.ToString(),
                     Status = (int)Common.Enums.TicketStatus.Open,
-
+                    ModifiedAt=BusinessManager.GetDateTimeNow(),
                     CreatedAt = BusinessManager.GetDateTimeNow()
                 };
             
@@ -171,7 +172,7 @@ namespace eSim.Implementations.Services.Middleware.Ticket
 
 
                 var detail = new TicketDTO
-                {
+                {  Id = ticket.Id,
                     TRN = ticketData.Ticket.TRN,
                     Subject = ticketData.Ticket.Subject,
                     Description = ticketData.Ticket.Description,
@@ -220,20 +221,41 @@ namespace eSim.Implementations.Services.Middleware.Ticket
         #endregion
 
         #region TicketsResponse
-        public Result<IQueryable<TicketsResponse>> Tickets()
+        public Result<IQueryable<TicketsResponse>> Tickets(Guid loggeruser)
         {
-            var types = _Db.TicketType.AsNoTracking().ToList();
-            var status=_Db.TicketStatus.AsNoTracking().ToList();
-            var tickets = _Db.Ticket.AsNoTracking().ToList().Select(a => new TicketsResponse
-            {
-                CreatedAt = a.CreatedAt,
-                Subject = a.Subject,
-                TRN = a.TRN,
-                Type = types.FirstOrDefault(t => t.Id == a.TicketType)?.Type ,
-                status = status.FirstOrDefault(s => s.Id == a.Status)?.Status
+            var userTickets = _Db.Ticket
+       .AsNoTracking()
+       .Where(a => a.CreatedBy == loggeruser.ToString())
+       .ToList();
 
-            }).AsQueryable();
-            
+        
+            var usedTypeIds = userTickets.Select(t => t.TicketType).Distinct().ToList();
+            var usedStatusIds = userTickets.Select(t => t.Status).Distinct().ToList();
+
+            // ✅ Get only relevant types and statuses
+            var types = _Db.TicketType
+                .AsNoTracking()
+                .Where(t => usedTypeIds.Contains(t.Id))
+                .ToList();
+
+            var status = _Db.TicketStatus
+                .AsNoTracking()
+                .Where(s => usedStatusIds.Contains(s.Id))
+                .ToList();
+
+            // ✅ Final projection
+            var tickets = userTickets
+                .Select(a => new TicketsResponse
+                {
+                    CreatedAt = a.CreatedAt,
+                    Subject = a.Subject,
+                    TRN = a.TRN,
+                    Type = types.FirstOrDefault(t => t.Id == a.TicketType)?.Type,
+                    status = status.FirstOrDefault(s => s.Id == a.Status)?.Status
+                })
+                .AsQueryable();
+
+
             return new Result<IQueryable<TicketsResponse>>() 
             
             { Data = tickets.OrderByDescending(a => a.CreatedAt) ,StatusCode=StatusCodes.Status200OK};
