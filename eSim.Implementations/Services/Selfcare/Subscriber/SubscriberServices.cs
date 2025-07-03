@@ -44,5 +44,10 @@ namespace eSim.Implementations.Services.Selfcare.Subscriber
             var result= await _consumeApi.Put<string, UpdateSubscriberDTORequest>(url,request);
             return result;
         }
+
+        public Task<Result<string>> UploadProfileImage()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

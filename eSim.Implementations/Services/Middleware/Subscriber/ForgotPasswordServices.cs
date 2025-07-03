@@ -166,13 +166,22 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                     return result;
                 }
 
+                bool isSamePassword = PasswordHasher.VerifyPassword(input.NewPassword, subscriber.Hash);
+                if (isSamePassword)
+                {
+                    result.Success = false;
+                    result.Message = "New password cannot be the same as the current password.";
+                    result.StatusCode = StatusCodes.Status400BadRequest;
+                    return result;
+                }
+
                 subscriber.Hash = PasswordHasher.HashPassword(input.NewPassword);
                 subscriber.ModifiedAt = BusinessManager.GetDateTimeNow();
 
                 await _db.SaveChangesAsync();
 
                 try
-                {
+                { 
                     var email = _email.SendEmail(new EmailDTO
                     {
                         To = subscriber.Email,
@@ -225,7 +234,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                     return result;
                 }
 
-                // ✅ **Use VerifyPassword instead of re-hashing**
+          
                 bool isOldPasswordCorrect = PasswordHasher.VerifyPassword(input.OldPassword, user.Hash);
 
                 if (!isOldPasswordCorrect || input.NewPassword != input.ConfirmPassword)
@@ -237,7 +246,14 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                     result.StatusCode = StatusCodes.Status400BadRequest;
                     return result;
                 }
-
+                bool isNewSameAsOld = PasswordHasher.VerifyPassword(input.NewPassword, user.Hash);
+                if (isNewSameAsOld)
+                {
+                    result.Success = false;
+                    result.Message = "New password cannot be the same as the old password. Please choose a different password.";
+                    result.StatusCode = StatusCodes.Status400BadRequest;
+                    return result;
+                }
                 var resetDto = new SubscriberResetPasswordDTO
                 {
                     NewPassword = input.NewPassword,

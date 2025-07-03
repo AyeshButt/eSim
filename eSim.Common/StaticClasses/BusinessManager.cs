@@ -33,6 +33,8 @@ namespace eSim.Common.StaticClasses
         public static string ImageMediaContentType = "image/png";
         public static string QRCode = "qr-code";
         public static string InvalidIccid = "Invalid Iccid";
+        public static string RegionorCountriesmustbeprovided = "Either Region or Countries must be provided.";
+        public static string InvalidCountryFormat = "Country must contain only English Letters.";
 
         public static string MdwBaseURL = "https://localhost:7264/";
         public static string MiddlewareBaseURL = "https://localhost:7264";

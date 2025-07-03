@@ -35,18 +35,18 @@ namespace eSim.Selfcare.Controllers
 
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> ChangePassword()
-        //{
-        //   ChangePasswordDTORequest request = new ChangePasswordDTORequest();
-            
-        //    return PartialView("_ChangePassword", request);
-        //}
+   
 
         [HttpPost]
         public async Task<IActionResult> ChangePassword( ChangePasswordDTORequest request)
         {
             var result=await _Subscriber.ChangePasswordAsync(request);
+            return RedirectToAction(nameof(Detail));
+        }
+        [HttpPost]
+        public async Task<IActionResult> UploadProfileImage()
+        {
+            var result = await _Subscriber.UploadProfileImage();
             return RedirectToAction(nameof(Detail));
         }
 

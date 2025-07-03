@@ -87,6 +87,13 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                     result.StatusCode = StatusCodes.Status400BadRequest;
                     return result;
                 }
+                if (!Regex.IsMatch(input.Country, @"^[A-Za-z]+$"))
+                {
+                    result.Success = false;
+                    result.Message = BusinessManager.InvalidCountryFormat;
+                    result.StatusCode = StatusCodes.Status400BadRequest;
+                    return result;
+                }
 
 
                 string hashedPassword = PasswordHasher.HashPassword(input.Password);
