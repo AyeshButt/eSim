@@ -55,13 +55,7 @@ namespace eSim.Implementations.Services.Middleware.Bundle
         public async Task<Result<GetBundleCatalogueResponse>> GetBundlesAsync(BundleRequest request)
         {
             var result = new Result<GetBundleCatalogueResponse>();
-            if (string.IsNullOrWhiteSpace(request.Region) && string.IsNullOrWhiteSpace(request.Countries))
-            {
-                result.Success = false;
-                result.Message = BusinessManager.RegionorCountriesmustbeprovided;
-                result.StatusCode = StatusCodes.Status400BadRequest;
-                return result;
-            }
+   
 
             var url = $"{BusinessManager.BaseURL}/catalogue?page={request.Page}&perPage={request.PerPage}&direction={request.Direction}&orderBy={request.OrderBy}&region={request.Region}";
 

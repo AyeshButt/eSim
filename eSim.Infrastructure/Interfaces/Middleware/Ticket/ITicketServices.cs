@@ -11,8 +11,8 @@ namespace eSim.Infrastructure.Interfaces.Middleware.Ticket
 {
     public interface ITicketServices
     {
-        Task<Result<string?>> CreateTicketAsync(TicketRequest input);
-        Result<IQueryable<TicketsResponse>> Tickets();
+        Task<Result<string?>> CreateTicketAsync(TicketRequest input,Guid loggeruser);
+        Result<IQueryable<TicketsResponse>> Tickets(Guid loggeruser);   
         Task<Result<string?>> UploadAttachmentAsync(TicketAttachmentRequest input);
 
         Task<Result<TicketDTO?>> GetTicketDetailAsync(string trn);

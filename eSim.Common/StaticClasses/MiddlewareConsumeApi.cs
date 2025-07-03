@@ -200,6 +200,53 @@ namespace eSim.Common.StaticClasses
 
             return response;
         }
+
+        public async Task<Result<T?>> PostMultipartAsync<T>(string url, IFormFile file)
+        {
+            try
+            {
+                var token = _httpContext.HttpContext?.User?.FindFirst("Token")?.Value;
+
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                await using var ms = new MemoryStream();
+                await file.CopyToAsync(ms);
+                ms.Position = 0;
+
+                using var form = new MultipartFormDataContent();
+                var fileContent = new ByteArrayContent(ms.ToArray());
+                fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+
+                form.Add(fileContent, "file", file.FileName); // 👈 Must match `[FromForm] IFormFile file`
+
+                var response = await client.PostAsync(url, form);
+                var responseBody = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return new Result<T?>
+                    {
+                        Success = false,
+                        Message = "Upload failed",
+                        StatusCode = (int)response.StatusCode,
+                        Data = default
+                    };
+                }
+
+                var result = JsonConvert.DeserializeObject<Result<T?>>(responseBody);
+                return result!;
+            }
+            catch (Exception ex)
+            {
+                return new Result<T?>
+                {
+                    Success = false,
+                    Message = "Exception occurred: " + ex.Message,
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
+        }
     }
 }
     
