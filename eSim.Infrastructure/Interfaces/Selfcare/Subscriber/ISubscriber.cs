@@ -14,6 +14,7 @@ namespace eSim.Infrastructure.Interfaces.Selfcare.Subscriber
         Task<Result<SubscriberDTO>> SubscriberDetailAsync();
         Task<Result<string>> UpdateSubscriberAsync(UpdateSubscriberDTORequest request);
         Task<Result<string>> ChangePasswordAsync(ChangePasswordDTORequest request);
+        Task<Result<string>> UploadProfileImage();
 
 
     }
