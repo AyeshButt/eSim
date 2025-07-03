@@ -18,6 +18,8 @@ namespace eSim.Infrastructure.Interfaces.Middleware
         Task<Result<GetBundleCatalogueDetailsResponse>> GetBundleDetailsAsync(string name);
         Result<List<CountriesDTORequest>> GetCountries();
 
+        Result<List<RegionsResponseDTO>> GetRegions();
+
 
     }
 }

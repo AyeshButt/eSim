@@ -83,7 +83,7 @@ namespace eSim.Implementations.Services.Middleware.Bundle
 
         public Result<List<CountriesDTORequest>> GetCountries()
         {
-            var listOfCountry = _db.Countries.Select(a => new CountriesDTORequest { CountryName = a.CountryName, Iso2 = a.Iso2, Iso3 = a.Iso3 }).ToList();
+            var listOfCountry = _db.Countries.Select(a => new CountriesDTORequest { CountryName = a.CountryName, Iso2 = a.Iso2, Iso3 = a.Iso3, RegionId = a.RegionId }).ToList();
 
 
             return new Result<List<CountriesDTORequest>>()
@@ -94,6 +94,15 @@ namespace eSim.Implementations.Services.Middleware.Bundle
             };
         }
 
+        public Result<List<RegionsResponseDTO>> GetRegions()
+        {
+            var listOfRegions = _db.Regions.Select(a => new RegionsResponseDTO { Name = a.Name}).ToList();
+
+            return new Result<List<RegionsResponseDTO>>()
+            {
+                Data = listOfRegions,
+            };
+        }
     }
 }
 

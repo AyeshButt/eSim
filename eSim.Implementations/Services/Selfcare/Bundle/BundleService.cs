@@ -23,7 +23,7 @@ namespace eSim.Implementations.Services.Selfcare.Bundle
         {
             BundleRequest dto = new()
             {
-                Region = "Europe"
+                Region = "Asia"
             };
             var Url = BusinessManager.MdwBaseURL + BusinessManager.BundelRegion;
             
