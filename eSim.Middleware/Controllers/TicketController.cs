@@ -31,8 +31,10 @@ namespace eSim.Middleware.Controllers
         [Route("List")]
         public IActionResult Get()
         {
-        
-            return Ok(_ticketServices.Tickets());
+            var loggeruser = User.SubscriberId();
+            if (loggeruser == null) return Unauthorized();
+
+            return Ok(_ticketServices.Tickets(Guid.Parse(loggeruser)));
 
         }
 
@@ -44,8 +46,14 @@ namespace eSim.Middleware.Controllers
         [HttpPost]
         public async Task<IActionResult> POST([FromBody] TicketRequest ticketDto)
         {
+            var loggeruser = User.SubscriberId(); 
 
-            var result = await _ticketServices.CreateTicketAsync(ticketDto);
+            if (loggeruser is null)
+                return Unauthorized();
+
+
+
+            var result = await _ticketServices.CreateTicketAsync(ticketDto,Guid.Parse(loggeruser));
             return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
 
         }

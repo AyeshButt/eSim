@@ -54,6 +54,7 @@ namespace eSim.Common.StaticClasses
         public static string SubscriberDetail = "subscriber/detail";
         public static string ChangePassword = "subscriber/change-password";
         public static string Subscriberupdate = "subscriber/update";
+        public static string Subscriberupload = "subscriber/upload";
         public static string BundelRegion = "bundle/bundles";
         public static string Bundeldetail = "bundle/";
         public static string EsimList = "esims/list";
