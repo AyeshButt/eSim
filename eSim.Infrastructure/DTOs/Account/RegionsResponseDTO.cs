@@ -8,6 +8,7 @@ namespace eSim.Infrastructure.DTOs.Account
 {
     public class RegionsResponseDTO
     {
+        public int Id {  get; set; }
         public string Name { get; set; }
     }
 }

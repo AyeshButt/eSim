@@ -39,8 +39,9 @@ namespace eSim.Common.StaticClasses
         public static string MdwBaseURL = "https://localhost:7264/";
         public static string MiddlewareBaseURL = "https://localhost:7264";
         public static string Countries = "Countries";
+        public static string Regions = "regions";
         public static string MidlewareLogin = "auth/login";
-        public static string CheckEmail = "Subscriber/check-email";
+        public static string CheckEmail = "subscriber/email-exists";
         public static string Subscriber = "Subscriber";
         public static string forgotPass = "Subscriber/forgot-password";
         public static string OTP = "Subscriber/verify-otp";

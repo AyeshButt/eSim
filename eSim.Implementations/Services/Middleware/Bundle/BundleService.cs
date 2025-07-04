@@ -105,7 +105,7 @@ namespace eSim.Implementations.Services.Middleware.Bundle
 
         public Result<List<RegionsResponseDTO>> GetRegions()
         {
-            var listOfRegions = _db.Regions.Select(a => new RegionsResponseDTO { Name = a.Name}).ToList();
+            var listOfRegions = _db.Regions.Select(a => new RegionsResponseDTO { Name = a.Name, Id = a.Id}).ToList();
 
             return new Result<List<RegionsResponseDTO>>()
             {
