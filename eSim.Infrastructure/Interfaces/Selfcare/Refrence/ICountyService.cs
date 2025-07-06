@@ -11,6 +11,7 @@ namespace eSim.Infrastructure.Interfaces.Selfcare.Refrence
     public interface ICountyService
     {
         public Task<List<CountriesDTORequest>> Countries();
+        public Task<List<RegionsResponseDTO>> RegionsAsync();
 
     }
 }

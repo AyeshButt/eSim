@@ -36,5 +36,15 @@ namespace eSim.Implementations.Services.Selfcare.Reference
 
             return null ;
         }
+
+        public async Task<List<RegionsResponseDTO>> RegionsAsync()
+        {
+            var Url = BusinessManager.MdwBaseURL + BusinessManager.Regions;
+            var resp = await _consumeApi.Get<List<RegionsResponseDTO>>(Url);
+
+            if (resp.Success) return resp.Data;
+
+            return null;
+        }
     }
 }

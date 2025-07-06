@@ -15,5 +15,6 @@ namespace eSim.EF.Entities
         public string CountryName { get; set; }
         public string Iso3 { get; set; }
         public string Iso2 { get; set; }
+        public int RegionId {  get; set; }
     }
 }

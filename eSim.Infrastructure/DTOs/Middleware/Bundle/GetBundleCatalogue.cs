@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using eSim.Infrastructure.DTOs.Account;
 
 namespace eSim.Infrastructure.DTOs.Middleware.Bundle
 {

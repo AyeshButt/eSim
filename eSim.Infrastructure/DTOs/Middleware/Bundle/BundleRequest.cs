@@ -9,14 +9,13 @@ namespace eSim.Infrastructure.DTOs.Middleware.Bundle
 {
     public class BundleRequest
     {
-       
-        public string? Region { get; set; }
+        public string? Region { get; set; } = "";
 
-        public string? Countries { get; set; } 
+        public string? Countries { get; set; } = "";
 
-        public int Page { get; set; } = 0;
+        public int Page { get; set; } = 1;
 
-        public int PerPage { get; set; } = 10;
+        public int PerPage { get; set; } = 100;
 
         public string Direction { get; set; } = "desc";
 

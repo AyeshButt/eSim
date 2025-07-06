@@ -14,7 +14,7 @@ namespace eSim.Infrastructure.Interfaces.Selfcare.Bundles
 {
     public interface IBundleService
     {
-        public Task<Result<GetBundleCatalogueResponse>> GetBundles();
+        public Task<Result<BundleViewModel>> GetBundles();
         public Task<Result<GetBundleCatalogueDetailsResponse>> BundleDetail(string input);
         public Task<Result<CreateOrderResponse>> CreateOrderAsync(OrderModalViewModel input);
 
