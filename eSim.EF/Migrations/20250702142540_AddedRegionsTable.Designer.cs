@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eSim.EF.Context;
 
@@ -11,9 +12,11 @@ using eSim.EF.Context;
 namespace eSim.EF.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250702142540_AddedRegionsTable")]
+    partial class AddedRegionsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -410,9 +413,6 @@ namespace eSim.EF.Migrations
                         .HasMaxLength(3)
                         .HasColumnType("nvarchar(3)");
 
-                    b.Property<int>("RegionId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("Countries", (string)null);
@@ -423,2016 +423,1764 @@ namespace eSim.EF.Migrations
                             Id = 1,
                             CountryName = "Afghanistan",
                             Iso2 = "AF",
-                            Iso3 = "AFG",
-                            RegionId = 1
+                            Iso3 = "AFG"
                         },
                         new
                         {
                             Id = 2,
                             CountryName = "Aland Islands",
                             Iso2 = "AX",
-                            Iso3 = "ALA",
-                            RegionId = 4
+                            Iso3 = "ALA"
                         },
                         new
                         {
                             Id = 3,
                             CountryName = "Albania",
                             Iso2 = "AL",
-                            Iso3 = "ALB",
-                            RegionId = 4
+                            Iso3 = "ALB"
                         },
                         new
                         {
                             Id = 4,
                             CountryName = "Algeria",
                             Iso2 = "DZ",
-                            Iso3 = "DZA",
-                            RegionId = 2
+                            Iso3 = "DZA"
                         },
                         new
                         {
                             Id = 5,
                             CountryName = "American Samoa",
                             Iso2 = "AS",
-                            Iso3 = "ASM",
-                            RegionId = 6
+                            Iso3 = "ASM"
                         },
                         new
                         {
                             Id = 6,
                             CountryName = "Andorra",
                             Iso2 = "AD",
-                            Iso3 = "AND",
-                            RegionId = 4
+                            Iso3 = "AND"
                         },
                         new
                         {
                             Id = 7,
                             CountryName = "Angola",
                             Iso2 = "AO",
-                            Iso3 = "AGO",
-                            RegionId = 2
+                            Iso3 = "AGO"
                         },
                         new
                         {
                             Id = 8,
                             CountryName = "Anguilla",
                             Iso2 = "AI",
-                            Iso3 = "AIA",
-                            RegionId = 8
+                            Iso3 = "AIA"
                         },
                         new
                         {
                             Id = 9,
                             CountryName = "Antarctica",
                             Iso2 = "AQ",
-                            Iso3 = "ATA",
-                            RegionId = 3
+                            Iso3 = "ATA"
                         },
                         new
                         {
                             Id = 10,
                             CountryName = "Antigua And Barbuda",
                             Iso2 = "AG",
-                            Iso3 = "ATG",
-                            RegionId = 8
+                            Iso3 = "ATG"
                         },
                         new
                         {
                             Id = 11,
                             CountryName = "Argentina",
                             Iso2 = "AR",
-                            Iso3 = "ARG",
-                            RegionId = 7
+                            Iso3 = "ARG"
                         },
                         new
                         {
                             Id = 12,
                             CountryName = "Armenia",
                             Iso2 = "AM",
-                            Iso3 = "ARM",
-                            RegionId = 1
+                            Iso3 = "ARM"
                         },
                         new
                         {
                             Id = 13,
                             CountryName = "Aruba",
                             Iso2 = "AW",
-                            Iso3 = "ABW",
-                            RegionId = 8
+                            Iso3 = "ABW"
                         },
                         new
                         {
                             Id = 14,
                             CountryName = "Australia",
                             Iso2 = "AU",
-                            Iso3 = "AUS",
-                            RegionId = 6
+                            Iso3 = "AUS"
                         },
                         new
                         {
                             Id = 15,
                             CountryName = "Austria",
                             Iso2 = "AT",
-                            Iso3 = "AUT",
-                            RegionId = 4
+                            Iso3 = "AUT"
                         },
                         new
                         {
                             Id = 16,
                             CountryName = "Azerbaijan",
                             Iso2 = "AZ",
-                            Iso3 = "AZE",
-                            RegionId = 1
+                            Iso3 = "AZE"
                         },
                         new
                         {
                             Id = 17,
                             CountryName = "Bahamas The",
                             Iso2 = "BS",
-                            Iso3 = "BHS",
-                            RegionId = 8
+                            Iso3 = "BHS"
                         },
                         new
                         {
                             Id = 18,
                             CountryName = "Bahrain",
                             Iso2 = "BH",
-                            Iso3 = "BHR",
-                            RegionId = 5
+                            Iso3 = "BHR"
                         },
                         new
                         {
                             Id = 19,
                             CountryName = "Bangladesh",
                             Iso2 = "BD",
-                            Iso3 = "BGD",
-                            RegionId = 1
+                            Iso3 = "BGD"
                         },
                         new
                         {
                             Id = 20,
                             CountryName = "Barbados",
                             Iso2 = "BB",
-                            Iso3 = "BRB",
-                            RegionId = 8
+                            Iso3 = "BRB"
                         },
                         new
                         {
                             Id = 21,
                             CountryName = "Belarus",
                             Iso2 = "BY",
-                            Iso3 = "BLR",
-                            RegionId = 4
+                            Iso3 = "BLR"
                         },
                         new
                         {
                             Id = 22,
                             CountryName = "Belgium",
                             Iso2 = "BE",
-                            Iso3 = "BEL",
-                            RegionId = 4
+                            Iso3 = "BEL"
                         },
                         new
                         {
                             Id = 23,
                             CountryName = "Belize",
                             Iso2 = "BZ",
-                            Iso3 = "BLZ",
-                            RegionId = 8
+                            Iso3 = "BLZ"
                         },
                         new
                         {
                             Id = 24,
                             CountryName = "Benin",
                             Iso2 = "BJ",
-                            Iso3 = "BEN",
-                            RegionId = 2
+                            Iso3 = "BEN"
                         },
                         new
                         {
                             Id = 25,
                             CountryName = "Bermuda",
                             Iso2 = "BM",
-                            Iso3 = "BMU",
-                            RegionId = 8
+                            Iso3 = "BMU"
                         },
                         new
                         {
                             Id = 26,
                             CountryName = "Bhutan",
                             Iso2 = "BT",
-                            Iso3 = "BTN",
-                            RegionId = 1
+                            Iso3 = "BTN"
                         },
                         new
                         {
                             Id = 27,
                             CountryName = "Bolivia",
                             Iso2 = "BO",
-                            Iso3 = "BOL",
-                            RegionId = 7
+                            Iso3 = "BOL"
                         },
                         new
                         {
                             Id = 28,
                             CountryName = "Bosnia and Herzegovina",
                             Iso2 = "BA",
-                            Iso3 = "BIH",
-                            RegionId = 4
+                            Iso3 = "BIH"
                         },
                         new
                         {
                             Id = 29,
                             CountryName = "Botswana",
                             Iso2 = "BW",
-                            Iso3 = "BWA",
-                            RegionId = 2
+                            Iso3 = "BWA"
                         },
                         new
                         {
                             Id = 30,
                             CountryName = "Bouvet Island",
                             Iso2 = "BV",
-                            Iso3 = "BVT",
-                            RegionId = 3
+                            Iso3 = "BVT"
                         },
                         new
                         {
                             Id = 31,
                             CountryName = "Brazil",
                             Iso2 = "BR",
-                            Iso3 = "BRA",
-                            RegionId = 7
+                            Iso3 = "BRA"
                         },
                         new
                         {
                             Id = 32,
                             CountryName = "British Indian Ocean Territory",
                             Iso2 = "IO",
-                            Iso3 = "IOT",
-                            RegionId = 1
+                            Iso3 = "IOT"
                         },
                         new
                         {
                             Id = 33,
                             CountryName = "Brunei",
                             Iso2 = "BN",
-                            Iso3 = "BRN",
-                            RegionId = 1
+                            Iso3 = "BRN"
                         },
                         new
                         {
                             Id = 34,
                             CountryName = "Bulgaria",
                             Iso2 = "BG",
-                            Iso3 = "BGR",
-                            RegionId = 4
+                            Iso3 = "BGR"
                         },
                         new
                         {
                             Id = 35,
                             CountryName = "Burkina Faso",
                             Iso2 = "BF",
-                            Iso3 = "BFA",
-                            RegionId = 2
+                            Iso3 = "BFA"
                         },
                         new
                         {
                             Id = 36,
                             CountryName = "Burundi",
                             Iso2 = "BI",
-                            Iso3 = "BDI",
-                            RegionId = 2
+                            Iso3 = "BDI"
                         },
                         new
                         {
                             Id = 37,
                             CountryName = "Cambodia",
                             Iso2 = "KH",
-                            Iso3 = "KHM",
-                            RegionId = 1
+                            Iso3 = "KHM"
                         },
                         new
                         {
                             Id = 38,
                             CountryName = "Cameroon",
                             Iso2 = "CM",
-                            Iso3 = "CMR",
-                            RegionId = 2
+                            Iso3 = "CMR"
                         },
                         new
                         {
                             Id = 39,
                             CountryName = "Canada",
                             Iso2 = "CA",
-                            Iso3 = "CAN",
-                            RegionId = 8
+                            Iso3 = "CAN"
                         },
                         new
                         {
                             Id = 40,
                             CountryName = "Cape Verde",
                             Iso2 = "CV",
-                            Iso3 = "CPV",
-                            RegionId = 2
+                            Iso3 = "CPV"
                         },
                         new
                         {
                             Id = 41,
                             CountryName = "Cayman Islands",
                             Iso2 = "KY",
-                            Iso3 = "CYM",
-                            RegionId = 8
+                            Iso3 = "CYM"
                         },
                         new
                         {
                             Id = 42,
                             CountryName = "Central African Republic",
                             Iso2 = "CF",
-                            Iso3 = "CAF",
-                            RegionId = 2
+                            Iso3 = "CAF"
                         },
                         new
                         {
                             Id = 43,
                             CountryName = "Chad",
                             Iso2 = "TD",
-                            Iso3 = "TCD",
-                            RegionId = 2
+                            Iso3 = "TCD"
                         },
                         new
                         {
                             Id = 44,
                             CountryName = "Chile",
                             Iso2 = "CL",
-                            Iso3 = "CHL",
-                            RegionId = 7
+                            Iso3 = "CHL"
                         },
                         new
                         {
                             Id = 45,
                             CountryName = "China",
                             Iso2 = "CN",
-                            Iso3 = "CHN",
-                            RegionId = 1
+                            Iso3 = "CHN"
                         },
                         new
                         {
                             Id = 46,
                             CountryName = "Christmas Island",
                             Iso2 = "CX",
-                            Iso3 = "CXR",
-                            RegionId = 1
+                            Iso3 = "CXR"
                         },
                         new
                         {
                             Id = 47,
                             CountryName = "Cocos (Keeling) Islands",
                             Iso2 = "CC",
-                            Iso3 = "CCK",
-                            RegionId = 1
+                            Iso3 = "CCK"
                         },
                         new
                         {
                             Id = 48,
                             CountryName = "Colombia",
                             Iso2 = "CO",
-                            Iso3 = "COL",
-                            RegionId = 7
+                            Iso3 = "COL"
                         },
                         new
                         {
                             Id = 49,
                             CountryName = "Comoros",
                             Iso2 = "KM",
-                            Iso3 = "COM",
-                            RegionId = 2
+                            Iso3 = "COM"
                         },
                         new
                         {
                             Id = 50,
                             CountryName = "Congo, The Republic of",
                             Iso2 = "CG",
-                            Iso3 = "COG",
-                            RegionId = 2
+                            Iso3 = "COG"
                         },
                         new
                         {
                             Id = 51,
                             CountryName = "Congo The Democratic Republic Of The",
                             Iso2 = "CD",
-                            Iso3 = "COD",
-                            RegionId = 2
+                            Iso3 = "COD"
                         },
                         new
                         {
                             Id = 52,
                             CountryName = "Cook Islands",
                             Iso2 = "CK",
-                            Iso3 = "COK",
-                            RegionId = 6
+                            Iso3 = "COK"
                         },
                         new
                         {
                             Id = 53,
                             CountryName = "Costa Rica",
                             Iso2 = "CR",
-                            Iso3 = "CRI",
-                            RegionId = 8
+                            Iso3 = "CRI"
                         },
                         new
                         {
                             Id = 54,
                             CountryName = "Cote D'Ivoire (Ivory Coast)",
                             Iso2 = "CI",
-                            Iso3 = "CIV",
-                            RegionId = 2
+                            Iso3 = "CIV"
                         },
                         new
                         {
                             Id = 55,
                             CountryName = "Croatia (Hrvatska)",
                             Iso2 = "HR",
-                            Iso3 = "HRV",
-                            RegionId = 4
+                            Iso3 = "HRV"
                         },
                         new
                         {
                             Id = 56,
                             CountryName = "Cuba",
                             Iso2 = "CU",
-                            Iso3 = "CUB",
-                            RegionId = 8
+                            Iso3 = "CUB"
                         },
                         new
                         {
                             Id = 57,
                             CountryName = "Cyprus, Republic of",
                             Iso2 = "CY",
-                            Iso3 = "CYP",
-                            RegionId = 4
+                            Iso3 = "CYP"
                         },
                         new
                         {
                             Id = 58,
                             CountryName = "Czech Republic",
                             Iso2 = "CZ",
-                            Iso3 = "CZE",
-                            RegionId = 4
+                            Iso3 = "CZE"
                         },
                         new
                         {
                             Id = 59,
                             CountryName = "Denmark",
                             Iso2 = "DK",
-                            Iso3 = "DNK",
-                            RegionId = 4
+                            Iso3 = "DNK"
                         },
                         new
                         {
                             Id = 60,
                             CountryName = "Djibouti",
                             Iso2 = "DJ",
-                            Iso3 = "DJI",
-                            RegionId = 2
+                            Iso3 = "DJI"
                         },
                         new
                         {
                             Id = 61,
                             CountryName = "Dominica",
                             Iso2 = "DM",
-                            Iso3 = "DMA",
-                            RegionId = 8
+                            Iso3 = "DMA"
                         },
                         new
                         {
                             Id = 62,
                             CountryName = "Dominican Republic",
                             Iso2 = "DO",
-                            Iso3 = "DOM",
-                            RegionId = 8
+                            Iso3 = "DOM"
                         },
                         new
                         {
                             Id = 63,
                             CountryName = "East Timor",
                             Iso2 = "TL",
-                            Iso3 = "TLS",
-                            RegionId = 1
+                            Iso3 = "TLS"
                         },
                         new
                         {
                             Id = 64,
                             CountryName = "Ecuador",
                             Iso2 = "EC",
-                            Iso3 = "ECU",
-                            RegionId = 7
+                            Iso3 = "ECU"
                         },
                         new
                         {
                             Id = 65,
                             CountryName = "Egypt",
                             Iso2 = "EG",
-                            Iso3 = "EGY",
-                            RegionId = 5
+                            Iso3 = "EGY"
                         },
                         new
                         {
                             Id = 66,
                             CountryName = "El Salvador",
                             Iso2 = "SV",
-                            Iso3 = "SLV",
-                            RegionId = 8
+                            Iso3 = "SLV"
                         },
                         new
                         {
                             Id = 67,
                             CountryName = "Equatorial Guinea",
                             Iso2 = "GQ",
-                            Iso3 = "GNQ",
-                            RegionId = 2
+                            Iso3 = "GNQ"
                         },
                         new
                         {
                             Id = 68,
                             CountryName = "Eritrea",
                             Iso2 = "ER",
-                            Iso3 = "ERI",
-                            RegionId = 2
+                            Iso3 = "ERI"
                         },
                         new
                         {
                             Id = 69,
                             CountryName = "Estonia",
                             Iso2 = "EE",
-                            Iso3 = "EST",
-                            RegionId = 4
+                            Iso3 = "EST"
                         },
                         new
                         {
                             Id = 70,
                             CountryName = "Ethiopia",
                             Iso2 = "ET",
-                            Iso3 = "ETH",
-                            RegionId = 2
+                            Iso3 = "ETH"
                         },
                         new
                         {
                             Id = 71,
                             CountryName = "Falkland Islands",
                             Iso2 = "FK",
-                            Iso3 = "FLK",
-                            RegionId = 7
+                            Iso3 = "FLK"
                         },
                         new
                         {
                             Id = 72,
                             CountryName = "Faroe Islands",
                             Iso2 = "FO",
-                            Iso3 = "FRO",
-                            RegionId = 4
+                            Iso3 = "FRO"
                         },
                         new
                         {
                             Id = 73,
                             CountryName = "Fiji Islands",
                             Iso2 = "FJ",
-                            Iso3 = "FJI",
-                            RegionId = 6
+                            Iso3 = "FJI"
                         },
                         new
                         {
                             Id = 74,
                             CountryName = "Finland",
                             Iso2 = "FI",
-                            Iso3 = "FIN",
-                            RegionId = 4
+                            Iso3 = "FIN"
                         },
                         new
                         {
                             Id = 75,
                             CountryName = "France",
                             Iso2 = "FR",
-                            Iso3 = "FRA",
-                            RegionId = 4
+                            Iso3 = "FRA"
                         },
                         new
                         {
                             Id = 76,
                             CountryName = "French Guiana",
                             Iso2 = "GF",
-                            Iso3 = "GUF",
-                            RegionId = 7
+                            Iso3 = "GUF"
                         },
                         new
                         {
                             Id = 77,
                             CountryName = "French Polynesia",
                             Iso2 = "PF",
-                            Iso3 = "PYF",
-                            RegionId = 6
+                            Iso3 = "PYF"
                         },
                         new
                         {
                             Id = 78,
                             CountryName = "French Southern Territories",
                             Iso2 = "TF",
-                            Iso3 = "ATF",
-                            RegionId = 3
+                            Iso3 = "ATF"
                         },
                         new
                         {
                             Id = 79,
                             CountryName = "Gabon",
                             Iso2 = "GA",
-                            Iso3 = "GAB",
-                            RegionId = 2
+                            Iso3 = "GAB"
                         },
                         new
                         {
                             Id = 80,
                             CountryName = "Gambia The",
                             Iso2 = "GM",
-                            Iso3 = "GMB",
-                            RegionId = 2
+                            Iso3 = "GMB"
                         },
                         new
                         {
                             Id = 81,
                             CountryName = "Georgia",
                             Iso2 = "GE",
-                            Iso3 = "GEO",
-                            RegionId = 1
+                            Iso3 = "GEO"
                         },
                         new
                         {
                             Id = 82,
                             CountryName = "Germany",
                             Iso2 = "DE",
-                            Iso3 = "DEU",
-                            RegionId = 4
+                            Iso3 = "DEU"
                         },
                         new
                         {
                             Id = 83,
                             CountryName = "Ghana",
                             Iso2 = "GH",
-                            Iso3 = "GHA",
-                            RegionId = 2
+                            Iso3 = "GHA"
                         },
                         new
                         {
                             Id = 84,
                             CountryName = "Gibraltar",
                             Iso2 = "GI",
-                            Iso3 = "GIB",
-                            RegionId = 4
+                            Iso3 = "GIB"
                         },
                         new
                         {
                             Id = 85,
                             CountryName = "Greece",
                             Iso2 = "GR",
-                            Iso3 = "GRC",
-                            RegionId = 4
+                            Iso3 = "GRC"
                         },
                         new
                         {
                             Id = 86,
                             CountryName = "Greenland",
                             Iso2 = "GL",
-                            Iso3 = "GRL",
-                            RegionId = 8
+                            Iso3 = "GRL"
                         },
                         new
                         {
                             Id = 87,
                             CountryName = "Grenada",
                             Iso2 = "GD",
-                            Iso3 = "GRD",
-                            RegionId = 8
+                            Iso3 = "GRD"
                         },
                         new
                         {
                             Id = 88,
                             CountryName = "Guadeloupe",
                             Iso2 = "GP",
-                            Iso3 = "GLP",
-                            RegionId = 8
+                            Iso3 = "GLP"
                         },
                         new
                         {
                             Id = 89,
                             CountryName = "Guam",
                             Iso2 = "GU",
-                            Iso3 = "GUM",
-                            RegionId = 6
+                            Iso3 = "GUM"
                         },
                         new
                         {
                             Id = 90,
                             CountryName = "Guatemala",
                             Iso2 = "GT",
-                            Iso3 = "GTM",
-                            RegionId = 8
+                            Iso3 = "GTM"
                         },
                         new
                         {
                             Id = 91,
                             CountryName = "Guernsey and Alderney",
                             Iso2 = "GG",
-                            Iso3 = "GGY",
-                            RegionId = 4
+                            Iso3 = "GGY"
                         },
                         new
                         {
                             Id = 92,
                             CountryName = "Guinea",
                             Iso2 = "GN",
-                            Iso3 = "GIN",
-                            RegionId = 2
+                            Iso3 = "GIN"
                         },
                         new
                         {
                             Id = 93,
                             CountryName = "Guinea-Bissau",
                             Iso2 = "GW",
-                            Iso3 = "GNB",
-                            RegionId = 2
+                            Iso3 = "GNB"
                         },
                         new
                         {
                             Id = 94,
                             CountryName = "Guyana",
                             Iso2 = "GY",
-                            Iso3 = "GUY",
-                            RegionId = 7
+                            Iso3 = "GUY"
                         },
                         new
                         {
                             Id = 95,
                             CountryName = "Haiti",
                             Iso2 = "HT",
-                            Iso3 = "HTI",
-                            RegionId = 8
+                            Iso3 = "HTI"
                         },
                         new
                         {
                             Id = 96,
                             CountryName = "Heard Island and McDonald Islands",
                             Iso2 = "HM",
-                            Iso3 = "HMD",
-                            RegionId = 3
+                            Iso3 = "HMD"
                         },
                         new
                         {
                             Id = 97,
                             CountryName = "Honduras",
                             Iso2 = "HN",
-                            Iso3 = "HND",
-                            RegionId = 8
+                            Iso3 = "HND"
                         },
                         new
                         {
                             Id = 98,
                             CountryName = "Hong Kong S.A.R.",
                             Iso2 = "HK",
-                            Iso3 = "HKG",
-                            RegionId = 1
+                            Iso3 = "HKG"
                         },
                         new
                         {
                             Id = 99,
                             CountryName = "Hungary",
                             Iso2 = "HU",
-                            Iso3 = "HUN",
-                            RegionId = 4
+                            Iso3 = "HUN"
                         },
                         new
                         {
                             Id = 100,
                             CountryName = "Iceland",
                             Iso2 = "IS",
-                            Iso3 = "ISL",
-                            RegionId = 4
+                            Iso3 = "ISL"
                         },
                         new
                         {
                             Id = 101,
                             CountryName = "India",
                             Iso2 = "IN",
-                            Iso3 = "IND",
-                            RegionId = 1
+                            Iso3 = "IND"
                         },
                         new
                         {
                             Id = 102,
                             CountryName = "Indonesia",
                             Iso2 = "ID",
-                            Iso3 = "IDN",
-                            RegionId = 1
+                            Iso3 = "IDN"
                         },
                         new
                         {
                             Id = 103,
                             CountryName = "Iran",
                             Iso2 = "IR",
-                            Iso3 = "IRN",
-                            RegionId = 5
+                            Iso3 = "IRN"
                         },
                         new
                         {
                             Id = 104,
                             CountryName = "Iraq",
                             Iso2 = "IQ",
-                            Iso3 = "IRQ",
-                            RegionId = 5
+                            Iso3 = "IRQ"
                         },
                         new
                         {
                             Id = 105,
                             CountryName = "Ireland",
                             Iso2 = "IE",
-                            Iso3 = "IRL",
-                            RegionId = 4
+                            Iso3 = "IRL"
                         },
                         new
                         {
                             Id = 106,
                             CountryName = "Israel",
                             Iso2 = "IL",
-                            Iso3 = "ISR",
-                            RegionId = 5
+                            Iso3 = "ISR"
                         },
                         new
                         {
                             Id = 107,
                             CountryName = "Italy",
                             Iso2 = "IT",
-                            Iso3 = "ITA",
-                            RegionId = 4
+                            Iso3 = "ITA"
                         },
                         new
                         {
                             Id = 108,
                             CountryName = "Jamaica",
                             Iso2 = "JM",
-                            Iso3 = "JAM",
-                            RegionId = 8
+                            Iso3 = "JAM"
                         },
                         new
                         {
                             Id = 109,
                             CountryName = "Japan",
                             Iso2 = "JP",
-                            Iso3 = "JPN",
-                            RegionId = 1
+                            Iso3 = "JPN"
                         },
                         new
                         {
                             Id = 110,
                             CountryName = "Jersey",
                             Iso2 = "JE",
-                            Iso3 = "JEY",
-                            RegionId = 4
+                            Iso3 = "JEY"
                         },
                         new
                         {
                             Id = 111,
                             CountryName = "Jordan",
                             Iso2 = "JO",
-                            Iso3 = "JOR",
-                            RegionId = 5
+                            Iso3 = "JOR"
                         },
                         new
                         {
                             Id = 112,
                             CountryName = "Kazakhstan",
                             Iso2 = "KZ",
-                            Iso3 = "KAZ",
-                            RegionId = 1
+                            Iso3 = "KAZ"
                         },
                         new
                         {
                             Id = 113,
                             CountryName = "Kenya",
                             Iso2 = "KE",
-                            Iso3 = "KEN",
-                            RegionId = 2
+                            Iso3 = "KEN"
                         },
                         new
                         {
                             Id = 114,
                             CountryName = "Kiribati",
                             Iso2 = "KI",
-                            Iso3 = "KIR",
-                            RegionId = 6
+                            Iso3 = "KIR"
                         },
                         new
                         {
                             Id = 115,
                             CountryName = "South Korea (Republic of)",
                             Iso2 = "KP",
-                            Iso3 = "PRK",
-                            RegionId = 1
+                            Iso3 = "PRK"
                         },
                         new
                         {
                             Id = 116,
                             CountryName = "North Korea (Democratic People's Republic of)",
                             Iso2 = "KR",
-                            Iso3 = "KOR",
-                            RegionId = 1
+                            Iso3 = "KOR"
                         },
                         new
                         {
                             Id = 117,
                             CountryName = "Kuwait",
                             Iso2 = "KW",
-                            Iso3 = "KWT",
-                            RegionId = 5
+                            Iso3 = "KWT"
                         },
                         new
                         {
                             Id = 118,
                             CountryName = "Kyrgyzstan",
                             Iso2 = "KG",
-                            Iso3 = "KGZ",
-                            RegionId = 1
+                            Iso3 = "KGZ"
                         },
                         new
                         {
                             Id = 119,
                             CountryName = "Laos",
                             Iso2 = "LA",
-                            Iso3 = "LAO",
-                            RegionId = 1
+                            Iso3 = "LAO"
                         },
                         new
                         {
                             Id = 120,
                             CountryName = "Latvia",
                             Iso2 = "LV",
-                            Iso3 = "LVA",
-                            RegionId = 4
+                            Iso3 = "LVA"
                         },
                         new
                         {
                             Id = 121,
                             CountryName = "Lebanon",
                             Iso2 = "LB",
-                            Iso3 = "LBN",
-                            RegionId = 5
+                            Iso3 = "LBN"
                         },
                         new
                         {
                             Id = 122,
                             CountryName = "Lesotho",
                             Iso2 = "LS",
-                            Iso3 = "LSO",
-                            RegionId = 2
+                            Iso3 = "LSO"
                         },
                         new
                         {
                             Id = 123,
                             CountryName = "Liberia",
                             Iso2 = "LR",
-                            Iso3 = "LBR",
-                            RegionId = 2
+                            Iso3 = "LBR"
                         },
                         new
                         {
                             Id = 124,
                             CountryName = "Libya",
                             Iso2 = "LY",
-                            Iso3 = "LBY",
-                            RegionId = 5
+                            Iso3 = "LBY"
                         },
                         new
                         {
                             Id = 125,
                             CountryName = "Liechtenstein",
                             Iso2 = "LI",
-                            Iso3 = "LIE",
-                            RegionId = 4
+                            Iso3 = "LIE"
                         },
                         new
                         {
                             Id = 126,
                             CountryName = "Lithuania",
                             Iso2 = "LT",
-                            Iso3 = "LTU",
-                            RegionId = 4
+                            Iso3 = "LTU"
                         },
                         new
                         {
                             Id = 127,
                             CountryName = "Luxembourg",
                             Iso2 = "LU",
-                            Iso3 = "LUX",
-                            RegionId = 4
+                            Iso3 = "LUX"
                         },
                         new
                         {
                             Id = 128,
                             CountryName = "Macau S.A.R.",
                             Iso2 = "MO",
-                            Iso3 = "MAC",
-                            RegionId = 1
+                            Iso3 = "MAC"
                         },
                         new
                         {
                             Id = 129,
                             CountryName = "North Macedonia",
                             Iso2 = "MK",
-                            Iso3 = "MKD",
-                            RegionId = 4
+                            Iso3 = "MKD"
                         },
                         new
                         {
                             Id = 130,
                             CountryName = "Madagascar",
                             Iso2 = "MG",
-                            Iso3 = "MDG",
-                            RegionId = 2
+                            Iso3 = "MDG"
                         },
                         new
                         {
                             Id = 131,
                             CountryName = "Malawi",
                             Iso2 = "MW",
-                            Iso3 = "MWI",
-                            RegionId = 2
+                            Iso3 = "MWI"
                         },
                         new
                         {
                             Id = 132,
                             CountryName = "Malaysia",
                             Iso2 = "MY",
-                            Iso3 = "MYS",
-                            RegionId = 1
+                            Iso3 = "MYS"
                         },
                         new
                         {
                             Id = 133,
                             CountryName = "Maldives",
                             Iso2 = "MV",
-                            Iso3 = "MDV",
-                            RegionId = 1
+                            Iso3 = "MDV"
                         },
                         new
                         {
                             Id = 134,
                             CountryName = "Mali",
                             Iso2 = "ML",
-                            Iso3 = "MLI",
-                            RegionId = 2
+                            Iso3 = "MLI"
                         },
                         new
                         {
                             Id = 135,
                             CountryName = "Malta",
                             Iso2 = "MT",
-                            Iso3 = "MLT",
-                            RegionId = 4
+                            Iso3 = "MLT"
                         },
                         new
                         {
                             Id = 136,
                             CountryName = "Man (Isle of)",
                             Iso2 = "IM",
-                            Iso3 = "IMN",
-                            RegionId = 4
+                            Iso3 = "IMN"
                         },
                         new
                         {
                             Id = 137,
                             CountryName = "Marshall Islands",
                             Iso2 = "MH",
-                            Iso3 = "MHL",
-                            RegionId = 6
+                            Iso3 = "MHL"
                         },
                         new
                         {
                             Id = 138,
                             CountryName = "Martinique",
                             Iso2 = "MQ",
-                            Iso3 = "MTQ",
-                            RegionId = 8
+                            Iso3 = "MTQ"
                         },
                         new
                         {
                             Id = 139,
                             CountryName = "Mauritania",
                             Iso2 = "MR",
-                            Iso3 = "MRT",
-                            RegionId = 2
+                            Iso3 = "MRT"
                         },
                         new
                         {
                             Id = 140,
                             CountryName = "Mauritius",
                             Iso2 = "MU",
-                            Iso3 = "MUS",
-                            RegionId = 2
+                            Iso3 = "MUS"
                         },
                         new
                         {
                             Id = 141,
                             CountryName = "Mayotte",
                             Iso2 = "YT",
-                            Iso3 = "MYT",
-                            RegionId = 2
+                            Iso3 = "MYT"
                         },
                         new
                         {
                             Id = 142,
                             CountryName = "Mexico",
                             Iso2 = "MX",
-                            Iso3 = "MEX",
-                            RegionId = 8
+                            Iso3 = "MEX"
                         },
                         new
                         {
                             Id = 143,
                             CountryName = "Micronesia",
                             Iso2 = "FM",
-                            Iso3 = "FSM",
-                            RegionId = 6
+                            Iso3 = "FSM"
                         },
                         new
                         {
                             Id = 144,
                             CountryName = "Moldova",
                             Iso2 = "MD",
-                            Iso3 = "MDA",
-                            RegionId = 4
+                            Iso3 = "MDA"
                         },
                         new
                         {
                             Id = 145,
                             CountryName = "Monaco",
                             Iso2 = "MC",
-                            Iso3 = "MCO",
-                            RegionId = 4
+                            Iso3 = "MCO"
                         },
                         new
                         {
                             Id = 146,
                             CountryName = "Mongolia",
                             Iso2 = "MN",
-                            Iso3 = "MNG",
-                            RegionId = 1
+                            Iso3 = "MNG"
                         },
                         new
                         {
                             Id = 147,
                             CountryName = "Montenegro",
                             Iso2 = "ME",
-                            Iso3 = "MNE",
-                            RegionId = 4
+                            Iso3 = "MNE"
                         },
                         new
                         {
                             Id = 148,
                             CountryName = "Montserrat",
                             Iso2 = "MS",
-                            Iso3 = "MSR",
-                            RegionId = 8
+                            Iso3 = "MSR"
                         },
                         new
                         {
                             Id = 149,
                             CountryName = "Morocco",
                             Iso2 = "MA",
-                            Iso3 = "MAR",
-                            RegionId = 5
+                            Iso3 = "MAR"
                         },
                         new
                         {
                             Id = 150,
                             CountryName = "Mozambique",
                             Iso2 = "MZ",
-                            Iso3 = "MOZ",
-                            RegionId = 2
+                            Iso3 = "MOZ"
                         },
                         new
                         {
                             Id = 151,
                             CountryName = "Myanmar",
                             Iso2 = "MM",
-                            Iso3 = "MMR",
-                            RegionId = 1
+                            Iso3 = "MMR"
                         },
                         new
                         {
                             Id = 152,
                             CountryName = "Namibia",
                             Iso2 = "NA",
-                            Iso3 = "NAM",
-                            RegionId = 2
+                            Iso3 = "NAM"
                         },
                         new
                         {
                             Id = 153,
                             CountryName = "Nauru",
                             Iso2 = "NR",
-                            Iso3 = "NRU",
-                            RegionId = 6
+                            Iso3 = "NRU"
                         },
                         new
                         {
                             Id = 154,
                             CountryName = "Nepal",
                             Iso2 = "NP",
-                            Iso3 = "NPL",
-                            RegionId = 1
+                            Iso3 = "NPL"
                         },
                         new
                         {
                             Id = 155,
                             CountryName = "Bonaire, Sint Eustatius and Saba",
                             Iso2 = "BQ",
-                            Iso3 = "BES",
-                            RegionId = 8
+                            Iso3 = "BES"
                         },
                         new
                         {
                             Id = 156,
                             CountryName = "Netherlands The",
                             Iso2 = "NL",
-                            Iso3 = "NLD",
-                            RegionId = 4
+                            Iso3 = "NLD"
                         },
                         new
                         {
                             Id = 157,
                             CountryName = "New Caledonia",
                             Iso2 = "NC",
-                            Iso3 = "NCL",
-                            RegionId = 6
+                            Iso3 = "NCL"
                         },
                         new
                         {
                             Id = 158,
                             CountryName = "New Zealand",
                             Iso2 = "NZ",
-                            Iso3 = "NZL",
-                            RegionId = 6
+                            Iso3 = "NZL"
                         },
                         new
                         {
                             Id = 159,
                             CountryName = "Nicaragua",
                             Iso2 = "NI",
-                            Iso3 = "NIC",
-                            RegionId = 8
+                            Iso3 = "NIC"
                         },
                         new
                         {
                             Id = 160,
                             CountryName = "Niger",
                             Iso2 = "NE",
-                            Iso3 = "NER",
-                            RegionId = 2
+                            Iso3 = "NER"
                         },
                         new
                         {
                             Id = 161,
                             CountryName = "Nigeria",
                             Iso2 = "NG",
-                            Iso3 = "NGA",
-                            RegionId = 2
+                            Iso3 = "NGA"
                         },
                         new
                         {
                             Id = 162,
                             CountryName = "Niue",
                             Iso2 = "NU",
-                            Iso3 = "NIU",
-                            RegionId = 6
+                            Iso3 = "NIU"
                         },
                         new
                         {
                             Id = 163,
                             CountryName = "Norfolk Island",
                             Iso2 = "NF",
-                            Iso3 = "NFK",
-                            RegionId = 6
+                            Iso3 = "NFK"
                         },
                         new
                         {
                             Id = 164,
                             CountryName = "Northern Mariana Islands",
                             Iso2 = "MP",
-                            Iso3 = "MNP",
-                            RegionId = 6
+                            Iso3 = "MNP"
                         },
                         new
                         {
                             Id = 165,
                             CountryName = "Norway",
                             Iso2 = "NO",
-                            Iso3 = "NOR",
-                            RegionId = 4
+                            Iso3 = "NOR"
                         },
                         new
                         {
                             Id = 166,
                             CountryName = "Oman",
                             Iso2 = "OM",
-                            Iso3 = "OMN",
-                            RegionId = 5
+                            Iso3 = "OMN"
                         },
                         new
                         {
                             Id = 167,
                             CountryName = "Pakistan",
                             Iso2 = "PK",
-                            Iso3 = "PAK",
-                            RegionId = 1
+                            Iso3 = "PAK"
                         },
                         new
                         {
                             Id = 168,
                             CountryName = "Palau",
                             Iso2 = "PW",
-                            Iso3 = "PLW",
-                            RegionId = 6
+                            Iso3 = "PLW"
                         },
                         new
                         {
                             Id = 169,
                             CountryName = "Palestine",
                             Iso2 = "PS",
-                            Iso3 = "PSE",
-                            RegionId = 5
+                            Iso3 = "PSE"
                         },
                         new
                         {
                             Id = 170,
                             CountryName = "Panama",
                             Iso2 = "PA",
-                            Iso3 = "PAN",
-                            RegionId = 8
+                            Iso3 = "PAN"
                         },
                         new
                         {
                             Id = 171,
                             CountryName = "Papua New Guinea",
                             Iso2 = "PG",
-                            Iso3 = "PNG",
-                            RegionId = 6
+                            Iso3 = "PNG"
                         },
                         new
                         {
                             Id = 172,
                             CountryName = "Paraguay",
                             Iso2 = "PY",
-                            Iso3 = "PRY",
-                            RegionId = 7
+                            Iso3 = "PRY"
                         },
                         new
                         {
                             Id = 173,
                             CountryName = "Peru",
                             Iso2 = "PE",
-                            Iso3 = "PER",
-                            RegionId = 7
+                            Iso3 = "PER"
                         },
                         new
                         {
                             Id = 174,
                             CountryName = "Philippines",
                             Iso2 = "PH",
-                            Iso3 = "PHL",
-                            RegionId = 1
+                            Iso3 = "PHL"
                         },
                         new
                         {
                             Id = 175,
                             CountryName = "Pitcairn Island",
                             Iso2 = "PN",
-                            Iso3 = "PCN",
-                            RegionId = 6
+                            Iso3 = "PCN"
                         },
                         new
                         {
                             Id = 176,
                             CountryName = "Poland",
                             Iso2 = "PL",
-                            Iso3 = "POL",
-                            RegionId = 4
+                            Iso3 = "POL"
                         },
                         new
                         {
                             Id = 177,
                             CountryName = "Portugal",
                             Iso2 = "PT",
-                            Iso3 = "PRT",
-                            RegionId = 4
+                            Iso3 = "PRT"
                         },
                         new
                         {
                             Id = 178,
                             CountryName = "Puerto Rico",
                             Iso2 = "PR",
-                            Iso3 = "PRI",
-                            RegionId = 8
+                            Iso3 = "PRI"
                         },
                         new
                         {
                             Id = 179,
                             CountryName = "Qatar",
                             Iso2 = "QA",
-                            Iso3 = "QAT",
-                            RegionId = 5
+                            Iso3 = "QAT"
                         },
                         new
                         {
                             Id = 180,
                             CountryName = "Reunion",
                             Iso2 = "RE",
-                            Iso3 = "REU",
-                            RegionId = 2
+                            Iso3 = "REU"
                         },
                         new
                         {
                             Id = 181,
                             CountryName = "Romania",
                             Iso2 = "RO",
-                            Iso3 = "ROU",
-                            RegionId = 4
+                            Iso3 = "ROU"
                         },
                         new
                         {
                             Id = 182,
                             CountryName = "Russia",
                             Iso2 = "RU",
-                            Iso3 = "RUS",
-                            RegionId = 1
+                            Iso3 = "RUS"
                         },
                         new
                         {
                             Id = 183,
                             CountryName = "Rwanda",
                             Iso2 = "RW",
-                            Iso3 = "RWA",
-                            RegionId = 2
+                            Iso3 = "RWA"
                         },
                         new
                         {
                             Id = 184,
                             CountryName = "Saint Helena",
                             Iso2 = "SH",
-                            Iso3 = "SHN",
-                            RegionId = 2
+                            Iso3 = "SHN"
                         },
                         new
                         {
                             Id = 185,
                             CountryName = "Saint Kitts And Nevis",
                             Iso2 = "KN",
-                            Iso3 = "KNA",
-                            RegionId = 8
+                            Iso3 = "KNA"
                         },
                         new
                         {
                             Id = 186,
                             CountryName = "Saint Lucia",
                             Iso2 = "LC",
-                            Iso3 = "LCA",
-                            RegionId = 8
+                            Iso3 = "LCA"
                         },
                         new
                         {
                             Id = 187,
                             CountryName = "Saint Pierre and Miquelon",
                             Iso2 = "PM",
-                            Iso3 = "SPM",
-                            RegionId = 8
+                            Iso3 = "SPM"
                         },
                         new
                         {
                             Id = 188,
                             CountryName = "Saint Vincent And The Grenadines",
                             Iso2 = "VC",
-                            Iso3 = "VCT",
-                            RegionId = 8
+                            Iso3 = "VCT"
                         },
                         new
                         {
                             Id = 189,
                             CountryName = "Saint-Barthelemy",
                             Iso2 = "BL",
-                            Iso3 = "BLM",
-                            RegionId = 8
+                            Iso3 = "BLM"
                         },
                         new
                         {
                             Id = 190,
                             CountryName = "Saint-Martin (French part)",
                             Iso2 = "MF",
-                            Iso3 = "MAF",
-                            RegionId = 8
+                            Iso3 = "MAF"
                         },
                         new
                         {
                             Id = 191,
                             CountryName = "Samoa",
                             Iso2 = "WS",
-                            Iso3 = "WSM",
-                            RegionId = 6
+                            Iso3 = "WSM"
                         },
                         new
                         {
                             Id = 192,
                             CountryName = "San Marino",
                             Iso2 = "SM",
-                            Iso3 = "SMR",
-                            RegionId = 4
+                            Iso3 = "SMR"
                         },
                         new
                         {
                             Id = 193,
                             CountryName = "Sao Tome and Principe",
                             Iso2 = "ST",
-                            Iso3 = "STP",
-                            RegionId = 2
+                            Iso3 = "STP"
                         },
                         new
                         {
                             Id = 194,
                             CountryName = "Saudi Arabia",
                             Iso2 = "SA",
-                            Iso3 = "SAU",
-                            RegionId = 5
+                            Iso3 = "SAU"
                         },
                         new
                         {
                             Id = 195,
                             CountryName = "Senegal",
                             Iso2 = "SN",
-                            Iso3 = "SEN",
-                            RegionId = 2
+                            Iso3 = "SEN"
                         },
                         new
                         {
                             Id = 196,
                             CountryName = "Serbia",
                             Iso2 = "RS",
-                            Iso3 = "SRB",
-                            RegionId = 4
+                            Iso3 = "SRB"
                         },
                         new
                         {
                             Id = 197,
                             CountryName = "Seychelles",
                             Iso2 = "SC",
-                            Iso3 = "SYC",
-                            RegionId = 2
+                            Iso3 = "SYC"
                         },
                         new
                         {
                             Id = 198,
                             CountryName = "Sierra Leone",
                             Iso2 = "SL",
-                            Iso3 = "SLE",
-                            RegionId = 2
+                            Iso3 = "SLE"
                         },
                         new
                         {
                             Id = 199,
                             CountryName = "Singapore",
                             Iso2 = "SG",
-                            Iso3 = "SGP",
-                            RegionId = 1
+                            Iso3 = "SGP"
                         },
                         new
                         {
                             Id = 200,
                             CountryName = "Slovakia",
                             Iso2 = "SK",
-                            Iso3 = "SVK",
-                            RegionId = 4
+                            Iso3 = "SVK"
                         },
                         new
                         {
                             Id = 201,
                             CountryName = "Slovenia",
                             Iso2 = "SI",
-                            Iso3 = "SVN",
-                            RegionId = 4
+                            Iso3 = "SVN"
                         },
                         new
                         {
                             Id = 202,
                             CountryName = "Solomon Islands",
                             Iso2 = "SB",
-                            Iso3 = "SLB",
-                            RegionId = 6
+                            Iso3 = "SLB"
                         },
                         new
                         {
                             Id = 203,
                             CountryName = "Somalia",
                             Iso2 = "SO",
-                            Iso3 = "SOM",
-                            RegionId = 2
+                            Iso3 = "SOM"
                         },
                         new
                         {
                             Id = 204,
                             CountryName = "South Africa",
                             Iso2 = "ZA",
-                            Iso3 = "ZAF",
-                            RegionId = 2
+                            Iso3 = "ZAF"
                         },
                         new
                         {
                             Id = 205,
                             CountryName = "South Georgia",
                             Iso2 = "GS",
-                            Iso3 = "SGS",
-                            RegionId = 7
+                            Iso3 = "SGS"
                         },
                         new
                         {
                             Id = 206,
                             CountryName = "South Sudan",
                             Iso2 = "SS",
-                            Iso3 = "SSD",
-                            RegionId = 2
+                            Iso3 = "SSD"
                         },
                         new
                         {
                             Id = 207,
                             CountryName = "Spain",
                             Iso2 = "ES",
-                            Iso3 = "ESP",
-                            RegionId = 4
+                            Iso3 = "ESP"
                         },
                         new
                         {
                             Id = 208,
                             CountryName = "Sri Lanka",
                             Iso2 = "LK",
-                            Iso3 = "LKA",
-                            RegionId = 1
+                            Iso3 = "LKA"
                         },
                         new
                         {
                             Id = 209,
                             CountryName = "Sudan",
                             Iso2 = "SD",
-                            Iso3 = "SDN",
-                            RegionId = 2
+                            Iso3 = "SDN"
                         },
                         new
                         {
                             Id = 210,
                             CountryName = "Suriname",
                             Iso2 = "SR",
-                            Iso3 = "SUR",
-                            RegionId = 7
+                            Iso3 = "SUR"
                         },
                         new
                         {
                             Id = 211,
                             CountryName = "Svalbard And Jan Mayen Islands",
                             Iso2 = "SJ",
-                            Iso3 = "SJM",
-                            RegionId = 4
+                            Iso3 = "SJM"
                         },
                         new
                         {
                             Id = 212,
                             CountryName = "Eswatini",
                             Iso2 = "SZ",
-                            Iso3 = "SWZ",
-                            RegionId = 2
+                            Iso3 = "SWZ"
                         },
                         new
                         {
                             Id = 213,
                             CountryName = "Sweden",
                             Iso2 = "SE",
-                            Iso3 = "SWE",
-                            RegionId = 4
+                            Iso3 = "SWE"
                         },
                         new
                         {
                             Id = 214,
                             CountryName = "Switzerland",
                             Iso2 = "CH",
-                            Iso3 = "CHE",
-                            RegionId = 4
+                            Iso3 = "CHE"
                         },
                         new
                         {
                             Id = 215,
                             CountryName = "Syria",
                             Iso2 = "SY",
-                            Iso3 = "SYR",
-                            RegionId = 5
+                            Iso3 = "SYR"
                         },
                         new
                         {
                             Id = 216,
                             CountryName = "Taiwan",
                             Iso2 = "TW",
-                            Iso3 = "TWN",
-                            RegionId = 1
+                            Iso3 = "TWN"
                         },
                         new
                         {
                             Id = 217,
                             CountryName = "Tajikistan",
                             Iso2 = "TJ",
-                            Iso3 = "TJK",
-                            RegionId = 1
+                            Iso3 = "TJK"
                         },
                         new
                         {
                             Id = 218,
                             CountryName = "Tanzania",
                             Iso2 = "TZ",
-                            Iso3 = "TZA",
-                            RegionId = 2
+                            Iso3 = "TZA"
                         },
                         new
                         {
                             Id = 219,
                             CountryName = "Thailand",
                             Iso2 = "TH",
-                            Iso3 = "THA",
-                            RegionId = 1
+                            Iso3 = "THA"
                         },
                         new
                         {
                             Id = 220,
                             CountryName = "Togo",
                             Iso2 = "TG",
-                            Iso3 = "TGO",
-                            RegionId = 2
+                            Iso3 = "TGO"
                         },
                         new
                         {
                             Id = 221,
                             CountryName = "Tokelau",
                             Iso2 = "TK",
-                            Iso3 = "TKL",
-                            RegionId = 6
+                            Iso3 = "TKL"
                         },
                         new
                         {
                             Id = 222,
                             CountryName = "Tonga",
                             Iso2 = "TO",
-                            Iso3 = "TON",
-                            RegionId = 6
+                            Iso3 = "TON"
                         },
                         new
                         {
                             Id = 223,
                             CountryName = "Trinidad And Tobago",
                             Iso2 = "TT",
-                            Iso3 = "TTO",
-                            RegionId = 8
+                            Iso3 = "TTO"
                         },
                         new
                         {
                             Id = 224,
                             CountryName = "Tunisia",
                             Iso2 = "TN",
-                            Iso3 = "TUN",
-                            RegionId = 2
+                            Iso3 = "TUN"
                         },
                         new
                         {
                             Id = 225,
                             CountryName = "Turkey",
                             Iso2 = "TR",
-                            Iso3 = "TUR",
-                            RegionId = 5
+                            Iso3 = "TUR"
                         },
                         new
                         {
                             Id = 226,
                             CountryName = "Turkmenistan",
                             Iso2 = "TM",
-                            Iso3 = "TKM",
-                            RegionId = 1
+                            Iso3 = "TKM"
                         },
                         new
                         {
                             Id = 227,
                             CountryName = "Turks And Caicos Islands",
                             Iso2 = "TC",
-                            Iso3 = "TCA",
-                            RegionId = 8
+                            Iso3 = "TCA"
                         },
                         new
                         {
                             Id = 228,
                             CountryName = "Tuvalu",
                             Iso2 = "TV",
-                            Iso3 = "TUV",
-                            RegionId = 6
+                            Iso3 = "TUV"
                         },
                         new
                         {
                             Id = 229,
                             CountryName = "Uganda",
                             Iso2 = "UG",
-                            Iso3 = "UGA",
-                            RegionId = 2
+                            Iso3 = "UGA"
                         },
                         new
                         {
                             Id = 230,
                             CountryName = "Ukraine",
                             Iso2 = "UA",
-                            Iso3 = "UKR",
-                            RegionId = 4
+                            Iso3 = "UKR"
                         },
                         new
                         {
                             Id = 231,
                             CountryName = "United Arab Emirates",
                             Iso2 = "AE",
-                            Iso3 = "ARE",
-                            RegionId = 5
+                            Iso3 = "ARE"
                         },
                         new
                         {
                             Id = 232,
                             CountryName = "United Kingdom",
                             Iso2 = "GB",
-                            Iso3 = "GBR",
-                            RegionId = 4
+                            Iso3 = "GBR"
                         },
                         new
                         {
                             Id = 233,
                             CountryName = "United States of America",
                             Iso2 = "US",
-                            Iso3 = "USA",
-                            RegionId = 8
+                            Iso3 = "USA"
                         },
                         new
                         {
                             Id = 234,
                             CountryName = "United States Minor Outlying Islands",
                             Iso2 = "UM",
-                            Iso3 = "UMI",
-                            RegionId = 6
+                            Iso3 = "UMI"
                         },
                         new
                         {
                             Id = 235,
                             CountryName = "Uruguay",
                             Iso2 = "UY",
-                            Iso3 = "URY",
-                            RegionId = 7
+                            Iso3 = "URY"
                         },
                         new
                         {
                             Id = 236,
                             CountryName = "Uzbekistan",
                             Iso2 = "UZ",
-                            Iso3 = "UZB",
-                            RegionId = 1
+                            Iso3 = "UZB"
                         },
                         new
                         {
                             Id = 237,
                             CountryName = "Vanuatu",
                             Iso2 = "VU",
-                            Iso3 = "VUT",
-                            RegionId = 6
+                            Iso3 = "VUT"
                         },
                         new
                         {
                             Id = 238,
                             CountryName = "Vatican City State (Holy See)",
                             Iso2 = "VA",
-                            Iso3 = "VAT",
-                            RegionId = 4
+                            Iso3 = "VAT"
                         },
                         new
                         {
                             Id = 239,
                             CountryName = "Venezuela",
                             Iso2 = "VE",
-                            Iso3 = "VEN",
-                            RegionId = 7
+                            Iso3 = "VEN"
                         },
                         new
                         {
                             Id = 240,
                             CountryName = "Vietnam",
                             Iso2 = "VN",
-                            Iso3 = "VNM",
-                            RegionId = 1
+                            Iso3 = "VNM"
                         },
                         new
                         {
                             Id = 241,
                             CountryName = "Virgin Islands (British)",
                             Iso2 = "VG",
-                            Iso3 = "VGB",
-                            RegionId = 8
+                            Iso3 = "VGB"
                         },
                         new
                         {
                             Id = 242,
                             CountryName = "Virgin Islands (US)",
                             Iso2 = "VI",
-                            Iso3 = "VIR",
-                            RegionId = 8
+                            Iso3 = "VIR"
                         },
                         new
                         {
                             Id = 243,
                             CountryName = "Wallis And Futuna Islands",
                             Iso2 = "WF",
-                            Iso3 = "WLF",
-                            RegionId = 6
+                            Iso3 = "WLF"
                         },
                         new
                         {
                             Id = 244,
                             CountryName = "Western Sahara",
                             Iso2 = "EH",
-                            Iso3 = "ESH",
-                            RegionId = 2
+                            Iso3 = "ESH"
                         },
                         new
                         {
                             Id = 245,
                             CountryName = "Yemen",
                             Iso2 = "YE",
-                            Iso3 = "YEM",
-                            RegionId = 5
+                            Iso3 = "YEM"
                         },
                         new
                         {
                             Id = 246,
                             CountryName = "Zambia",
                             Iso2 = "ZM",
-                            Iso3 = "ZMB",
-                            RegionId = 2
+                            Iso3 = "ZMB"
                         },
                         new
                         {
                             Id = 247,
                             CountryName = "Zimbabwe",
                             Iso2 = "ZW",
-                            Iso3 = "ZWE",
-                            RegionId = 2
+                            Iso3 = "ZWE"
                         },
                         new
                         {
                             Id = 248,
                             CountryName = "Kosovo",
                             Iso2 = "XK",
-                            Iso3 = "XKX",
-                            RegionId = 4
+                            Iso3 = "XKX"
                         },
                         new
                         {
                             Id = 249,
                             CountryName = "Curaçao",
                             Iso2 = "CW",
-                            Iso3 = "CUW",
-                            RegionId = 8
+                            Iso3 = "CUW"
                         },
                         new
                         {
                             Id = 250,
                             CountryName = "Sint Maarten (Dutch part)",
                             Iso2 = "SX",
-                            Iso3 = "SXM",
-                            RegionId = 8
+                            Iso3 = "SXM"
                         },
                         new
                         {
                             Id = 251,
                             CountryName = "Cyprus, Turkish Republic of Northern",
                             Iso2 = "CY",
-                            Iso3 = "CYP",
-                            RegionId = 4
+                            Iso3 = "CYP"
                         },
                         new
                         {
                             Id = 252,
                             CountryName = "South Georgia and the South Sandwich Islands",
                             Iso2 = "GS",
-                            Iso3 = "SGS",
-                            RegionId = 7
+                            Iso3 = "SGS"
                         });
                 });
 

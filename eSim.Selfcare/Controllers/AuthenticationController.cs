@@ -240,7 +240,7 @@ namespace eSim.Selfcare.Controllers
 
                 string email = TempData["Email"].ToString();
 
-                //Console.WriteLine(email);
+                Console.WriteLine(email);
                 ViewBag.Email = email;
                 return View();
             }
