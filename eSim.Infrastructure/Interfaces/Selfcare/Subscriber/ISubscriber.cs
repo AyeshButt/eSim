@@ -17,6 +17,10 @@ namespace eSim.Infrastructure.Interfaces.Selfcare.Subscriber
         Task<Result<string>> ChangePasswordAsync(ChangePasswordDTORequest request);
         Task<Result<string>> UploadProfileImage(IFormFile file);
 
+        
+
+
+
 
     }
 }

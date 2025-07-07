@@ -66,6 +66,7 @@ namespace eSim.Selfcare.Controllers
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principle);
 
+
                 return RedirectToAction("Index", "Dashboard");
                 
             }

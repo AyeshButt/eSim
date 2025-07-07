@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using eSim.Infrastructure.DTOs.Account;
 
 namespace eSim.Infrastructure.DTOs.Subscribers
 {
@@ -22,5 +23,7 @@ namespace eSim.Infrastructure.DTOs.Subscribers
         public string Country { get; set; }
         public bool IsEmailVerifired { get; set; } = false;
         public bool TermsAndConditions { get; set; }
+
+        public List<CountriesDTORequest> CountryList { get; set; } = new List<CountriesDTORequest>();
     }
 }
