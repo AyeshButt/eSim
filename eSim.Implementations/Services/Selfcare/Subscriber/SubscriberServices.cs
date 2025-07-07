@@ -32,6 +32,8 @@ namespace eSim.Implementations.Services.Selfcare.Subscriber
 
         }
 
+      
+
         public async Task<Result<SubscriberDTO>> SubscriberDetailAsync()
         {
             var url = BusinessManager.MdwBaseURL + BusinessManager.SubscriberDetail;

@@ -21,6 +21,7 @@ namespace eSim.Middleware.Controllers
     {
         private readonly ISubscriberService _subscriber = subscriber;
         private readonly IForgotPassword _password = password;
+       
 
         [AllowAnonymous]
         [HttpGet("email-exists")]
@@ -98,7 +99,11 @@ namespace eSim.Middleware.Controllers
             return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
 
+
         
+
+
+
         [HttpPatch("update")]
         public async Task<IActionResult> UpdateSubscriber([FromBody] UpdateSubscriberDTORequest input)
 
