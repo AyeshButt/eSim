@@ -1,0 +1,45 @@
+﻿@model List<eSim.Infrastructure.DTOs.Admin.Inventory.AdminInventoryDTO>
+
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Inventory</h5>
+                </div>
+                <div class="card-body">
+                    @if (!Model.Any())
+                    {
+                        <div class="alert alert-danger text-center">
+                            Inventory not available
+                        </div>
+                    }
+                    else
+                    {
+                        <table id="alternative-pagination" class="table nowrap dt-responsive align-middle table-hover table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Client</th>
+                                    <th>Subscriber</th>
+                                    <th>Bundle</th>
+                                    <th>Created Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.Client</td>
+                                        <td>@item.Subscriber</td>
+                                        <td>@item.Item</td>
+                                        <td>@item.CreatedDate</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                    }
+                </div>
+            </div>
+        </div>
+    </div>

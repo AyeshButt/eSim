@@ -1,8 +1,11 @@
 ﻿using eSim.Infrastructure.DTOs.Admin.Inventory;
 using eSim.Infrastructure.Interfaces.Admin.Client;
 using eSim.Infrastructure.Interfaces.Admin.Inventory;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 
@@ -18,25 +21,34 @@ namespace eSim.Admin.Controllers
             _inventory = inventory;
             _client = client;
         }
-
+        [Authorize(Policy="Inventory:view")]
         [HttpGet]
-        public async Task<IActionResult> Index(AdminInventoryViewModel input)
+        public async Task<IActionResult> Index()
         {
             var model = new AdminInventoryViewModel();
             
             var inventory = await _inventory.GetInventoryAsync();
+            
+            model.Inventory = inventory.OrderByDescending(u=>u.CreatedDate).ToList();
+
             var clients = await _client.GetAllClientsAsync();
 
             if (inventory is null || clients is null)
                 return View(model);
 
-            model.Inventory = FilterInventory(inventory,input).ToList();
-
             ViewBag.Clients = clients.Select(u => new SelectListItem() {Text =  u.Name, Value=u.Id.ToString()}).ToList();
             
             return View(model);
         }
-        
+        [HttpGet]
+        public async Task<IActionResult> GetFilteredInventory(AdminInventoryFilterDTO input)
+        {
+            var inventory = await _inventory.GetInventoryAsync();
+
+            List<AdminInventoryDTO> filteredList = FilterInventory(inventory, input).OrderByDescending(u=>u.CreatedDate).ToList();
+
+            return PartialView("_InventoryListPartial", filteredList);
+        }
         [HttpGet]
         public async Task<IActionResult> GetClientSubscribers(string clientId)
         {
@@ -51,7 +63,7 @@ namespace eSim.Admin.Controllers
         }
 
         #region Filter inventory list
-        private IQueryable<AdminInventoryDTO> FilterInventory(IQueryable<AdminInventoryDTO> inventory,AdminInventoryViewModel input)
+        private IQueryable<AdminInventoryDTO> FilterInventory(IQueryable<AdminInventoryDTO> inventory, AdminInventoryFilterDTO input)
         {
             if (input.Client is not null)
             {
@@ -61,15 +73,26 @@ namespace eSim.Admin.Controllers
             {
                 inventory = inventory.Where(u => u.SubscriberId == Guid.Parse(input.Subscriber));
             }
-            if (input.From is not null)
+            if (input.Date is not null)
             {
-                inventory = inventory.Where(u => u.CreatedDate >= input.From);
-            }
-            if (input.To is not null)
-            {
-                inventory = inventory.Where(u => u.CreatedDate <= input.To);
-            }
+                var splitDate = input.Date.Split("to");
 
+                if (splitDate.Length > 1)
+                {
+                    var from = DateTime.Parse(splitDate[0]);
+                    var toDateOnly = DateTime.Parse(splitDate[1]);
+
+                    var to = toDateOnly.Date.AddDays(1).AddSeconds(-1); // Sets to 23:59:59
+
+                    inventory = inventory.Where(u => u.CreatedDate >= from && u.CreatedDate <=to);
+
+                }
+                else
+                {
+                    inventory = inventory.Where(u => u.CreatedDate >= DateTime.Parse(input.Date));
+                }
+            }
+            
             return inventory;
         }
         #endregion
