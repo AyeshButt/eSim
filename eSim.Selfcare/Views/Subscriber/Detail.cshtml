@@ -1,6 +1,7 @@
 ﻿@using eSim.Infrastructure.DTOs.Account
 @using eSim.Infrastructure.DTOs.Global
 @using eSim.Infrastructure.DTOs.Subscribers
+@using eSim.Common.StaticClasses;
 @model SubscriberDTO
 
 @{
@@ -49,7 +50,7 @@
 					<div class="row">
 						<div class="col-xxl-3">
 							@{
-								var baseUrl = "https://localhost:7264";
+								var baseUrl = BusinessManager.MdwBaseURL;
 								var imagePath = Model.ProfileImage;
 								var finalImageUrl = string.IsNullOrWhiteSpace(imagePath)
 								? Url.Content("~/assets/images/users/avatar-1.jpg")  // ← optional fallback

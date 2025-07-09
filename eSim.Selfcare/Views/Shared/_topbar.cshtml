@@ -1,4 +1,13 @@
-﻿<header id="page-topbar">
+﻿@using eSim.Common.StaticClasses;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    var profileImg = HttpContextAccessor.HttpContext?.Session.GetString("ProfileImage")
+        ?? Url.Content("~/assets/images/users/avatar-1.jpg");
+
+    var fullName = HttpContextAccessor.HttpContext?.Session.GetString("FullName") ?? "Guest";
+}
+<header id="page-topbar">
     <div class="layout-width">
         <div class="navbar-header">
             <div class="d-flex">
@@ -243,13 +252,14 @@
                 <div class="dropdown ms-sm-3 header-item topbar-user">
                     <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">
+                    
                         <span class="d-flex align-items-center">
-                            <img class="rounded-circle header-profile-user" src="~/assets/images/users/avatar-1.jpg"
+                            <img class="rounded-circle header-profile-user" src="@profileImg"
                                  alt="Header Avatar">
-                            <span class="text-start ms-xl-2">
+                           @*  <span class="text-start ms-xl-2">
                                 <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text"></span>
                                 <span class="d-none d-xl-block ms-1 fs-12 text-muted user-name-sub-text">()()</span>
-                            </span>
+                            </span>  *@
                         </span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-end">

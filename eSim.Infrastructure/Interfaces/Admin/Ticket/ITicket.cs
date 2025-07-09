@@ -1,4 +1,5 @@
-﻿using eSim.Infrastructure.DTOs.Ticket;
+﻿using eSim.Infrastructure.DTOs.Global;
+using eSim.Infrastructure.DTOs.Ticket;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,8 @@ namespace eSim.Infrastructure.Interfaces.Admin.Ticket
         public Task<IQueryable<TicketListDTO>> GetAllTicketsAsync();
         public Task<IQueryable<TicketStatusDTO>> GetStatusListAsync();
         public Task<IQueryable<TicketTypeDTO>> GetTypeListAsync();
+        Task<Result<TicketDTO>> GetTicketDetailAsync(string trn);
 
- 
+
     }
 }
