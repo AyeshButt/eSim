@@ -4,11 +4,14 @@ using eSim.Implementations.Services.Middleware.Subscriber;
 using eSim.Infrastructure.DTOs.Account;
 using eSim.Infrastructure.DTOs.Email;
 using eSim.Infrastructure.DTOs.Global;
+using eSim.Infrastructure.DTOs.Subscribers;
 using eSim.Infrastructure.Interfaces.Admin.Email;
 using eSim.Infrastructure.Interfaces.Middleware;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Raven.Database.Extensions;
+using Raven.Database.FileSystem.Synchronization.Rdc.Wrapper;
 
 namespace eSim.Middleware.Controllers
 {
@@ -18,6 +21,7 @@ namespace eSim.Middleware.Controllers
     {
         private readonly ISubscriberService _subscriber = subscriber;
         private readonly IForgotPassword _password = password;
+       
 
         [AllowAnonymous]
         [HttpGet("email-exists")]
@@ -61,20 +65,25 @@ namespace eSim.Middleware.Controllers
 
         [AllowAnonymous]
         [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPassword([FromBody] SubscriberResetPasswordDTORequest input)
+        public async Task<IActionResult> ResetPassword([FromBody] SubscriberResetPasswordDTO input)
         {
-            var result = await _password.ResetPasswordAsync(input);
+            var logged = User.SubscriberId();
+            if (logged == null)
+                return Unauthorized();
+            var result = await _password.ResetPasswordAsync(Guid.Parse(logged) ,input);
 
             return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
 
-        [AllowAnonymous]
+
         [HttpPatch("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTORequest input)
         {
-           
+            var logged = User.SubscriberId();
+            if(logged == null)
+                return Unauthorized();
 
-            var result = await _password.ChangePasswordAsync(input);
+            var result = await _password.ChangePasswordAsync(Guid.Parse(logged),input);
             return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
 
@@ -90,7 +99,11 @@ namespace eSim.Middleware.Controllers
             return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }
 
+
         
+
+
+
         [HttpPatch("update")]
         public async Task<IActionResult> UpdateSubscriber([FromBody] UpdateSubscriberDTORequest input)
 
@@ -104,18 +117,16 @@ namespace eSim.Middleware.Controllers
 
 
 
-        [AllowAnonymous]
+
         [HttpPost("Upload")]
-        public async Task<IActionResult> UploadProfileImage(IFormFile file, [FromForm] Guid subscriberId)
+        public async Task<IActionResult> UploadProfileImage(IFormFile file)
         {
-            
 
-            var dto = new ProfileImageDTORequest
-            {
-                SubscriberId = subscriberId
-            };
 
-            var result = await _subscriber.UploadProfileImageAsync(file, dto);
+            var loggeduser = User.SubscriberId();
+            if(loggeduser is null) return Unauthorized();
+            var dto = new ProfileImageDTORequest();
+            var result = await _subscriber.UploadProfileImageAsync(Guid.Parse(loggeduser),file,dto);
 
             return StatusCode(HttpStatusCodeMapper.FetchStatusCode(result.StatusCode), result);
         }

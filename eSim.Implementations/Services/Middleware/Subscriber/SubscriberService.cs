@@ -87,6 +87,13 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                     result.StatusCode = StatusCodes.Status400BadRequest;
                     return result;
                 }
+                if (!Regex.IsMatch(input.Country, @"^[A-Za-z]+$"))
+                {
+                    result.Success = false;
+                    result.Message = BusinessManager.InvalidCountryFormat;
+                    result.StatusCode = StatusCodes.Status400BadRequest;
+                    return result;
+                }
 
 
                 string hashedPassword = PasswordHasher.HashPassword(input.Password);
@@ -167,7 +174,6 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             var transaction = await _db.Database.BeginTransactionAsync();
             try
             {
-
                 var subscriber = await _db.Subscribers.FirstOrDefaultAsync(x => x.Id == loggeduser);
 
                 if (subscriber is null)
@@ -178,10 +184,41 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                     return result;
 
                 }
+                if (!string.IsNullOrWhiteSpace(request.FirstName))
+                {
+                    if (!Regex.IsMatch(request.FirstName, @"^[A-Za-z]+$"))
+                    {
+                        result.Success = false;
+                        result.Message = BusinessManager.FirstName;
+                        result.StatusCode = StatusCodes.Status400BadRequest;
+                        return result;
+                    }
+                    subscriber.FirstName = request.FirstName;
+                }
 
-                subscriber.FirstName = request.FirstName;
-                subscriber.LastName = request.LastName;
-                subscriber.Country = request.Country;
+                if (!string.IsNullOrWhiteSpace(request.LastName))
+                {
+                    if (!Regex.IsMatch(request.LastName, @"^[A-Za-z]+$"))
+                    {
+                        result.Success = false;
+                        result.Message = BusinessManager.LastName;
+                        result.StatusCode = StatusCodes.Status400BadRequest;
+                        return result;
+                    }
+                    subscriber.LastName = request.LastName;
+                }
+
+                if (!string.IsNullOrWhiteSpace(request.Country))
+                {
+                    if (!Regex.IsMatch(request.Country, @"^[A-Za-z]+$"))
+                    {
+                        result.Success = false;
+                        result.Message = BusinessManager.InvalidCountryFormat;
+                        result.StatusCode = StatusCodes.Status400BadRequest;
+                        return result;
+                    }
+                    subscriber.Country = request.Country;
+                }
                 subscriber.ModifiedAt = BusinessManager.GetDateTimeNow();
 
                 await _db.SaveChangesAsync();
@@ -207,9 +244,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
         }
 
 
-        public async Task<Result<string?>>
-
-            UploadProfileImageAsync(IFormFile file, ProfileImageDTORequest dto)
+        public async Task<Result<string?>>UploadProfileImageAsync(Guid loggeduser,IFormFile file, ProfileImageDTORequest dto)
         {
 
             var result = new Result<string?>();
@@ -253,7 +288,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
 
                 dto.ProfileImage = $"/uploads/{fileName}";
 
-                var subscriber = await _db.Subscribers.FindAsync(dto.SubscriberId);
+                var subscriber = await _db.Subscribers.FindAsync(loggeduser);
                 if (subscriber == null)
                 {
                     result.Success = false;
@@ -349,6 +384,9 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                     Email = subscriber.Email,
                     Country = subscriber.Country,
                     ProfileImage = subscriber.ProfileImage,
+                    ClientId=loggedUser,
+                    CreatedAt=BusinessManager.GetDateTimeNow(),
+                    ModifiedAt=BusinessManager.GetDateTimeNow(),
                     IsEmailVerifired = subscriber.IsEmailVerifired,
                     TermsAndConditions = subscriber.TermsAndConditions
                 };
@@ -372,7 +410,10 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
             }
             return result;
         }
+
+        
+    }
     }
     #endregion
-}
+
 

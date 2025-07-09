@@ -17,7 +17,7 @@ namespace eSim.Infrastructure.Interfaces.Middleware
         Task<Result<string>> CreateSubscriber(SubscriberDTORequest input);
 
         Task<Result<string>> UpdateSubscriberAsync(Guid loggeduser, UpdateSubscriberDTORequest request);
-        Task<Result<string?>> UploadProfileImageAsync(IFormFile file, ProfileImageDTORequest dto);
+        Task<Result<string?>> UploadProfileImageAsync(Guid loggeduser,IFormFile file, ProfileImageDTORequest dto);
 
 
         public Task<IQueryable<SubscriberDTO>> GetClient_SubscribersListAsync(string id);

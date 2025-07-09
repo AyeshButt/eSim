@@ -1,13 +1,28 @@
 ﻿@using eSim.Infrastructure.DTOs.Global
-@using eSim.Infrastructure.DTOs.Middleware.Bundle
+@* @using eSim.Infrastructure.DTOs.Middleware.Bundle *@
+@using eSim.Infrastructure.DTOs.Selfcare.Bundles
 
-@model Result<GetBundleCatalogueResponse>
+
+@section styles{
+    @* <!--datatable css-->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
+    <!--datatable responsive css-->
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css"> *@
+}
+
+@model Result<BundleViewModel>
 @{
     var notifications = new List<(string Key, string Type)>
     {
         ("Success", "success"),
         ("Error", "success"),
     };
+
+    var bundlesList = Model.Data.BundlesDto;
+    var region = Model.Data.Regions;
+    var country = Model.Data.CountriesDTO;
 }
 <!-- Filters -->
 <div class="row">
@@ -18,19 +33,41 @@
             </div>
             <div class="card-body">
                 <div>
-                    <div class="row">
-                        <div class="col-lg-3 col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label text-muted">Filter By Region</label>
-                                <select class="form-control" data-choices name="choices-single-default" id="choices-single-default">
-                                    <option value="">Select Region</option>
-                                    <option value="Choice 1">Choice 1</option>
-                                    <option value="Choice 2">Choice 2</option>
-                                    <option value="Choice 3">Choice 3</option>
-                                </select>
+                    <div>
+                        <div class="row">
+                            <div class="col-lg-4 col-md-6">
+                                <div class="mb-3">
+                                    <label for="choices-single-default" class="form-label text-muted">Filter By Region</label>
+                                    @*   <p class="text-muted">Set <code>data-choices</code> attribute to set a default single select.</p> *@
+                                    <select class="form-control" data-choices name="choices-single-default"
+                                        id="choices-single-default">
+                                        <option value="">Select Region</option>
+                                        @foreach(var item in region)
+                                        {
+                                            <option value="@item.Id">@item.Name</option>
+                                        };
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="mb-3">
+                                    <label for="choices-single-default" class="form-label text-muted">Filter By Country</label>
+                                    @*                                   <p class="text-muted">Set <code>data-choices</code> attribute to set a default single select.</p> *@
+                                    <select class="form-control" data-choices name="choices-single-default"
+                                    id="choices-single-default">
+                                        <option value="">Select Country</option>
+                                        @foreach (var item in country)
+                                        {
+                                            <option value="@item.Iso2">@item.CountryName</option>
+                                        };
+                                    </select>
+                                </div>
+                            </div>
+       
+                            <div class="col-lg-4 col-md-2">
+                                
                             </div>
                         </div>
-                        <!-- Repeat for Country, State, Plane -->
                     </div>
                 </div>
             </div>
@@ -64,7 +101,7 @@
                     <tbody>
                         @if (Model != null)
                         {
-                            @foreach (var item in Model.Data.bundles)
+                            @foreach (var item in bundlesList.bundles)
                             {
                                 <tr class="View-Bundle" data-name="@item.name" style="cursor: pointer;">
                                     <td>@item.name</td>
@@ -133,6 +170,41 @@
 </div>
 
 @section scripts {
+
+    <script>
+        var table = $('.datatable.scroll').DataTable();
+        var pageSize  = table.page.len();
+        var currentPage = table.page.info().page + 1;
+        console.log("current page size of the table", currentPage);
+                var table = $('.datatable-scroll').DataTable();
+
+        $('#submitBtn').on('click', function () {
+            var pageSize = table.page.len(); // ✅ Corrected
+            var currentPage = table.page.info().page + 1;
+
+            $.ajax({
+                url: '/YourController/YourAction',
+                type: 'POST',
+                data: {
+                    pageSize: pageSize,
+                    page: currentPage
+                },
+                success: function (res) {
+                    console.log('Data sent!', res);
+                }
+            });
+        });
+
+        console.log("PageLengths", pageSize)
+    </script>
+    
+
+    <!-- Required libraries -->
+    <script src="~/assets/libs/prismjs/prism.js"></script>
+
+    <script src="~/assets/js/app.js"></script>
+    <!-- gridjs js -->
+ 
     <script>
         // Handle row click except buttons
         $(document).on('click', '.View-Bundle', function (e) {
@@ -220,7 +292,5 @@
         });
     </script>
 
-    <!-- Required libraries -->
-    <script src="~/assets/libs/prismjs/prism.js"></script>
-    <script src="~/assets/js/app.js"></script>
+
 }

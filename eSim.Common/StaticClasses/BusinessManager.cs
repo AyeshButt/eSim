@@ -33,12 +33,15 @@ namespace eSim.Common.StaticClasses
         public static string ImageMediaContentType = "image/png";
         public static string QRCode = "qr-code";
         public static string InvalidIccid = "Invalid Iccid";
+        public static string RegionorCountriesmustbeprovided = "Either Region or Countries must be provided.";
+        public static string InvalidCountryFormat = "Country must contain only English Letters.";
 
         public static string MdwBaseURL = "https://localhost:7264/";
         public static string MiddlewareBaseURL = "https://localhost:7264";
         public static string Countries = "Countries";
+        public static string Regions = "regions";
         public static string MidlewareLogin = "auth/login";
-        public static string CheckEmail = "Subscriber/check-email";
+        public static string CheckEmail = "subscriber/email-exists";
         public static string Subscriber = "Subscriber";
         public static string forgotPass = "Subscriber/forgot-password";
         public static string OTP = "Subscriber/verify-otp";
@@ -49,7 +52,9 @@ namespace eSim.Common.StaticClasses
         public static string TicketDetail = "ticket/detail";
         public static string Ticketcomment = "ticket/comment";
         public static string SubscriberDetail = "subscriber/detail";
+        public static string ChangePassword = "subscriber/change-password";
         public static string Subscriberupdate = "subscriber/update";
+        public static string Subscriberupload = "subscriber/upload";
         public static string BundelRegion = "bundle/bundles";
         public static string Bundeldetail = "bundle/";
         public static string EsimList = "esims/list";

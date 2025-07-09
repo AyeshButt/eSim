@@ -11,28 +11,36 @@ using eSim.Infrastructure.DTOs.Middleware.Order;
 using eSim.Infrastructure.DTOs.Selfcare.Bundles;
 using eSim.Infrastructure.Interfaces.ConsumeApi;
 using eSim.Infrastructure.Interfaces.Selfcare.Bundles;
+using eSim.Infrastructure.Interfaces.Selfcare.Refrence;
 using static eSim.Infrastructure.DTOs.Middleware.Bundle.GetBundleCatalogueDetailDTO;
 
 namespace eSim.Implementations.Services.Selfcare.Bundle
 {
-    public class BundleService(IMiddlewareConsumeApi consumeApi) : IBundleService
+    public class BundleService(IMiddlewareConsumeApi consumeApi, ICountyService countryService) : IBundleService
     {
         private readonly IMiddlewareConsumeApi _consumeApi = consumeApi;
+        private readonly ICountyService _countryService = countryService;
 
-       
-
-        public async Task<Result<GetBundleCatalogueResponse>> GetBundles()
+        public async Task<Result<BundleViewModel>> GetBundles()
         {
-            BundleRequest dto = new()
+            Result<BundleViewModel> result = new()
             {
-                Region = "Europe"
+                Data = new BundleViewModel()
             };
+
+            BundleRequest dto = new();
+
             var Url = BusinessManager.MdwBaseURL + BusinessManager.BundelRegion;
-            
- 
+
+            result.Data.CountriesDTO = await _countryService.Countries();
+
+            result.Data.Regions = await _countryService.RegionsAsync();
+
             var response = await _consumeApi.Post<GetBundleCatalogueResponse, BundleRequest>(Url, dto);
 
-            return response;
+            result.Data.BundlesDto = response.Data;
+
+            return result;
         }
 
 
@@ -69,5 +77,7 @@ namespace eSim.Implementations.Services.Selfcare.Bundle
             return response;
 
         }
+
+        
     }
 }

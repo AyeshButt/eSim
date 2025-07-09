@@ -28,5 +28,13 @@ namespace eSim.Middleware.Controllers
             //return Ok(subKey);
            return Ok(_bundleService.GetCountries());
         }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("Regions")]
+        public IActionResult GetRegions() 
+        { 
+            return Ok(_bundleService?.GetRegions());
+        }
     }
 }

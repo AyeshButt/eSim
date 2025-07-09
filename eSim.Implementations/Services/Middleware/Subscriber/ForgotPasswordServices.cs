@@ -18,6 +18,9 @@ using static System.Net.WebRequestMethods;
 using eSim.Common.Enums;
 using System.ServiceModel.Channels;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using System.Diagnostics.Metrics;
+using eSim.Infrastructure.DTOs.Subscribers;
 
 namespace eSim.Implementations.Services.Middleware.Subscriber
 {
@@ -83,7 +86,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 result.Message = ex.Message;
                 result.StatusCode = StatusCodes.Status500InternalServerError;
                 return result;
-               
+
             }
 
             return result;
@@ -119,7 +122,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 {
                     result.Success = false;
                     result.Message = BusinessManager.InvalidOTP;
-                    result.StatusCode= StatusCodes.Status400BadRequest;
+                    result.StatusCode = StatusCodes.Status400BadRequest;
 
                     return result;
                 }
@@ -136,7 +139,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 result.Success = false;
                 result.Message = ex.Message;
                 result.StatusCode = StatusCodes.Status500InternalServerError;
-                return result ;
+                return result;
             }
 
             return result;
@@ -146,20 +149,29 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
 
         #region ResetPassword
 
-        public async Task<Result<string>> ResetPasswordAsync(SubscriberResetPasswordDTORequest input)
+        public async Task<Result<string>> ResetPasswordAsync(Guid logged, SubscriberResetPasswordDTO input)
         {
             var result = new Result<string>();
 
             try
             {
-                var subscriber = await _db.Subscribers.FirstOrDefaultAsync(x => x.Email == input.Email);
+                var subscriber = await _db.Subscribers.FirstOrDefaultAsync(x => x.Id == logged);
 
                 if (subscriber == null)
                 {
                     result.Success = false;
                     result.Message = BusinessManager.SubscriberNotFound;
-                    result.StatusCode=StatusCodes.Status400BadRequest;
+                    result.StatusCode = StatusCodes.Status400BadRequest;
 
+                    return result;
+                }
+
+                bool isSamePassword = PasswordHasher.VerifyPassword(input.NewPassword, subscriber.Hash);
+                if (isSamePassword)
+                {
+                    result.Success = false;
+                    result.Message = "New password cannot be the same as the current password.";
+                    result.StatusCode = StatusCodes.Status400BadRequest;
                     return result;
                 }
 
@@ -169,7 +181,7 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 await _db.SaveChangesAsync();
 
                 try
-                {
+                { 
                     var email = _email.SendEmail(new EmailDTO
                     {
                         To = subscriber.Email,
@@ -206,59 +218,61 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
         #endregion
 
         #region changePassowrd
-        public async Task<Result<string>> ChangePasswordAsync(ChangePasswordDTORequest input)
+
+
+        public async Task<Result<string>> ChangePasswordAsync(Guid logged, ChangePasswordDTORequest input)
         {
             var result = new Result<string>();
             try
             {
-
-                var user = await _db.Subscribers.FirstOrDefaultAsync(u => u.Email == input.Email);
+                var user = await _db.Subscribers.FirstOrDefaultAsync(u => u.Id == logged);
                 if (user == null)
                 {
                     result.Success = false;
                     result.Message = BusinessManager.userNotFound;
                     result.StatusCode = StatusCodes.Status400BadRequest;
-
                     return result;
                 }
 
-                var oldHash = PasswordHasher.HashPassword(input.OldPassword);
+          
+                bool isOldPasswordCorrect = PasswordHasher.VerifyPassword(input.OldPassword, user.Hash);
 
-                if (user.Hash != oldHash || input.NewPassword != input.ConfirmPassword)
+                if (!isOldPasswordCorrect || input.NewPassword != input.ConfirmPassword)
                 {
                     result.Success = false;
-                    result.Message = user.Hash != oldHash
-                        ? BusinessManager.IncorrectOldPassword: BusinessManager.PasswordNotMatched;
+                    result.Message = !isOldPasswordCorrect
+                        ? BusinessManager.IncorrectOldPassword
+                        : BusinessManager.PasswordNotMatched;
                     result.StatusCode = StatusCodes.Status400BadRequest;
-
                     return result;
                 }
-
-
-                var resetDto = new SubscriberResetPasswordDTORequest
+                bool isNewSameAsOld = PasswordHasher.VerifyPassword(input.NewPassword, user.Hash);
+                if (isNewSameAsOld)
                 {
-                    Email = input.Email,
+                    result.Success = false;
+                    result.Message = "New password cannot be the same as the old password. Please choose a different password.";
+                    result.StatusCode = StatusCodes.Status400BadRequest;
+                    return result;
+                }
+                var resetDto = new SubscriberResetPasswordDTO
+                {
                     NewPassword = input.NewPassword,
                     ConfirmPassword = input.ConfirmPassword
                 };
-                
-                result = await ResetPasswordAsync(resetDto);
-               
+
+                result = await ResetPasswordAsync(logged,resetDto);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 result.Success = false;
                 result.Message = ex.Message;
                 result.StatusCode = StatusCodes.Status500InternalServerError;
             }
             return result;
-        }
-
-
-
-
-
+        
         #endregion
     }
-
+    }
 }
+
+

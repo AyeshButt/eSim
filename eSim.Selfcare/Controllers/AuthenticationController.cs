@@ -66,6 +66,7 @@ namespace eSim.Selfcare.Controllers
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principle);
 
+
                 return RedirectToAction("Index", "Dashboard");
                 
             }
@@ -239,7 +240,7 @@ namespace eSim.Selfcare.Controllers
 
                 string email = TempData["Email"].ToString();
 
-                //Console.WriteLine(email);
+                Console.WriteLine(email);
                 ViewBag.Email = email;
                 return View();
             }

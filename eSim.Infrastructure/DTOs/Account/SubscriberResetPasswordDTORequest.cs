@@ -9,9 +9,9 @@ namespace eSim.Infrastructure.DTOs.Account
 {
     public class SubscriberResetPasswordDTORequest
     {
-        [Required(ErrorMessage = "Password is required")]
-        [DataType(DataType.EmailAddress)]
-        public string Email { get; set; }
+        //[Required(ErrorMessage = "Password is required")]
+        //[DataType(DataType.EmailAddress)]
+        //public string Email { get; set; }
 
 
 
