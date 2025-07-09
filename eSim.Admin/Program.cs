@@ -3,6 +3,7 @@ using eSim.EF.Context;
 using eSim.EF.Entities;
 using eSim.Implementations.Services.Account;
 using eSim.Implementations.Services.Admin.Inventory;
+using eSim.Implementations.Services.Admin.Order;
 using eSim.Implementations.Services.Client;
 using eSim.Implementations.Services.Email;
 using eSim.Implementations.Services.Middleware.Subscriber;
@@ -13,6 +14,7 @@ using eSim.Infrastructure.Interfaces.Admin.Account;
 using eSim.Infrastructure.Interfaces.Admin.Client;
 using eSim.Infrastructure.Interfaces.Admin.Email;
 using eSim.Infrastructure.Interfaces.Admin.Inventory;
+using eSim.Infrastructure.Interfaces.Admin.Order;
 using eSim.Infrastructure.Interfaces.Admin.Ticket;
 using eSim.Infrastructure.Interfaces.Middleware;
 using eSim.Infrastructure.Interfaces.SystemClaimRepo;
@@ -44,6 +46,7 @@ builder.Services.AddTransient<IClient, ClientService>();
 builder.Services.AddTransient<IClientSettings, ClientSettingsService>();
 builder.Services.AddTransient<ITicket, TicketService>();
 builder.Services.AddTransient<IInventory, InventoryService>();
+builder.Services.AddTransient<IAdminOrder, AdminOrderService>();
 builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailConfiguration"));
 
 builder.Services.

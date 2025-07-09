@@ -2,7 +2,6 @@
 @using eSim.Infrastructure.DTOs.Ticket
 @model Result<List<TicketsResponse>>
 
-
 @{
     ViewBag.Title = "Support";
     ViewBag.pTitle = "Tickets List";
@@ -10,10 +9,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
-@section styles{
-<!-- Sweet Alert css-->
-<link href="~/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
+@section styles {
+    <!-- Sweet Alert css-->
+    <link href="~/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
 }
 
 <div class="row">
@@ -24,8 +22,12 @@
                     <h5 class="card-title mb-0 flex-grow-1">Tickets</h5>
                     <div class="flex-shrink-0">
                         <div class="d-flex flex-wrap gap-2">
-                            <a href="@Url.Action("OpenNewTicket", "SupportTicket")" class="btn btn-danger add-btn">  <i class="ri-add-line align-bottom me-1"></i> Create Tickets</a>
-                            <button class="btn btn-soft-danger" id="remove-actions" onClick="deleteMultiple()"><i class="ri-delete-bin-2-line"></i></button>
+                            <a href="@Url.Action("OpenNewTicket", "SupportTicket")" class="btn btn-danger add-btn">
+                                <i class="ri-add-line align-bottom me-1"></i> Create Tickets
+                            </a>
+                            <button class="btn btn-soft-danger" id="remove-actions" onClick="deleteMultiple()">
+                                <i class="ri-delete-bin-2-line"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -35,145 +37,123 @@
                     <div class="row g-3">
                         <div class="col-xxl-5 col-sm-12">
                             <div class="search-box">
-                                <input type="text" name="search" class="form-control search bg-light border-light" placeholder="Search with Ticket Refrence Number" value="@Context.Request.Query["search"]">
+                                <input type="text" name="search" class="form-control search bg-light border-light"
+                                       placeholder="Search with Ticket Refrence Number" value="@Context.Request.Query["search"]">
                                 <i class="ri-search-line search-icon"></i>
                             </div>
-                        </div><!--end col-->
-
+                        </div>
                         <div class="col-xxl-3 col-sm-4">
-                            <input type="text" name="dateRange" class="form-control bg-light border-light" data-provider="flatpickr" data-date-format="d M, Y" data-range-date="true" id="demo-datepicker" placeholder="Select date range">
-                        </div><!--end col-->
-
+                            <input type="text" name="dateRange" class="form-control bg-light border-light"
+                                   data-provider="flatpickr" data-date-format="d M, Y" data-range-date="true"
+                                   id="demo-datepicker" placeholder="Select date range">
+                        </div>
                         <div class="col-xxl-3 col-sm-4">
                             <div class="input-light">
-                                <select name="status" class="form-control" data-choices data-choices-search-false  id="idStatus">
+                                <select name="status" class="form-control" data-choices data-choices-search-false id="idStatus">
                                     <option value="">Status</option>
                                     <option value="all" selected>All</option>
                                     <option value="Open">Open</option>
-                                    <option value="Inprogress">Inprogress</option> 
+                                    <option value="Inprogress">Inprogress</option>
                                     <option value="Closed">Closed</option>
                                     <option value="New">New</option>
                                 </select>
                             </div>
-                        </div><!--end col-->
+                        </div>
                         <div class="col-xxl-1 col-sm-4">
                             <button type="submit" class="btn btn-primary w-100">
                                 <i class="ri-equalizer-fill me-1 align-bottom"></i>
                                 Filters
                             </button>
-                        </div><!--end col-->
-                    </div><!--end row-->
+                        </div>
+                    </div>
                 </form>
-            </div><!--end card-body-->
+            </div>
             <div class="card-body">
                 <div class="table-responsive table-card mb-4">
                     <table class="table table-hover align-middle table-nowrap mb-0" id="ticketTable">
                         <thead>
                             <tr>
-                                <th class="sort" data-sort="">Ticket Refrence Number</th>
-                                <th class="sort" data-sort="tasks_name">Subject</th>
-                                <th class="sort" data-sort="client_name">Type</th>
-                                <th class="sort" data-sort="create_date">Created Date</th>
-                                <th>Action</th>
-
+                                <th scope="col">Ticket Refrence Number</th>
+                                <th scope="col">Subject</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Created Date</th>
+                                <th scope="col">Action</th>
                             </tr>
                         </thead>
-                        <tbody class="list ">
-                            @if(Model.Data != null)
+                        <tbody>
+                            @if (Model.Data != null)
                             {
-                                @foreach(var item in Model.Data)
+                                // Group tickets by TRN and select first occurrence
+                                var distinctTickets = Model.Data
+                                .GroupBy(t => t.TRN)
+                                .Select(g => g.First())
+                                .ToList();
+
+                                foreach (var item in distinctTickets)
                                 {
                                     <tr>
-                                        <td class="">@item.TRN</td>
-                                        <td class="">
-                                            @(item.Subject.Length > 30 ? item.Subject.Substring(0,30) + "..." : item.Subject)    
-                                        </td>
-                                        <td class="">@item.Type</td>
-                                        <td class="">@item.CreatedAt</td>
+                                        <td>@item.TRN</td>
                                         <td>
-                                            <button class="dropdown-item" onclick="viewTicketDetails('@item.TRN')"><i class="ri-eye-fill align-bottom me-2 text-muted"></i></button>
+                                            @(item.Subject.Length > 30 ? item.Subject.Substring(0, 30) + "..." : item.Subject)
+                                        </td>
+                                        <td>@item.Type</td>
+                                        <td>@item.CreatedAt.ToString("MM/dd/yyyy hh:mm tt")</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary" onclick="viewTicketDetails('@item.TRN')">
+                                                <i class="ri-eye-fill align-bottom"></i> View
+                                            </button>
                                         </td>
                                     </tr>
                                 }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center">No tickets found</td>
+                                </tr>
                             }
                         </tbody>
                     </table>
                     <div class="noresult" style="display: none">
                         <div class="text-center">
-                            <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px">
+                            <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop"
+                                       colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px">
                             </lord-icon>
                             <h5 class="mt-2">Sorry! No Result Found</h5>
                             <p class="text-muted mb-0">We've searched more than 150+ Tickets We did not find any Tickets for you search.</p>
                         </div>
                     </div>
-
-                    <div class="d-flex justify-content-end mt-2">
-                        <div class="pagination-wrap hstack gap-2">
-                            <a class="page-item pagination-prev disabled" href="#">
-                                Previous
-                            </a>
-                            <ul class="pagination listjs-pagination mb-0"></ul>
-                            <a class="page-item pagination-next" href="#">
-                                Next
-                            </a>
-                        </div>
-                    </div>
                 </div>
-            </div><!--end card-body-->
-        </div><!--end card-->
-    </div><!--end col-->
-</div><!--end row-->
+            </div>
+        </div>
+    </div>
+</div>
 
-@section scripts{
+@section scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const message = '@TempData["ToastMessage"]';
             const type = '@TempData["ToastType"]';
 
-            if (message && message!== null) {
+            if (message && message !== '') {
                 ToastNotification(message, type || "success");
             }
         });
 
-
-
-         
-    </script>
-           
-          <script>
-              function viewTicketDetails(trn) {
+        function viewTicketDetails(trn) {
             var url = '@Url.Action("TicketDetails", "SupportTicket")' + '?trn=' + trn;
             window.location.href = url;
         }
 
-          </script>  
+        function deleteMultiple() {
+            // Implement your delete multiple functionality here
+            console.log('Delete multiple triggered');
+        }
+    </script>
 
-           
-    @* <script>
-        $(document).on('click', '.ticket-detail', function()
-           {
-               var bundleName = $(this).data('name');
-
-                    $('.bs-example-modal-center').modal('show');
-
-                  // Show loader and clear any previous data
-
-               $('#bundleDetailLoader').show();
-                   $('#bundleDetailModalBody').html('');
-
-               $.ajax({
-                   url: '@Url.Action("Detail", "Bundles")',
-                   type: 'GET',
-                   data: { name: bundleName },
-               });
-           });
-    </script> *@
+    <!-- Optional: Only include if needed for other functionality -->
     <script src="~/assets/libs/list.js/list.min.js"></script>
-
-    <!--list pagination js-->
     <script src="~/assets/libs/list.pagination.js/list.pagination.min.js"></script>
-
-    <!-- titcket init js -->
     <script src="~/assets/js/pages/ticketlist.init.js"></script>
     <script src="~/assets/js/app.js"></script>
 }
