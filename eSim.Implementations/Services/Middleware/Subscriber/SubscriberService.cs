@@ -318,29 +318,51 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
         }
 
 
-        public async Task<IQueryable<SubscriberDTO>> GetClient_SubscribersListAsync(string id)
+        public async Task<IQueryable<SubscribersResponseViewModel>> GetClient_SubscribersListAsync(string id)
         {
-            Guid parsedClientId = Guid.Parse(id);
 
-            var client_subscriber_list = (from s in _db.Subscribers
-                                          join c in _db.Client on s.ClientId equals c.Id
-                                          where s.ClientId == parsedClientId
-                                          select new SubscriberDTO()
-                                          {
-                                              Id = s.Id,
-                                              FirstName = s.FirstName,
-                                              LastName = s.LastName,
-                                              Email = s.Email,
-                                              Hash = s.Hash,
-                                              Active = s.Active,
-                                              ClientId = s.ClientId,
-                                              CreatedAt = s.CreatedAt,
-                                              ModifiedAt = s.ModifiedAt,
-                                          }
-                                  );
-
-
-            return await Task.FromResult(client_subscriber_list);
+            if(!string.IsNullOrWhiteSpace(id) && Guid.TryParse(id, out Guid parsedClientId))
+            {
+                var client_subscriber_list = (from s in _db.Subscribers
+                                              join c in _db.Client on s.ClientId equals c.Id
+                                              where s.ClientId == parsedClientId
+                                              select new SubscribersResponseViewModel()
+                                              {
+                                                  Id = s.Id,
+                                                  FirstName = s.FirstName,
+                                                  LastName = s.LastName,
+                                                  Email = s.Email,
+                                                  Hash = s.Hash,
+                                                  Active = s.Active,
+                                                  ClientId = s.ClientId,
+                                                  CreatedAt = s.CreatedAt,
+                                                  ModifiedAt = s.ModifiedAt,
+                                                  ClientName  = c.Name
+                                              }
+                                 );
+                return await Task.FromResult(client_subscriber_list);
+            }
+            else
+            {
+                var client_subscriber_list = (from s in _db.Subscribers
+                                              join c in _db.Client on s.ClientId equals c.Id
+                                              select new SubscribersResponseViewModel()
+                                              {
+                                                  Id = s.Id,
+                                                  FirstName = s.FirstName,
+                                                  LastName = s.LastName,
+                                                  Email = s.Email,
+                                                  Hash = s.Hash,
+                                                  Active = s.Active,
+                                                  ClientId = s.ClientId,
+                                                  CreatedAt = s.CreatedAt,
+                                                  ModifiedAt = s.ModifiedAt,
+                                                  ClientName = c.Name
+                                              }
+                                );
+                return await Task.FromResult(client_subscriber_list);
+            }
+                
         }
 
         public async Task<IQueryable<SubscriberDTO>> GetSubscribersListAsync()

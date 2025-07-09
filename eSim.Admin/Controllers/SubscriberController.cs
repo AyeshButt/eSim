@@ -24,33 +24,50 @@ namespace eSim.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string ClientId)
         {
-            IQueryable<SubscriberDTO> subscriberList = null!;
+            IQueryable<SubscribersResponseViewModel> subscriberList = null!;
 
-            var user = await _userManager.GetUserAsync(User);
-
-            if (user == null)
-                return RedirectToAction("Error", "Account");
-
-            if (user.UserType == (int)AspNetUsersTypeEnum.Client)
+            if (ClientId == null)
             {
-                subscriberList = await _subscriber.GetClient_SubscribersListAsync(user.Id);
-
-            }
-            else if (user.UserType == (int)AspNetUsersTypeEnum.Subclient)
-            {
-                subscriberList = await _subscriber.GetClient_SubscribersListAsync(user.ParentId ?? string.Empty);
+                subscriberList = await _subscriber.GetClient_SubscribersListAsync(null);
             }
             else
             {
-                //for superadmin and other accounts
-                subscriberList = Enumerable.Empty<SubscriberDTO>().AsQueryable();
+                subscriberList = await _subscriber.GetClient_SubscribersListAsync(ClientId);
             }
-
-            return View(subscriberList.ToList());
-
+                return View(subscriberList.ToList());
         }
+
+        //[HttpGet]
+        //public async Task<IActionResult> Index()
+        //{
+        //    IQueryable<SubscriberDTO> subscriberList = null!;
+
+        //    var user = await _userManager.GetUserAsync(User);
+
+        //    if (user == null)
+        //        return RedirectToAction("Error", "Account");
+
+        //    if (user.UserType == (int)AspNetUsersTypeEnum.Client)
+        //    {
+        //        subscriberList = await _subscriber.GetClient_SubscribersListAsync(user.Id);
+
+        //    }
+        //    else if (user.UserType == (int)AspNetUsersTypeEnum.Subclient)
+        //    {
+        //        subscriberList = await _subscriber.GetClient_SubscribersListAsync(user.ParentId ?? string.Empty);
+        //    }
+        //    else
+        //    {
+        //        //for superadmin and other accounts
+        //        subscriberList = Enumerable.Empty<SubscriberDTO>().AsQueryable();
+        //    }
+
+        //    return View(subscriberList.ToList());
+
+        //}
 
     }
 }
+
