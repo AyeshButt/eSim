@@ -3,160 +3,147 @@
     ViewBag.Title = "Inventory";
 }
 @section styles {
-    <!--datatable css-->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
-    <!--datatable responsive css-->
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
-
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css" />
 }
 
 <div class="row my-3">
-    <form asp-action="Index" asp-controller="Inventory" method="get" class="d-flex align-items-end">
+    <form id="filterForm" class="d-flex align-items-end">
+        <div class="col-2 ms mx-2">
+            <div class="mt-3">
+                <label asp-for="Date" class="form-label">Date</label>
+                <input asp-for="Date" type="text" id="date" class="form-control rounded-pill" placeholder="Select Date"
+                       data-provider="flatpickr" data-date-format="d M, Y" data-range-date="true">
+            </div>
+        </div>
+
         <div class="col-2">
             <label asp-for="Client" class="form-label">Client</label>
             <select id="client" asp-for="Client" asp-items="@ViewBag.Clients" class="form-control rounded-pill">
-                <option value="">Select Client</option>
+                <option value="">---Select---</option>
             </select>
         </div>
 
         <div id="subscriberGroup" class="col-2 mx-2" style="display: none;">
             <label asp-for="Subscriber" class="form-label">Subscriber</label>
-            <select id="subscriber" asp-for="Subscriber" class="form-control rounded-pill" data-selected="@Model.Subscriber">
-                <option value="">Select Subscriber</option>
+            <select id="subscriber" asp-for="Subscriber" class="form-control rounded-pill"
+                    data-selected="@Model.Subscriber">
+                <option value="">---Subscriber---</option>
             </select>
         </div>
-        <!--end col-->
-        <div class="col-2 ms-2">
-            <label asp-for="From" class="form-label">From</label>
-            <input asp-for="From" type="date" class="form-control rounded-pill" id="exampleInputdate">
-        </div>
-        <div class="col-2 ms-2">
-            <label asp-for="To" class="form-label">To</label>
-            <input asp-for="To" type="date" class="form-control rounded-pill" id="exampleInputdate">
-        </div>
 
-        <!--end col-->
         <div class="col-auto ms-3">
-            <label class="form-label d-block invisible">Search</label> <!-- Keeps alignment -->
-            <button type="submit" class="btn btn-primary rounded-pill px-4">Search</button>
-            <a asp-action="Index" asp-controller="Inventory" class="btn btn-secondary rounded-pill px-4">Reset</a>
+            <label class="form-label d-block invisible">Search</label>
+            <button type="submit" class="btn rounded-pill btn-secondary waves-effect waves-light">Search</button>
+            <a asp-controller="Inventory" asp-action="Index" id="resetBtn" class="btn rounded-pill btn-danger waves-effect waves-light">Reset</a>
         </div>
     </form>
 </div>
+
 <div class="row">
     <div class="col-lg-12">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Inventory</h5>
-            </div>
-            <div class="card-body">
-                @if (!Model.Inventory.Any())
-                {
-                    <div class="alert alert-danger text-center">
-                        Inventory not available
-                    </div>
-                }
-                else
-                {
-                    <table id="alternative-pagination" class="table nowrap dt-responsive align-middle table-hover table-bordered" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>Client</th>
-                                <th>Subscriber</th>
-                                <th>Bundle</th>
-                                <th>Created Date</th>
-                                <th>Order Reference Id</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.Inventory)
-                            {
-                                <tr>
-                                    <td>@item.Client</td>
-                                    <td>@item.Subscriber</td>
-                                    <td>@item.Item</td>
-                                    <td>@item.CreatedDate</td>
-                                    <td>@item.OrderRefrenceId</td>
-                                    <td>Bundle Details</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-
-                }
-            </div>
+        <div id="inventoryContainer">
+            <partial name="_InventoryListPartial" model="Model.Inventory" />
         </div>
     </div>
 </div>
 
 @section scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const clientSelect = document.getElementById('client');
+            const subscriberSelect = document.getElementById('subscriber');
+            const subscriberGroup = document.getElementById('subscriberGroup');
+            const resetBtn = document.getElementById('resetBtn');
+            const dateInput = document.getElementById('date');
+            const filterForm = document.getElementById('filterForm');
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const clientSelect = document.getElementById('client');
-        const subscriberSelect = document.getElementById('subscriber');
-        const subscriberGroup = document.getElementById('subscriberGroup');
+            function loadSubscribers(clientId, selected = "") {
+                subscriberSelect.innerHTML = '<option value="">---Select---</option>';
+                subscriberGroup.style.display = 'none';
 
-        subscriberGroup.style.display = 'none';
+                if (!clientId) return;
 
-        function loadSubscribers(clientId, selectedSubscriber = null) {
-            subscriberSelect.innerHTML = '<option value="">Select Subscriber</option>';
-            subscriberGroup.style.display = 'none';
+                fetch(`/Inventory/GetClientSubscribers?clientId=${encodeURIComponent(clientId)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data || data.length === 0) return;
 
-            if (!clientId) return;
+                        data.forEach(item => {
+                            const option = document.createElement('option');
+                            option.value = item.value;
+                            option.text = item.text;
+                            subscriberSelect.appendChild(option);
+                        });
 
-            fetch(`/Inventory/GetClientSubscribers?clientId=${encodeURIComponent(clientId)}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (!data || data.length === 0) return;
+                        if (selected) subscriberSelect.value = selected;
+                        subscriberGroup.style.display = 'block';
 
-                    data.forEach(item => {
-                        const option = document.createElement('option');
-                        option.value = item.value;
-                        option.text = item.text;
-                        subscriberSelect.appendChild(option);
                     });
+            }
 
-                    // ✅ Set selected subscriber
-                    if (selectedSubscriber) {
-                        subscriberSelect.value = selectedSubscriber;
-                        console.log("Restored subscriber:", selectedSubscriber);
-                    }
+            // On client change
+            clientSelect.addEventListener('change', function () {
+                loadSubscribers(this.value);
+            });
 
-                    subscriberGroup.style.display = 'block';
-                });
-        }
+            // On reset
+            // resetBtn.addEventListener('click', function () {
+            //     dateInput.value = '';
+            //     clientSelect.value = '';
+            //     subscriberSelect.innerHTML = '<option value="">---Select---</option>';
+            //     subscriberGroup.style.display = 'none';
 
-        clientSelect.addEventListener('change', function () {
-            loadSubscribers(clientSelect.value);
+                // fetch(`/Inventory/Index`)
+                //     .then(res => res.text())
+                //     .then(html => {
+                //         document.getElementById('inventoryContainer').innerHTML = html;
+                //         $('#alternative-pagination').DataTable();
+                //     });
+            //});
+
+            // On search (submit)
+            filterForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const model = {
+                    Date: dateInput.value,
+                    Client: clientSelect.value,
+                    Subscriber: subscriberSelect.value
+                };
+
+                const query = new URLSearchParams(model).toString();
+
+                fetch(`/Inventory/GetFilteredInventory?${query}`)
+                    .then(res => res.text())
+                    .then(html => {
+                        document.getElementById('inventoryContainer').innerHTML = html;
+                        $('#alternative-pagination').DataTable();
+                    })
+                    .catch(() => alert("No data found."));
+            });
+
+            // On page load — restore preselected values
+            const preselectedClient = clientSelect.value;
+            const preselectedSubscriber = subscriberSelect.dataset.selected;
+            if (preselectedClient) {
+                loadSubscribers(preselectedClient, preselectedSubscriber);
+            }
         });
+    </script>
 
-        // 🔁 On page load: restore if model has values
-        const preselectedClient = clientSelect.value;
-        const preselectedSubscriber = subscriberSelect.dataset.selected;
-
-        if (preselectedClient) {
-            loadSubscribers(preselectedClient, preselectedSubscriber);
-        }
-    });
-</script>
-
-   
-    <!--datatable js-->
+    <!-- DataTables & App JS -->
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
 
     <script src="~/assets/js/pages/datatables.init.js"></script>
-
-    <!-- App js -->
     <script src="~/assets/js/app.js"></script>
-    }
+}
