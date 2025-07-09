@@ -42,11 +42,11 @@ namespace eSim.Selfcare.Controllers
                     Iso3 = x.Iso3
                 }).ToList();
             }
-          //  HttpContext.Session.SetString("ProfileImage", string.IsNullOrWhiteSpace(result.Data.ProfileImage)
-          //? Url.Content("~/assets/images/users/avatar-1.jpg")
-          //: "https://localhost:7264" + result.Data.ProfileImage);
+            HttpContext.Session.SetString("ProfileImage",
+    string.IsNullOrWhiteSpace(result.Data.ProfileImage)
+        ? Url.Content("~/assets/images/users/avatar-1.jpg")
+        : "https://localhost:7264" + result.Data.ProfileImage);
 
-          //  HttpContext.Session.SetString("FullName", result.Data.FirstName + " " + result.Data.LastName);
 
 
 
@@ -97,10 +97,13 @@ namespace eSim.Selfcare.Controllers
                 return RedirectToAction(nameof(Detail)); 
             }
 
-            var result = await _Subscriber.UploadProfileImage(file); 
+            var result = await _Subscriber.UploadProfileImage(file);
 
             if (result.Success)
+            {
                 TempData["Success"] = "Image uploaded successfully!";
+              
+            }
             else
                 TempData["Error"] = result.Message;
 

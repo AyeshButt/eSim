@@ -1,4 +1,5 @@
 ﻿using eSim.EF.Context;
+using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.DTOs.Ticket;
 using eSim.Infrastructure.Interfaces.Admin.Ticket;
 using Microsoft.EntityFrameworkCore;
@@ -52,6 +53,61 @@ namespace eSim.Implementations.Services.Ticket
             }).AsQueryable();
 
             return await Task.FromResult(statusList);
+        }
+
+        public async Task<Result<TicketDTO>> GetTicketDetailAsync(string trn)
+        {
+            var result = new Result<TicketDTO>();
+
+            try
+            {
+                var ticket = await _db.Ticket.FirstOrDefaultAsync(t => t.TRN == trn);
+
+                if (ticket == null)
+                {
+                    result.Success = false;
+                    result.Message = "Ticket not found.";
+                    return result;
+                }
+
+                var comments = await _db.TicketActivities
+                    .Where(a => a.TicketId == ticket.Id.ToString())
+                    .OrderByDescending(a => a.ActivityAt)
+                    .Select(a => new TicketActivityDTO
+                    {
+                        Comment = a.Comment,
+                        ActivityBy = a.ActivityBy,
+                        ActivityAt = a.ActivityAt
+                    }).ToListAsync();
+
+                var attachments = await _db.TicketAttachments
+                    .Where(att => att.TicketId == ticket.Id.ToString())
+                    .Select(att => att.Attachment)
+                    .ToListAsync();
+
+                result.Data = new TicketDTO
+                {
+                    Id = ticket.Id,
+                    TRN = ticket.TRN,
+                    Subject = ticket.Subject,
+                    Description = ticket.Description,
+                    TicketType = ticket.TicketType,
+                    CreatedAt = ticket.CreatedAt,
+                    Status = ticket.Status,
+                    Comments = comments,
+                    Attachments = attachments
+                };
+
+                result.Success = true;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Something went wrong: " + ex.Message;
+            }
+
+            return result;
+        
         }
 
         public async Task<IQueryable<TicketTypeDTO>> GetTypeListAsync()

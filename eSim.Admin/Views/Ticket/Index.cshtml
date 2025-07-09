@@ -99,11 +99,14 @@
                                             <td><span class="badge bg-success">@item.StatusName</span></td>
 
                                             <td>
-                                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="ticket details" class="mx-2" asp-action="TicketDetails" asp-controller="Ticket" asp-route-id="@item.Id"><i class="ri-eye-fill"></i></a>
+                                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="ticket details" class="mx-2" asp-action="Detail" asp-controller="Ticket" asp-route-trn="@item.TRN">
+                                                    <i class="ri-eye-fill"></i>
+                                                </a>
                                             </td>
 
-                                        </tr>
 
+                                        </tr>
+                                            
                                     }
                                 </tbody>
                             </table>
