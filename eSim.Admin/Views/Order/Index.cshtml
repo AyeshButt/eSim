@@ -1,110 +1,110 @@
-﻿@model eSim.Infrastructure.DTOs.Middleware.Order.ListOrderResponse
+﻿@model eSim.Infrastructure.DTOs.Admin.order.OrderViewModel
 
 @{
-    ViewData["Title"] = "Admin Order List";
+	ViewData["Title"] = "Admin Order List";
 }
 
 <div class="row">
-    <div class="col-lg-12">
-        <form asp-action="Index" asp-controller="Order" method="get">
-            <div class="card">
-                <div class="card-header align-items-center d-flex">
-                    <h4 class="card-title mb-0 flex-grow-1">Filter</h4>
-                </div>
-                <div class="card-body">
-                    <div class="live-preview">
-                        <div class="row gy-4">
-                            <div class="col-xxl-3 col-md-6">
-                                <label for="From">From Date</label>
-                                <input type="date" name="From" class="form-control" />
-                            </div>
-                            <div class="col-xxl-3 col-md-6">
-                                <label for="To">To Date</label>
-                                <input type="date" name="To" class="form-control" />
-                            </div>
-                            <div class="col-xxl-3 col-md-6">
-                                <label for="Page">Page</label>
-                                <input type="number" name="Page" value="1" min="1" class="form-control" />
-                            </div>
-                            <div class="col-xxl-3 col-md-6">
-                                <label for="Limit">Limit</label>
-                                <input type="number" name="Limit" value="10" min="1" class="form-control" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <button type="submit" class="btn rounded-pill btn-secondary">Search</button>
-                    <button type="button" class="btn rounded-pill btn-danger" onclick="window.location.href='@Url.Action("Index", "Order")'">Reset</button>
-                </div>
-            </div>
-        </form>
-    </div>
+	<div class="col-lg-12">
+		<form asp-action="Index" asp-controller="Order" method="get">
+			<div class="card">
+				<div class="card-header align-items-center d-flex">
+					<h4 class="card-title mb-0 flex-grow-1">Filter</h4>
+				</div>
+				<div class="card-body">
+					<div class="live-preview">
+						<div class="row gy-4">
+							<div class="col-xxl-3 col-md-6">
+								
+								<div>
+									<label asp-for="@Model.Date">Date Range</label>
+									<input type="text" asp-for="@Model.Date" class="form-control" data-provider="flatpickr"
+										   data-date-format="d M, Y" data-range-date="true" placeholder="Select the date range">
+								</div>
+							</div>
+							<div class="col-xxl-3 col-md-6">
+								<label asp-for="OrderReference">Order Reference</label>
+								<input asp-for="OrderReference" class="form-control" placeholder="Enter Order Reference" />
+							</div>
+						@* 	<div class="col-xxl-3 col-md-6">
+								<label for="Page">Page</label>
+								<input type="number" name="Page" value="1" min="1" class="form-control" />
+							</div> *@
+							@* <div class="col-xxl-3 col-md-6">
+								<label for="Limit">Limit</label>
+								<input type="number" name="Limit" value="10" min="1" class="form-control" />
+							</div> *@
+						</div>
+					</div>
+				</div>
+				<div class="card-footer">
+					<button type="submit" class="btn rounded-pill btn-secondary">Search</button>
+					<button type="button" class="btn rounded-pill btn-danger" onclick="window.location.href='@Url.Action("Index", "Order")'">Reset</button>
+				</div>
+			</div>
+		</form>
+	</div>
 </div>
 
 @if (Model.Orders.Any())
 {
-        <div class="row mt-4">
-            <div class="col-xl-12">
-                <div class="card">
-                    <div class="card-header align-items-center d-flex">
-                        <h4 class="card-title mb-0 flex-grow-1">Order List</h4>
-                    </div>
+	<div class="row mt-4">
+		<div class="col-xl-12">
+			<div class="card">
+				<div class="card-header align-items-center d-flex">
+					<h4 class="card-title mb-0 flex-grow-1">Order List</h4>
+				</div>
 
-                    <div class="card-body">
-                        <div class="live-preview">
-                            <div class="table-responsive">
-                                <table class="table table-striped table-nowrap align-middle mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>Order Ref</th>
-                                            <th>Total</th>
-                                            <th>Currency</th>
-                                            <th>Status</th>
-                                            <th>Status Msg</th>
-                                            <th>Created Date</th>
-                                            <th>Assigned</th>
-                                            <th>Source IP</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    @foreach (var order in Model.Orders)
-                                    {
-                                                <tr>
-                                                    <td>@order.OrderReference</td>
-                                                    <td>@order.Total</td>
-                                                    <td>@order.Currency</td>
-                                                    <td>@order.Status</td>
-                                                    <td>@order.StatusMessage</td>
-                                                    <td>@order.CreatedDate.ToString("yyyy-MM-dd HH:mm")</td>
-                                                    <td>@(order.Assigned == true ? "Yes" : "No")</td>
-                                                    <td>@order.SourceIP</td>
-                                            <td>
-                                                <a asp-action="Detail"asp-controller="Order"asp-route-orderReferenceId="@order.OrderReference"data-bs-toggle="tooltip"data-bs-placement="top"title="Order Details"
-                                                   class="mx-2">
-                                                    <i class="ri-eye-fill"></i>
-                                                </a>
-                                            </td>
+				<div class="card-body">
+					<div class="live-preview">
+						<div class="table-responsive">
+							<table class="table table-striped table-nowrap align-middle mb-0">
+								<thead>
+									<tr>
+										<th>Status</th>
+										<th>Total</th>
+										<th>Currency</th>
+									
+										<th>Created Date</th>
+										<th>Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var order in Model.Orders)
+									{
+										<tr>
+											<td>@order.Status</td>
+											<td>@order.Total</td>
+											<td>@order.Currency</td>
+										
+											<td>@order.CreatedDate.ToString("yyyy-MM-dd HH:mm")</td>
 
-                                                </tr>
-                                    }
-                                    </tbody>
-                                </table>
-                            </div>
-                            <p class="mt-3">
-                                Page Size: @Model.PageSize | Total Orders: @Model.Rows | Pages: @Model.PageCount
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+									
+											<td>
+												<a asp-action="Detail" asp-controller="Order" asp-route-orderReferenceId="@order.OrderReference" data-bs-toggle="tooltip" data-bs-placement="top" title="Order Details"
+												   class="mx-2">
+													<i class="ri-eye-fill"></i>
+												</a>
+											</td>
+
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+						<p class="mt-3">
+							Page Size: @Model.PageSize | Total Orders: @Model.Rows | Pages: @Model.PageCount
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 }
 else
 {
-        <div class="alert alert-danger text-center alert-dismissible fade show mt-4" role="alert">
-            <strong>No orders available</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+	<div class="alert alert-danger text-center alert-dismissible fade show mt-4" role="alert">
+		<strong>No orders available</strong>
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
 }
