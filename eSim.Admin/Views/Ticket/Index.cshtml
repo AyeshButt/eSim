@@ -1,65 +1,52 @@
 ﻿@model eSim.Infrastructure.DTOs.Ticket.TicketViewModel
 
 @{
-    ViewData["Title"] = "Ticket List";
+    ViewData["Title"] = "Manage Tickets";
 }
+<h4>Manage Tickets</h4>
+<hr />
 
-<div class="row">
-    <div class="col-lg-12">
-        <form asp-action="Index" asp-controller="Ticket" method="get">
-            <div class="card">
-                <div class="card-header align-items-center d-flex">
-                    <h4 class="card-title mb-0 flex-grow-1">Filter</h4>
-                </div><!-- end card header -->
-                <div class="card-body">
-                    <div class="live-preview">
-                        <div class="row gy-4">
-                            <div class="col-xxl-3 col-md-6">
-                                <div>
-                                    <label asp-for="@Model.TRN">Ticket Reference Number</label>
-                                    <input asp-for="@Model.TRN" type="text" class="form-control" placeholder="Enter TRN" />
-                                </div>
-                            </div>
-                            <div class="col-xxl-3 col-md-6">
-                                <div>
-                                    <label asp-for="@Model.Date">Date Range</label>
-                                    <input type="text" asp-for="@Model.Date" class="form-control" data-provider="flatpickr"
-                                           data-date-format="d M, Y" data-range-date="true" placeholder="Select the date range">
-                                </div>
-                            </div>
-                            <div class="col-xxl-3 col-md-6">
-                                <div>
-                                    <label asp-for="@Model.Status">Status</label>
-                                    <select asp-for="@Model.Status" asp-items="@ViewBag.Status" class="form-control">
-                                        <option value="">---Select---</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-xxl-3 col-md-6">
-                                <div>
-                                    <label asp-for="@Model.Type">Type</label>
-                                    <select asp-for="@Model.Type" asp-items="@ViewBag.TicketType" class="form-control">
-                                        <option value="">---Select---</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <!--end col-->
-                            <!--end col-->
-                        </div>
-                        <!--end row-->
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <button type="submit" class="btn rounded-pill btn-secondary waves-effect waves-light">Search</button>
-  
-                    <button type="button" class="btn rounded-pill btn-danger waves-effect waves-light" onclick="window.location.href='@Url.Action("Index", "Ticket")'">Reset</button>
-                </div>
+
+<div class="row my-3">
+
+    <form asp-action="Index" asp-controller="Ticket" method="get" class="d-flex align-items-end">
+        <div class="col-2 ms mx-2">
+            <div class="mt-3">
+
+                <label asp-for="@Model.TRN" class="form-label">Ticket Reference Number</label>
+                <input asp-for="@Model.TRN" type="text" class="form-control rounded-pill" placeholder="Enter TRN" />
+
             </div>
+        </div>
+        <div class="col-2 ms mx-2">
+            <div class="mt-3">
 
-        </form>
-    </div>
+                <label asp-for="Date" class="form-label">Date</label>
+                <input asp-for="Date" type="text" id="date" class="form-control rounded-pill" placeholder="Select Date"
+                       data-provider="flatpickr" data-date-format="d M, Y" data-range-date="true">
+            </div>
+        </div>
 
-    <!--end col-->
+        <div class="col-2">
+            <label asp-for="@Model.Status" class="form-label">Status</label>
+            <select asp-for="@Model.Status" asp-items="@ViewBag.Status" class="form-control rounded-pill">
+                <option value="">---Select---</option>
+            </select>
+        </div>
+        <div class="col-2">
+            <label asp-for="@Model.Type" class="form-label">Type</label>
+            <select asp-for="@Model.Type" asp-items="@ViewBag.TicketType" class="form-control rounded-pill">
+                <option value="">---Select---</option>
+            </select>
+        </div>
+
+        <div class="col-auto ms-3">
+            <label class="form-label d-block invisible">Search</label>
+            <button type="submit" class="btn rounded-pill btn-secondary waves-effect waves-light">Search</button>
+            <a asp-controller="Ticket" asp-action="Index" id="resetBtn" class="btn rounded-pill btn-danger waves-effect waves-light">Reset</a>
+
+        </div>
+    </form>
 </div>
 
 
@@ -69,7 +56,7 @@
         <div class="col-xl-12">
             <div class="card">
                 <div class="card-header align-items-center d-flex">
-                    <h4 class="card-title mb-0 flex-grow-1">Ticket List</h4>
+                    <h4 class="card-title mb-0 flex-grow-1">Tickets</h4>
                 </div><!-- end card header -->
 
                 <div class="card-body">
@@ -106,7 +93,7 @@
 
 
                                         </tr>
-                                            
+
                                     }
                                 </tbody>
                             </table>

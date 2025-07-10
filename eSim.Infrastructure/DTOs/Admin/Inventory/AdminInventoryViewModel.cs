@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,9 +11,15 @@ namespace eSim.Infrastructure.DTOs.Admin.Inventory
     {
         public string? Client { get; set; }
         public string? Subscriber { get; set; }
-        public DateTime? From { get; set; }
-        public DateTime? To { get; set; }
+        public string? Date { get; set; }
         public List<AdminInventoryDTO> Inventory { get; set; } = new List<AdminInventoryDTO>();
+    }
+    public class AdminInventoryFilterDTO
+    {
+        public string? Client { get; set; }
+        public string? Subscriber { get; set; }
+        public string? Date { get; set; }
+
     }
     public class AdminInventoryDTO
     {

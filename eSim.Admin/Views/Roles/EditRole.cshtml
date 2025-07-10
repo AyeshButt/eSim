@@ -6,6 +6,11 @@
     ViewBag.Title = "Edit Role";
     var claims = ViewBag.Claims as List<ManageRoleClaimDTO>;
 }
+<div class="row my-3">
+    <a asp-controller="Roles" asp-action="ManageRoles">
+        <i class=" ri-arrow-left-line fs-3"></i>
+    </a>
+</div>
 
 <h4>Edit Role</h4>
 <hr />
@@ -55,8 +60,7 @@
 
     <div class="card mt-3">
         <div class="card-footer">
-            <input type="submit" value="Update" class="btn btn-primary" />
-            <a class="btn btn-danger" asp-action="ManageRoles">Back</a>
+            <input type="submit" value="Update" class=" btn rounded-pill btn-secondary waves-effect waves-light" />
         </div>
 
     </div>
