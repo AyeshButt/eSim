@@ -1,4 +1,5 @@
-﻿using eSim.Infrastructure.DTOs.Ticket;
+﻿using eSim.Infrastructure.DTOs.Global;
+using eSim.Infrastructure.DTOs.Ticket;
 using eSim.Infrastructure.Interfaces.Admin.Ticket;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -64,6 +65,25 @@ namespace eSim.Admin.Controllers
             var type = await _ticket.GetTypeListAsync();
             
             ViewBag.TicketType = new SelectList(type.ToList(), "Id", "Type");
+        }
+        [HttpGet]
+        public async Task<IActionResult> Detail(string trn)
+        {
+            if (string.IsNullOrEmpty(trn))
+            {
+                ViewBag.Error = "Invalid TRN.";
+                return View(new TicketDTO());
+            }
+
+            var result = await _ticket.GetTicketDetailAsync(trn);
+
+            if (!result.Success || result.Data == null)
+            {
+                ViewBag.Error = result.Message ?? "Ticket not found.";
+                return View(new TicketDTO());
+            }
+
+            return View(result.Data);
         }
     }
 }

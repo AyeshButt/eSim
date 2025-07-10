@@ -6,6 +6,11 @@
     ViewBag.Title = "Edit Role";
     var claims = ViewBag.Claims as List<ManageRoleClaimDTO>;
 }
+<div class="row my-3">
+    <a asp-controller="Roles" asp-action="ManageRoles">
+        <i class=" ri-arrow-left-line fs-3"></i>
+    </a>
+</div>
 
 <h4>Edit Role</h4>
 <hr />
@@ -37,8 +42,9 @@
                 {
                     <input asp-for="Claims[sideMenu][menu].Value" type="hidden" />
                     <input asp-for="Claims[sideMenu][menu].Type" type="hidden" />
-                    @if (User.HasClaim($"{Model.Claims[sideMenu][menu].Type}", $"{Model.Claims[sideMenu][menu].Value}")) 
-                    { 
+                    <!--comment below if check while assigning claims to a role (donot comment the inner input tag)-->
+                    @if (User.HasClaim($"{Model.Claims[sideMenu][menu].Type}", $"{Model.Claims[sideMenu][menu].Value}"))
+                    {
 
                         <input asp-for="Claims[sideMenu][menu].isSelected" type="checkbox" /> <span>@Model.Claims[sideMenu][menu].Value</span>
 
@@ -55,8 +61,7 @@
 
     <div class="card mt-3">
         <div class="card-footer">
-            <input type="submit" value="Update" class="btn btn-primary" />
-            <a class="btn btn-danger" asp-action="ManageRoles">Back</a>
+            <input type="submit" value="Update" class=" btn rounded-pill btn-secondary waves-effect waves-light" />
         </div>
 
     </div>

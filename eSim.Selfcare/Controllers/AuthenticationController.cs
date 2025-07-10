@@ -7,6 +7,7 @@ using eSim.Infrastructure.DTOs.Selfcare.Authentication;
 using eSim.Infrastructure.DTOs.Selfcare.Subscriber;
 using eSim.Infrastructure.Interfaces.Selfcare.Authentication;
 using eSim.Infrastructure.Interfaces.Selfcare.Refrence;
+using eSim.Infrastructure.Interfaces.Selfcare.Subscriber;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -19,12 +20,14 @@ namespace eSim.Selfcare.Controllers
         private readonly Infrastructure.Interfaces.Selfcare.Authentication.IAuthenticationService _auth;
         private readonly IHttpContextAccessor _httpContext;
         private readonly ICountyService _countryService;
+        private readonly ISubscriber _Subscriber;
 
-        public AuthenticationController(Infrastructure.Interfaces.Selfcare.Authentication.IAuthenticationService auth, IHttpContextAccessor httpContext, ICountyService countryService)
+        public AuthenticationController(Infrastructure.Interfaces.Selfcare.Authentication.IAuthenticationService auth, IHttpContextAccessor httpContext, ICountyService countryService, ISubscriber Subscriber)
         {
             _auth = auth;
             _httpContext = httpContext;
             _countryService = countryService;
+            _Subscriber = Subscriber;
         }
 
         public new HttpContext HttpContext => _httpContext.HttpContext!;
@@ -53,10 +56,21 @@ namespace eSim.Selfcare.Controllers
             if (!string.IsNullOrEmpty(token))
             {
                 HttpContext.Session.SetString("Token", token);
+                var subscriber = await _Subscriber.SubscriberDetailAsync(); // <-- Inject this service
 
-                //creating claim 
+                if (subscriber.Success && subscriber.Data != null)
+                {
+                    var profile = subscriber.Data;
 
-                var claims = new List<Claim>
+                    // 🟢 Set Name and Image in Session
+                    HttpContext.Session.SetString("ProfileImage",
+                        string.IsNullOrWhiteSpace(profile.ProfileImage)
+                            ? Url.Content("~/assets/images/users/avatar-1.jpg")
+                            : "https://localhost:7264" + profile.ProfileImage);
+
+                    //creating claim 
+                }
+                    var claims = new List<Claim>
                 {
                     new Claim("Token", token)
                 };

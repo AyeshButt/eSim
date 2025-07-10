@@ -11,7 +11,7 @@
 
 @if (User.HasClaim("SideMenus", "create"))
 {
-    <a class="btn btn-primary float-end my-2" asp-action="Create">Add Side Menu</a>
+    <a class="btn rounded-pill btn-secondary waves-effect waves-light float-end my-2" asp-action="Create">Add Side Menu</a>
 
 }
 
@@ -25,7 +25,6 @@
         <h4>@list.Where(u => u.Id == item.Key).Select(u => u.Title).FirstOrDefault()</h4>
 
     </div>
-
 
     <table class="table table-bordered">
         <thead>
@@ -47,17 +46,17 @@
                     <td>
                         @if (User.HasClaim("SideMenus", "edit"))
                         {
-                            <a asp-action="Edit" class="mx-1" asp-route-id="@type.Id">Edit</a>
+                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="edit" asp-action="Edit" class="mx-1" asp-route-id="@type.Id"><i class="ri-pencil-fill fs-5"></i></a>
 
                         }
                         @if (User.HasClaim("SideMenus", "details"))
                         {
 
-                            <a asp-action="Details" class="mx-1" asp-route-id="@type.Id">Details</a>
+                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="details" asp-action="Details" class="mx-1" asp-route-id="@type.Id"><i class="ri-eye-fill fs-5"></i></a>
                         }
                         @if (User.HasClaim("SideMenus", "delete"))
                         {
-                            <a asp-action="Delete" class="mx-1" asp-route-id="@type.Id">Delete</a>
+                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="delete" asp-action="Delete" class="mx-1" asp-route-id="@type.Id"><i class="ri-delete-bin-fill fs-5"></i></a>
 
                         }
                     </td>
