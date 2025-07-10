@@ -1,12 +1,15 @@
 ﻿
 using eSim.Common.Enums;
 using eSim.EF.Entities;
+using eSim.Infrastructure.DTOs.Admin.Inventory;
+using eSim.Infrastructure.DTOs.Client;
 using eSim.Infrastructure.DTOs.Subscribers;
 using eSim.Infrastructure.Interfaces.Admin.Client;
 using eSim.Infrastructure.Interfaces.Middleware;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
 
 namespace eSim.Admin.Controllers
@@ -24,19 +27,100 @@ namespace eSim.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string ClientId)
+        public async Task<IActionResult> Index(SubscribersResponseViewModel input)
         {
-            IQueryable<SubscribersResponseViewModel> subscriberList = null!;
+            SubscribersResponseViewModel model = new();
 
-            if (ClientId == null)
+            var clients = await _client.GetAllClientsAsync();
+            var subScribers = await _subscriber.GetClient_SubscribersListAsync();
+
+            if (subScribers is null || clients is null)
+                return View(model);
+
+            model.SubscribersResponse = FilterSubscribers(subScribers, input).ToList();
+
+
+            ViewBag.Clients = clients.Select(u => new ClientDTO() { Name = u.Name, Id = u.Id }).ToList();
+
+            return View(model);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetClientSubscribers(string clientId)
+        {
+            var subscribers = await _subscriber.GetClient_SubscribersListByID(clientId);
+
+            if (subscribers is null)
+                return Json(new List<SelectListItem>());
+
+            var model = subscribers.Select(u => new SelectListItem() { Text = u.Email, Value = u.Id.ToString() }).ToList();
+
+            return Json(model);
+        }
+
+        private IQueryable<SubscribersResponseDTO> FilterSubscribers(IQueryable<SubscribersResponseDTO> inventory, SubscribersResponseViewModel input)
+        {
+            if (input == null) return inventory;
+
+            // Date Range Filter
+            if (!string.IsNullOrWhiteSpace(input.DateRange))
             {
-                subscriberList = await _subscriber.GetClient_SubscribersListAsync(null);
+                var dates = input.DateRange.Split(new[] { " to " }, StringSplitOptions.RemoveEmptyEntries);
+
+                if (dates.Length == 2 &&
+                    DateTime.TryParse(dates[0], out var fromDate) &&
+                    DateTime.TryParse(dates[1], out var toDate))
+                {
+                    inventory = inventory.Where(u => u.CreatedAt >= fromDate && u.CreatedAt <= toDate);
+                }
             }
-            else
+
+            // Client Filter
+            if (!string.IsNullOrWhiteSpace(input.Client) && Guid.TryParse(input.Client, out var clientId))
             {
-                subscriberList = await _subscriber.GetClient_SubscribersListAsync(ClientId);
+                inventory = inventory.Where(u => u.ClientId == clientId);
             }
-                return View(subscriberList.ToList());
+
+            // Subscriber Filter
+            if (!string.IsNullOrWhiteSpace(input.Subscriber) && Guid.TryParse(input.Subscriber, out var subscriberId))
+            {
+                inventory = inventory.Where(u => u.Id == subscriberId);
+            }
+
+            return inventory; // Don't forget to return the filtered query
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Detail(string Id)
+        {
+            Guid.TryParse(Id, out Guid GuidID);
+            var request = await _subscriber.GetSubscriberDetailAsync(GuidID);
+            var subscriberDetail = request.Data;
+            return View(subscriberDetail);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> TabPartialViews(string tab, string iccid)
+        {
+            switch (tab)
+            {
+                case "order":
+
+                    Guid.TryParse(iccid, out Guid GuidID);
+                    var request = await _subscriber.GetSubscriberDetailAsync(GuidID);
+                    var subscriberDetail = request.Data;
+                    return PartialView("_OrdersPartialView", subscriberDetail);
+
+                case "inventory":
+                    return PartialView("_OrdersPartialView");
+                
+                case "esim":
+                    return PartialView("_OrdersPartialView");
+                
+                default:
+                    return PartialView("_OrdersPartialView");
+            }
         }
 
         //[HttpGet]

@@ -3,10 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using eSim.Infrastructure.DTOs.Admin.Inventory;
 
 namespace eSim.Infrastructure.DTOs.Subscribers
 {
-    public class SubscribersResponseViewModel
+   public class SubscribersResponseViewModel
+    {
+        public string? Client { get; set; }
+        public string? Subscriber { get; set; }
+        public string? DateRange {  get; set; }
+        public List<SubscribersResponseDTO> SubscribersResponse { get; set; } = new List<SubscribersResponseDTO>();
+
+    }
+
+    public class SubscribersResponseDTO
     {
         public Guid Id { get; set; }
         public string FirstName { get; set; } = null!;
