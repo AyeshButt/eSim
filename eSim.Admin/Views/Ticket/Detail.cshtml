@@ -2,146 +2,180 @@
 
 @{
     ViewBag.Title = "Ticket Details";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = null;
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4">Ticket Details</h2>
 
-    @if (ViewBag.Error != null)
-    {
-        <div class="alert alert-danger text-center alert-dismissible fade show" role="alert">
-            <strong>@ViewBag.Error</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
-    else if (Model != null)
-    {
-       
-        <div class="card mb-4">
-            <div class="card-header">
-                <strong>Ticket Info</strong>
-            </div>
-            <div class="card-body">
-                <table class="table table-bordered">
-                    <tr>
-                        <th>TRN</th>
-                        <td>@Model.TRN</td>
-                    </tr>
-                    <tr>
-                        <th>Subject</th>
-                        <td>@Model.Subject</td>
-                    </tr>
-                    <tr>
-                        <th>Type</th>
-                        <td>@(Model.TicketType == 1 ? "Bundle" : "Payment")</td>
-                    </tr>
-                    <tr>
-                        <th>Status</th>
-                        <td>@(Model.Status == 0 ? "Completed" : "Working On")</td>
-                    </tr>
-                    <tr>
-                        <th>Created At</th>
-                        <td>@Model.CreatedAt.ToString("dd MMM yyyy - hh:mm tt")</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-           <div class="col-xxl-9">
-                            <div class="card">
-        <div class="card mb-4">
-            <div class="card-header">
-                <strong>Description</strong>
-            </div>
-            <div class="card-body">
-                <p class="text-muted">@Model.Description</p>
-            </div>
-        </div>
+<!doctype html>
+<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable">
+<head>
+    @Html.Partial("~/Views/Shared/_title_meta.cshtml")
+    @Html.Partial("~/Views/Shared/_head_css.cshtml")
+</head>
+<body>
+    <div id="layout-wrapper">
+        @Html.Partial("~/Views/Shared/_menu.cshtml")
 
-        <div class="card mb-4">
-            <div class="card-header">
-                <strong>Comments</strong>
-            </div>
-            <div class="card-body">
-                @if (Model.Comments != null && Model.Comments.Any())
-                {
-                    foreach (var comment in Model.Comments)
-                    {
-                        <div class="border p-3 mb-3 rounded">
-                            <strong>@comment.ActivityBy</strong>
-                            <span class="text-muted small">(@comment.ActivityAt.ToString("dd MMM yyyy - hh:mm tt"))</span>
-                            <p class="mt-2">@comment.Comment</p>
-                        </div>
-                    }
-                }
-                else
-                {
-                    <p class="text-muted">No comments available for this ticket.</p>
-                }
-            </div>
-        </div>
-            </div><!--end card-->
-        </div>
-
-        <!--end col-->
-        @* ===== Attachments Section Starts Here ===== *@
-        @if (Model.Attachments != null && Model.Attachments.Any())
-        {
-            <div class="card mb-4">
-                <div class="card-header">
-                    <strong>Attachments</strong>
+        <div class="main-content">
+            <div class="page-content">
+                <div class="row my-2">
+                    <a asp-controller="Ticket" asp-action="Detail">
+                        <i class="ri-arrow-left-line fs-3"></i>
+                    </a>
                 </div>
-                <div class="card-body">
-                    @foreach (var fileUrl in Model.Attachments)
-                    {
-                        var fileName = System.IO.Path.GetFileName(fileUrl);
-                        var fileExt = System.IO.Path.GetExtension(fileUrl).ToLower();
-                        var baseUrl = "https://localhost:7264/uploads/"; 
-                        var encodedFileName = Uri.EscapeDataString(fileName);
-                        var fullUrl = $"{baseUrl}{encodedFileName}";
+                <div class="container-fluid">
 
-                        var originalFileName = fileName.Contains("_") ? fileName.Split('_', 2)[1] : fileName;
-
-                        string icon = fileExt switch
-                        {
-                            ".pdf" => "ri-file-pdf-line text-danger",
-                            ".doc" or ".docx" => "ri-file-word-2-line text-primary",
-                            ".ppt" or ".pptx" => "ri-file-ppt-2-line text-warning",
-                            ".xls" or ".xlsx" => "ri-file-excel-2-line text-success",
-                            ".zip" or ".rar" => "ri-file-zip-line text-secondary",
-                            _ => "ri-attachment-line text-muted"
-                        };
-
-                        <div class="d-flex align-items-center border border-dashed p-2 rounded mt-2">
-                            <div class="flex-shrink-0 avatar-sm">
-                                <div class="avatar-title bg-light rounded">
-                                    <i class="@icon fs-20"></i>
+                    <!-- Header Info -->
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card mt-n4 mx-n4 mb-n5">
+                                <div class="bg-warning-subtle">
+                                    <div class="card-body pb-4 mb-5">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-auto">
+                                                <div class="avatar-md">
+                                                   <div class="avatar-title bg-white rounded-circle">
+                                                        <img src="~/assets/images/companies/img-4.png" class="avatar-sm" />
+                                                    </div> 
+                                                </div>
+                                            </div>
+                                            <div class="col-md">
+                                                <h4 class="fw-semibold">@Model.Subject</h4>
+                                                <div class="hstack gap-3 flex-wrap">
+                                                    <div class="text-muted">
+                                                        <i class="ri-building-line me-1"></i>
+                                                        @(Model.TicketType == 1 ? "Bundle" : "Payment")
+                                                    </div>
+                                                    <div class="vr"></div>
+                                                    <div class="text-muted">
+                                                        Created At: <span class="fw-medium">@Model.CreatedAt.ToString("dd MMM yyyy - hh:mm tt")</span>
+                                                    </div>
+                                                    <div class="vr"></div>
+                                                    <div class="badge bg-info fs-12">
+                                                        @(Model.Status == 0 ? "Completed" : "Working On")
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="flex-grow-1 ms-3">
-                                <h6 class="mb-1">
-                                    <a href="@fullUrl" target="_blank">@originalFileName</a>
-                                </h6>
-                            </div>
-                            <div class="hstack gap-3 fs-16">
-                                <a href="@fullUrl" class="text-muted" download="@originalFileName">
-                                    <i class="ri-download-2-line"></i>
-                                </a>
+                        </div>
+                    </div>
+
+                    <!-- Main Content Row -->
+                    <div class="row">
+                        <!-- Left Content -->
+                        <div class="col-xxl-9">
+                            <div class="card">
+                                <div class="card-body p-4">
+                                    <h6 class="fw-semibold text-uppercase mb-3">Description</h6>
+                                    <p class="text-muted">@Model.Description</p>
+                                </div>
+
+                                <!-- Comments -->
+                                <div class="card-body p-4">
+                                    <h5 class="card-title mb-4">Comments</h5>
+                                    <div data-simplebar style="height: 300px;" class="px-3 mx-n3">
+                                        @if (Model.Comments != null && Model.Comments.Any())
+                                        {
+                                            foreach (var comment in Model.Comments)
+                                            {
+                                                <div class="d-flex mb-4">
+                                                    <div class="flex-shrink-0">
+                                                        <img src="~/assets/images/users/avatar-8.jpg" class="avatar-xs rounded-circle" />
+                                                    </div>
+                                                    <div class="flex-grow-1 ms-3">
+                                                        <h5 class="fs-13">
+                                                            @comment.ActivityBy
+                                                            <small class="text-muted">@comment.ActivityAt.ToString("dd MMM yyyy - hh:mm tt")</small>
+                                                        </h5>
+                                                        <p class="text-muted">@comment.Comment</p>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <p class="text-muted">No comments available.</p>
+                                        }
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    }
+
+                        <!-- Right Sidebar -->
+                        <div class="col-xxl-3">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Ticket Details</h5>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-borderless align-middle">
+                                        <tbody>
+                                            <tr><td class="fw-medium">TRN</td><td>@Model.TRN</td></tr>
+                                            <tr><td class="fw-medium">Type</td><td>@(Model.TicketType == 1 ? "Bundle" : "Payment")</td></tr>
+                                            <tr><td class="fw-medium">Status</td><td>@(Model.Status == 0 ? "Completed" : "Working On")</td></tr>
+                                            <tr><td class="fw-medium">Created</td><td>@Model.CreatedAt.ToString("dd MMM yyyy - hh:mm tt")</td></tr>
+                                            <tr><td class="fw-medium">Priority</td><td><span class="badge bg-danger">High</span></td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Attachments -->
+                            @if (Model.Attachments != null && Model.Attachments.Any())
+                            {
+                                <div class="card">
+                                    <div class="card-header"><strong>Attachments</strong></div>
+                                    <div class="card-body">
+                                        @foreach (var fileUrl in Model.Attachments)
+                                        {
+                                            var fileName = System.IO.Path.GetFileName(fileUrl);
+                                            var encodedFileName = Uri.EscapeDataString(fileName);
+                                            var fullUrl = $"https://localhost:7264/uploads/{encodedFileName}";
+                                            var displayName = fileName.Contains("_") ? fileName.Split('_', 2)[1] : fileName;
+                                            var ext = System.IO.Path.GetExtension(fileUrl).ToLower();
+                                            var icon = ext switch
+                                            {
+                                                ".pdf" => "ri-file-pdf-line text-danger",
+                                                ".doc" or ".docx" => "ri-file-word-2-line text-primary",
+                                                ".xls" or ".xlsx" => "ri-file-excel-2-line text-success",
+                                                ".ppt" or ".pptx" => "ri-file-ppt-2-line text-warning",
+                                                ".zip" or ".rar" => "ri-file-zip-line text-secondary",
+                                                _ => "ri-attachment-line text-muted"
+                                            };
+
+                                            <div class="d-flex align-items-center border border-dashed p-2 rounded mt-2">
+                                                <div class="flex-shrink-0 avatar-sm">
+                                                    <div class="avatar-title bg-light rounded">
+                                                        <i class="@icon fs-20"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="flex-grow-1 ms-3">
+                                                    <h6 class="mb-1"><a href="@fullUrl" target="_blank">@displayName</a></h6>
+                                                </div>
+                                                <div class="hstack gap-3 fs-16">
+                                                    <a href="@fullUrl" class="text-muted" download="@displayName">
+                                                        <i class="ri-download-2-line"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
                 </div>
             </div>
-            }
-        
-        @* ===== Attachments Section Ends Here ===== *@
-    }
-    else
-    {
-        <div class="alert alert-warning text-center">
-            No data available.
+            @Html.Partial("~/Views/Shared/_footer.cshtml")
         </div>
-    }
+    </div>
 
-    <a asp-action="Index" asp-controller="Ticket" class="btn btn-secondary">Back to List</a>
-</div>
+    @Html.Partial("~/Views/Shared/_customizer.cshtml")
+    @Html.Partial("~/Views/Shared/_vendor_scripts.cshtml")
+    <script src="~/assets/js/app.js"></script>
+</body>
+</html>
