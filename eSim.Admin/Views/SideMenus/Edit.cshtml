@@ -3,6 +3,11 @@
 @{
     ViewBag.Title = "Edit SideMenu";
 }
+<div class="row my-3">
+    <a asp-controller="SideMenus" asp-action="Index">
+        <i class=" ri-arrow-left-line fs-3"></i>
+    </a>
+</div>
 
 <!DOCTYPE html>
 
@@ -44,8 +49,8 @@
 
                 <div class="form-group mt-2">
 
-                    <button type="submit" class="btn btn-primary">Update</button>
-                    <a asp-action="Index" class="btn btn-danger">Cancel</a>
+                    <button type="submit" class="btn rounded-pill btn-secondary waves-effect waves-light">Update</button>
+                    <button type="reset" class="btn rounded-pill btn-danger waves-effect waves-light">Reset</button>
                 </div>
         </form>
     </div>

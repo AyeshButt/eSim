@@ -8,7 +8,7 @@
 <hr />
 @if (User.HasClaim("Roles", "create"))
 {
-    <a asp-action="AddRole" class="btn btn-primary float-end mb-2">Add Role</a>
+    <a asp-action="AddRole" class="btn rounded-pill btn-secondary waves-effect waves-light float-end mb-3">Add Role</a>
 }
 
 <table class="table table-bordered table-striped">
@@ -24,7 +24,7 @@
             <td>
                 @if (User.HasClaim("Roles", "edit"))
                 {
-                    <a asp-action="EditRole" asp-route-id="@user.Id">Edit</a>
+                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="edit" asp-action="EditRole" asp-route-id="@user.Id"><i class="ri-pencil-fill fs-5"></i></a>
 
                 }
 

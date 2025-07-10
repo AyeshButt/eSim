@@ -1,7 +1,7 @@
 ﻿@model List<eSim.Infrastructure.DTOs.Client.ClientDTO>
 
 @{
-    ViewData["Title"] = "Client List";
+    ViewData["Title"] = "Manage Clients";
 
     var notifications = new List<(string Key, string Type)>
     {
@@ -14,6 +14,8 @@
         ("EmailReceived", "success")
     };
 }
+<h4>Manage Clients</h4>
+<hr />
 
 @if (User.HasClaim("Clients", "create"))
 {
@@ -31,7 +33,7 @@
         <div class="col-xl-12">
             <div class="card">
                 <div class="card-header align-items-center d-flex">
-                    <h4 class="card-title mb-0 flex-grow-1">Client List</h4>
+                    <h4 class="card-title mb-0 flex-grow-1">Clients</h4>
 
                 </div><!-- end card header -->
 
@@ -39,6 +41,7 @@
                     <div class="live-preview">
                         <div class="table-responsive">
                             <table class="table table-striped table-nowrap align-middle mb-0">
+
                                 <thead>
 
 
