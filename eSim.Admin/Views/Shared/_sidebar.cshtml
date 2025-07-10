@@ -470,6 +470,22 @@
                         </a>
                     </li>
                 }
+ 
+
+                @if (User.HasClaim("Orders", "view"))
+                {
+                    <li class="nav-item">
+
+                        <a class="nav-link menu-link" href="@Url.Action("Index","Order")"
+                           aria-expanded="false" aria-controls="sidebarDashboards">
+
+                            <i class="ri-dashboard-2-line"></i> Orders
+
+                        </a>
+                    </li>
+                }
+
+
             </ul>
         </div>
         <!-- Sidebar -->

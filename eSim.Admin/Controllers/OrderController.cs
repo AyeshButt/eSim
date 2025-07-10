@@ -5,6 +5,7 @@ using eSim.Infrastructure.DTOs.Admin.order;
 using eSim.Infrastructure.DTOs.Middleware.Order;
 using eSim.Infrastructure.Interfaces.Admin.Order;
 using eSim.Infrastructure.Interfaces.Middleware.Order;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eSim.Admin.Controllers
@@ -16,6 +17,7 @@ namespace eSim.Admin.Controllers
         {           
             _Order = Order;
         }
+        [Authorize(Policy ="Orders:view")]
         public async Task<IActionResult> Index(OrderViewModel request
             )
         {
@@ -61,9 +63,7 @@ namespace eSim.Admin.Controllers
             return View(viewModel);
         }
 
-
-    
-    [HttpGet]
+        [HttpGet]
         public async Task<IActionResult> Detail(string orderReferenceId)
         {
             var result = await _Order.GetOrderDetailAsync(orderReferenceId);

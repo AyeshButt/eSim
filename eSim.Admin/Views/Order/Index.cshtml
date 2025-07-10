@@ -81,10 +81,14 @@
 
 									
 											<td>
+												@if (User.HasClaim("Orders", "order:details"))
+												{
+
 												<a asp-action="Detail" asp-controller="Order" asp-route-orderReferenceId="@order.OrderReference" data-bs-toggle="tooltip" data-bs-placement="top" title="Order Details"
 												   class="mx-2">
 													<i class="ri-eye-fill"></i>
 												</a>
+												}
 											</td>
 
 										</tr>

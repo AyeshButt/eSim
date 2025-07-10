@@ -42,6 +42,7 @@
                 {
                     <input asp-for="Claims[sideMenu][menu].Value" type="hidden" />
                     <input asp-for="Claims[sideMenu][menu].Type" type="hidden" />
+                    <!--comment below if check while assigning claims to a role (donot comment the inner input tag)-->
                     @if (User.HasClaim($"{Model.Claims[sideMenu][menu].Type}", $"{Model.Claims[sideMenu][menu].Value}"))
                     {
 
