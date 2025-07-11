@@ -5,6 +5,9 @@ using eSim.Infrastructure.DTOs.Admin.Inventory;
 using eSim.Infrastructure.DTOs.Client;
 using eSim.Infrastructure.DTOs.Subscribers;
 using eSim.Infrastructure.Interfaces.Admin.Client;
+using eSim.Infrastructure.Interfaces.Admin.Esim;
+using eSim.Infrastructure.Interfaces.Admin.Inventory;
+using eSim.Infrastructure.Interfaces.Admin.Order;
 using eSim.Infrastructure.Interfaces.Middleware;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -19,11 +22,18 @@ namespace eSim.Admin.Controllers
         private readonly ISubscriberService _subscriber;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IClient _client;
-        public SubscriberController(ISubscriberService subscriber, UserManager<ApplicationUser> userManager, IClient client)
+        private readonly IAdminOrder _adminOrder;
+        private readonly IInventory _inventory;
+        private readonly IEsims _esim;
+
+        public SubscriberController(ISubscriberService subscriber, UserManager<ApplicationUser> userManager, IClient client, IAdminOrder adminOrder, IInventory inventory, IEsims esim)
         {
             _subscriber = subscriber;
             _userManager = userManager;
             _client = client;
+            _adminOrder = adminOrder;
+            _inventory = inventory;
+            _esim = esim;
         }
 
         [HttpGet]
@@ -101,25 +111,29 @@ namespace eSim.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> TabPartialViews(string tab, string iccid)
+        public async Task<IActionResult> TabPartialViews(string tab, string subId)
         {
+            Guid.TryParse(subId, out Guid GuidId);
             switch (tab)
             {
                 case "order":
 
-                    Guid.TryParse(iccid, out Guid GuidID);
-                    var request = await _subscriber.GetSubscriberDetailAsync(GuidID);
-                    var subscriberDetail = request.Data;
-                    return PartialView("_OrdersPartialView", subscriberDetail);
+                    var request = await _adminOrder.GetOrderBySubscriberId(subId);
+                    return PartialView("_OrdersPartialView", request);
 
                 case "inventory":
-                    return PartialView("_OrdersPartialView");
+
+                    var CompleteInventory = await _inventory.GetInventoryAsync();
+                    var SubscriberInventory = CompleteInventory.Where(u => u.SubscriberId == GuidId).ToList();
+                    return PartialView("_InventoryPartialView", SubscriberInventory);
                 
                 case "esim":
-                    return PartialView("_OrdersPartialView");
+                    var EsimList = await _esim.GetAllAsync(subId);
+                    return PartialView("_EsimPartialView", EsimList);
                 
                 default:
-                    return PartialView("_OrdersPartialView");
+                    var TicketList = await _esim.GetAllTicketAsync(subId);
+                    return PartialView("_TicketsPartialView", TicketList);
             }
         }
 

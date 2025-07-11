@@ -1,0 +1,57 @@
+﻿@using eSim.Infrastructure.DTOs.Admin.Inventory
+@model List<AdminInventoryDTO>
+
+
+<div class="row">
+    <div class="col-xxl-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">Inventory</h4>
+            </div>
+            <div class="card-body">
+                @if(Model.Any()){
+
+                <table id="example" class="datatable-scroll table-hover table dt-responsive nowrap align-middle mdl-data-table" style="width:100%">
+
+                    <thead>
+                        <tr>
+                            <th scope="col">Item</th>
+                            <th scope="col">DataAmount</th>
+                            <th scope="col">Duration</th>
+                            <th scope="col">Country</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Created Date</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td> @item.Item </td>
+                                <td>@item.DataAmount</td>
+                                <td>@item.Duration</td>
+                                <td>@item.Country</td>
+                                <td>@item.Quantity</td>
+                                <td>@item.CreatedDate</td>
+                                <td>
+
+                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="edit" class="mx-2" asp-action="Detail" asp-controller="Subscriber" asp-route-id="@item.Id">
+                                        <i class="ri-eye-fill fs-5"></i>
+                                    </a>
+
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+                }
+                else
+                {
+                    <h5 class=" text-center bg-info p-3">There is nothing to show</h5>
+                }
+            </div>
+        </div>
+    </div>
+</div>
