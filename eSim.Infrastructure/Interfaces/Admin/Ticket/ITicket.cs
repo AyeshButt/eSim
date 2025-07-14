@@ -14,6 +14,7 @@ namespace eSim.Infrastructure.Interfaces.Admin.Ticket
         public Task<IQueryable<TicketStatusDTO>> GetStatusListAsync();
         public Task<IQueryable<TicketTypeDTO>> GetTypeListAsync();
         Task<Result<TicketDTO>> GetTicketDetailAsync(string trn);
+        Task SaveTicketCommentAsync(TicketCommentRequest request, string activityBy);
 
 
     }
