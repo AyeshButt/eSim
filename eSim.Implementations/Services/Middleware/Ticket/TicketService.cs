@@ -159,13 +159,14 @@ namespace eSim.Implementations.Services.Middleware.Ticket
 
                                             Activities = (from activity in _Db.TicketActivities
                                                           join user in _Db.Subscribers
-                                                          on activity.ActivityBy equals user.Id.ToString()
-                                                          where activity.TicketId == t.Id.ToString()
+                                                          on activity.ActivityBy equals user.Id.ToString() into activityGroup
+                                                          from user in activityGroup.DefaultIfEmpty()
+                                                          where activity.TicketId == t.Id.ToString() && activity.IsVisibleToCustomer
                                                           orderby activity.ActivityAt descending
                                                           select new TicketActivityDTO
                                                           {
                                                               Comment = activity.Comment,
-                                                              ActivityBy = user.Email,
+                                                              ActivityBy = user != null ? user.Email : activity.ActivityBy,
                                                               ActivityAt = activity.ActivityAt
                                                           }).ToList()
                                         }).FirstOrDefaultAsync();

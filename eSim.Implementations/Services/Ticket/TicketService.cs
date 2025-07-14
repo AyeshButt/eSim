@@ -1,4 +1,6 @@
-﻿using eSim.EF.Context;
+﻿using eSim.Common.StaticClasses;
+using eSim.EF.Context;
+using eSim.EF.Entities;
 using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.DTOs.Ticket;
 using eSim.Infrastructure.Interfaces.Admin.Ticket;
@@ -119,6 +121,25 @@ namespace eSim.Implementations.Services.Ticket
             }).AsQueryable();
 
             return await Task.FromResult(typeList);
+        }
+
+        public async Task SaveTicketCommentAsync(TicketCommentRequest request, string activityBy)
+        {
+            var ticket = await _db.Ticket.FirstOrDefaultAsync(t => t.TRN == request.TRN);
+            if (ticket == null) throw new Exception("Ticket not found.");
+
+            var activity = new TicketActivities
+            {
+                TicketId = ticket.Id.ToString(),
+                Comment = request.Comment,
+                CommentType = request.CommentType,
+                IsVisibleToCustomer = request.IsVisibleToCustomer,
+                ActivityBy = activityBy,
+                ActivityAt = BusinessManager.GetDateTimeNow()
+            };
+
+            await _db.TicketActivities.AddAsync(activity);
+            await _db.SaveChangesAsync();
         }
     }
 }
