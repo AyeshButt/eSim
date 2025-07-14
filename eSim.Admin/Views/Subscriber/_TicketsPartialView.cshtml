@@ -1,0 +1,63 @@
+﻿@using eSim.Infrastructure.DTOs.Admin.Ticket
+@model List<TicketResponseViewModel>
+
+
+<div class="row">
+    <div class="col-xxl-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">Inventory</h4>
+            </div>
+            <div class="card-body">
+                @if (Model.Any())
+                {
+                    <table id="example" class="datatable-scroll table-hover table dt-responsive nowrap align-middle mdl-data-table" style="width:100%">
+
+                        <thead>
+                            <tr>
+                                <th scope="col">TRN</th>
+                                <th scope="col">DataAmount</th>
+                                <th scope="col">Created At</th>
+                                <th scope="col">Modified At</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td> @item.TRN </td>
+                                    <td>@item.Subject</td>
+                                    <td>@item.CreatedAt</td>
+                                    <td>@item.ModifiedAt</td>
+                                    <td>
+                                        @if(item.status == 1)
+                                        {
+                                            <p>Bundle</p>
+                                        }
+                                        else
+                                        {
+                                            <p>Payment</p>
+                                        }
+                                    </td>
+                                    <td>
+
+                                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="edit" class="mx-2" asp-action="Detail" asp-controller="Subscriber" asp-route-id="@item.TRN">
+                                            <i class="ri-eye-fill fs-5"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <h5 class=" text-center bg-info p-3">There is nothing to show</h5>
+                }
+            </div>
+        </div>
+    </div>
+</div>

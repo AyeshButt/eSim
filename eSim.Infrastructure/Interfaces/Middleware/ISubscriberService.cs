@@ -20,7 +20,8 @@ namespace eSim.Infrastructure.Interfaces.Middleware
         Task<Result<string?>> UploadProfileImageAsync(Guid loggeduser,IFormFile file, ProfileImageDTORequest dto);
 
 
-        public Task<IQueryable<SubscriberDTO>> GetClient_SubscribersListAsync(string id);
+        public Task<IQueryable<SubscribersResponseDTO>> GetClient_SubscribersListAsync();
+        public Task<IQueryable<SubscribersResponseDTO>> GetClient_SubscribersListByID(string id);
         public Task<IQueryable<SubscriberDTO>> GetSubscribersListAsync();
         Task<Result<SubscriberDTO>> GetSubscriberDetailAsync(Guid loggedUser);
 
