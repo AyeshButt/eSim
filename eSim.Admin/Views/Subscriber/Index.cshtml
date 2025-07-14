@@ -1,24 +1,73 @@
-﻿@model List<eSim.Infrastructure.DTOs.Subscribers.SubscriberDTO>
+﻿@using eSim.Infrastructure.DTOs.Subscribers
+@model SubscribersResponseViewModel
 
 @{
-    ViewData["Title"] = "Subscriber List";
+    var Clients = ViewBag.Clients;
+    var subScribersList = Model.SubscribersResponse;
 
-    var notifications = new List<(string Key, string Type)>
-    {
-        ("ClientCreated", "success"),
-    };
 }
 
+@section styles {
+    <!--datatable css-->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
+    <!--datatable responsive css-->
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+}
     <div class="row">
-        <div class="col-xl-12">
-            <a asp-action="CreateClient" asp-controller="Client" class="float-end my-3 btn rounded-pill btn-secondary waves-effect waves-light">Create</a>
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">Filter</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Index" asp-controller="Subscriber" method="get">
+                        <div class="row align-items-end">
+                            <div class="col-xxl-3 col-sm-4">
+                                <div class="mb-3">
+                                <label for="Clients" class="form-label text-muted">Filter By Cients</label>
+                                    <select asp-for="Client" class="form-control" data-choices name="Clients"
+                                        id="client">
+                                        <option value="">Select Client</option>
+                                        @foreach (var item in Clients)
+                                        {
+                                        <option value="@item.Id">@item.Name</option>
+                                        };
+                                    </select>
+                                </div>
+                            </div>
+                            <div id="subscriberGroup" class="col-xxl-3 col-sm-4" style="display:none;">
+                                <div class="mb-3">
+                                    <label asp-for="Subscriber" class="form-label text-muted">Subscriber</label>
+                                    <select id="subscriber" asp-for="Subscriber" class="form-control" data-selected="@Model.Subscriber">
+                                        <option value="">Select Subscriber</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xxl-3 col-sm-4">
+                                <div class="mb-3">
+                                <label for="DateRange" class="form-label text-muted">Filter By Date</label>
+                                <input asp-for="DateRange" type="text" class="form-control" name="DateRange" data-provider="flatpickr"
+                                       data-date-format="d M, Y" data-range-date="true" />
+                                </div>
+                            </div> 
+
+                            <div class="col-xxl-3 col-sm-4  d-flex">
+                                <div class="mb-3 d-flex align-items-center gap-2">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="ri-equalizer-fill me-1 align-bottom"></i>
+                                        Filters
+                                    </button>
+                                    <a asp-action="Index" asp-controller="Subscriber" class="btn btn-secondary px-4">Reset</a>
+                                </div>    
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
-
-
-
-@if (Model.Any())
-{
     <div class="row">
         <div class="col-xl-12">
             <div class="card">
@@ -28,86 +77,125 @@
                 </div><!-- end card header -->
 
                 <div class="card-body">
-                    <div class="live-preview">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-nowrap align-middle mb-0">
-                                <thead>
+                <table id="example" class="datatable-scroll table-hover table table-bordered dt-responsive nowrap align-middle mdl-data-table" style="width:100%">
 
+                        <thead>
+                            <tr>
+                                
+                                <th scope="col">Active</th>
+                                <th scope="col">Client</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">CreatedAt</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var item in subScribersList)
+                            {
+                                <tr>
+                                    <td>
 
-                                    <tr>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input client-toggle-switch"
+                                                    type="checkbox"
+                                                    id="switch-@item.Id"
+                                                    data-url="@Url.Action("DisableClient", "Client", new { id = item.Id })"
+                                                    data-client-id="@item.Id"
+                                            @(item.Active ? "checked" : "") />
+                                        </div>
+                                    </td>
+                                    <td>@item.ClientName</td>
+                                    <td>@(item.FirstName + " " + item.LastName)</td>
+                                    <td>@item.Email</td>
+                                    <td>@item.CreatedAt.ToString("dd/MM/yyyy")</td>
 
-                                        <th scope="col">Active</th>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">Email</th>
-                                        <th scope="col">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model)
-                                    {
-                                        <tr>
-                                            <td>
-                                                
-                                                    <div class="form-check form-switch">
-                                                        <input class="form-check-input client-toggle-switch"
-                                                               type="checkbox"
-                                                               id="switch-@item.Id"
-                                                               data-url="@Url.Action("DisableClient", "Client", new { id = item.Id })"
-                                                               data-client-id="@item.Id"
-                                                        @(item.Active ? "checked" : "") />
-                                                    </div>
+                                    <td>
 
-                                                
-                                            </td>
-                                            <td>@(item.FirstName + " " + item.LastName)</td>
-                                            <td>@item.Email</td>
-                                            <td>
-                                               
-                                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="edit" class="mx-2" asp-action="UpdateClient" asp-controller="Subscriber" asp-route-id="@item.Id"><i class="ri-pencil-fill fs-5"></i></a>
-                                                
-                                              
+                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="edit" class="mx-2" asp-action="Detail" asp-controller="Subscriber" asp-route-id="@item.Id">
+                                        <i class="ri-eye-fill fs-5"></i>
+                                    </a>
 
-                                            </td>
+                                    </td>
 
-                                        </tr>
+                                </tr>
+                            }
 
-                                    }
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                        </tbody>
+                    </table>
                 </div><!-- end card-body -->
             </div><!-- end card -->
         </div>
         <!-- end col -->
     </div>
     <!-- end row -->
-}
-else
-{
-    <!-- Danger Alert -->
-    <div class="alert alert-danger text-center alert-dismissible fade show" role="alert">
-        <strong> No subscriber available</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-
-}
-
-
 @section scripts {
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-        @foreach (var (key, type) in notifications)
-        {
-            if (TempData[key] != null)
-            {
-                <text>ToastNotification("@TempData[key]", "@type");</text>
+            const clientSelect = document.getElementById('client');
+            const subscriberSelect = document.getElementById('subscriber');
+            const subscriberGroup = document.getElementById('subscriberGroup');
+
+            subscriberGroup.style.display = 'none';
+
+            function loadSubscribers(clientId, selectedSubscriber = null) {
+                subscriberSelect.innerHTML = '<option value="">Select Subscriber</option>';
+                subscriberGroup.style.display = 'none';
+
+                if (!clientId) return;
+
+                fetch(`/Subscriber/GetClientSubscribers?clientId=${encodeURIComponent(clientId)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data || data.length === 0) return;
+
+                        data.forEach(item => {
+                            const option = document.createElement('option');
+                            option.value = item.value;
+                            option.text = item.text;
+                            subscriberSelect.appendChild(option);
+                        });
+
+                        // ✅ Set selected subscriber
+                        if (selectedSubscriber) {
+                            subscriberSelect.value = selectedSubscriber;
+                            console.log("Restored subscriber:", selectedSubscriber);
+                        }
+
+                        subscriberGroup.style.display = 'block';
+                    });
             }
-        }
+
+            clientSelect.addEventListener('change', function () {
+                loadSubscribers(clientSelect.value);
+            });
+
+            // 🔁 On page load: restore if model has values
+            const preselectedClient = clientSelect.value;
+            const preselectedSubscriber = subscriberSelect.dataset.selected;
+
+            if (preselectedClient) {
+                loadSubscribers(preselectedClient, preselectedSubscriber);
+            }
         });
     </script>
 
-}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
+    <!--datatable js-->
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+
+    <script src="~/assets/js/pages/datatables.init.js"></script>
+
+    <!-- App js -->
+    <script src="~/assets/js/app.js"></script>
+ }

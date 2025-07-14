@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Azure;
 using eSim.EF.Context;
+using eSim.EF.Entities;
+using eSim.Infrastructure.DTOs.Admin.order;
 using eSim.Infrastructure.DTOs.Global;
 using eSim.Infrastructure.DTOs.Middleware.Order;
 using eSim.Infrastructure.Interfaces.Admin.Order;
@@ -23,6 +25,8 @@ namespace eSim.Implementations.Services.Admin.Order
         {
             _db = db;
         }
+
+
 
         public async Task<Result<GetOrderDetailResponse>> GetOrderDetailAsync(string orderReferenceId)
         {
@@ -113,6 +117,74 @@ namespace eSim.Implementations.Services.Admin.Order
                 result.Message = ex.Message;
             }
             return result;
+        }
+
+        public async Task<List<OrderDetailResponseViewModel>> GetOrderBySubscriberId(string Id)
+        {
+            Guid.TryParse(Id, out Guid subId);
+
+            var order = await _db.Orders
+                .Where(o => o.SubscriberId == subId)
+                .ToListAsync();
+
+            var orderRefId = order.Select(o => o.OrderReferenceId).ToList();
+
+            var orderDetail = await _db.OrderDetails
+                .Where(od => orderRefId.Contains(od.OrderReferenceId))
+            .ToListAsync();
+
+
+            var result = order.Select(order => new OrderDetailResponseViewModel
+            {
+                Total = order.Total,
+                OrderReferenceId = order.OrderReferenceId,
+                Currency = order.Currency,
+                Status = order.Status,
+                StatusMessage = order.StatusMessage,
+                CreatedDate = order.CreatedDate,
+                Assigned = order.Assigned,
+                SourceIP = order.SourceIP,
+
+                Order = orderDetail
+                .Where(od => od.OrderReferenceId == order.OrderReferenceId)
+                .Select(od => new OrderBySubIdDetail
+                {
+                    Type = od.Type,
+                    Item = od.Item,
+                    Quantity = od.Quantity,
+                    SubTotal = od.SubTotal,
+                    PricePerUnit = od.PricePerUnit,
+                    AllowReassign = od.AllowReassign
+                }).ToList()
+
+            }).ToList();
+            
+            return result;
+            //var ordersWithDetails = await _db.Orders
+            //    .Where(o => o.SubscriberId == subId)
+            //    .Select( u => new OrderDetailResponseViewModel
+            //    {
+            //        Total = u.Total,
+            //        Currency = u.Currency,
+            //        Status = u.Status,
+            //        StatusMessage = u.StatusMessage,
+            //        CreatedDate = u.CreatedDate,
+            //        Assigned = u.Assigned,
+            //        SourceIP = u.SourceIP,
+
+            //        Order =  _db.OrderDetails
+            //        .Where(od => od.OrderReferenceId == u.OrderReferenceId)
+            //        .Select(od => new OrderBySubIdDetail
+            //        {
+            //            Type = od.Type,
+            //            Item  = od.Item,
+            //            Quantity = od.Quantity,
+            //            SubTotal = od.SubTotal,
+            //            PricePerUnit = od.PricePerUnit,
+            //            AllowReassign = od.AllowReassign
+            //        }).
+
+            //    });
         }
     }
 }
