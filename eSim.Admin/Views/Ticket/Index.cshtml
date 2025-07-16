@@ -81,8 +81,11 @@
                                             <td>@item.TypeName</td>
 
                                             <td class="fw-medium">@item.TRN</td>
-                                            <td>@item.Subject</td>
-                                            <td>@item.CreatedAt</td>
+                                            <td title="@item.Subject">
+                                                @(item.Subject.Length > 30 ? item.Subject.Substring(0, 30) + "..." : item.Subject)
+                                            </td>
+
+                                            <td>@item.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
                                             <td><span class="badge bg-success">@item.StatusName</span></td>
 
                                             <td>

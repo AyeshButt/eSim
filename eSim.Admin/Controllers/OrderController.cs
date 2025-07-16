@@ -57,7 +57,10 @@ namespace eSim.Admin.Controllers
                 PageSize = result.Data.PageSize,
                 Rows = result.Data.Rows,
                 Date = request.Date,
-                OrderReference = request.OrderReference
+                OrderReference = request.OrderReference,
+                
+              
+
             };
 
             return View(viewModel);
