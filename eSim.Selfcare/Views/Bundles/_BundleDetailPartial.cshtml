@@ -8,9 +8,10 @@
                 <h6 class="d-flex flex-column align-items-center">
                     @if (Model.dataAmount != 0)
                     {
-                        var GB = Math.Round((double)Model.dataAmount / 1024);
-                        <i class="mdi mdi-database mdi-36px mb-1"></i>
-                        <span>@($"{GB} GB")</span>
+                        <span>@eSim.Common.StaticClasses.BusinessManager.FormatDataAmount(Model.dataAmount)</span>
+                        @* var GB = Math.Round((double)Model.dataAmount / 1024); *@
+                        @* <i class="mdi mdi-database mdi-36px mb-1"></i> *@
+                        @* <span>@($"{GB} GB")</span> *@
                     }
                 </h6>
                 <h6 class="d-flex text-muted flex-column align-items-center">

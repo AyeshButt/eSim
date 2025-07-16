@@ -521,6 +521,10 @@ namespace eSim.Implementations.Services.Esim
             return queryParams.Count > 0 ? $"{baseUrl}?{string.Join("&", queryParams)}" : baseUrl;
         }
         #endregion
+
+        
     }
+
+
 
 }

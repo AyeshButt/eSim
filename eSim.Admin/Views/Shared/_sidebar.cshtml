@@ -523,6 +523,19 @@
                         </a>
                     </li>
                 }
+                @if (User.HasClaim("Orders", "view"))
+                {
+                    <li class="nav-item">
+
+                        <a class="nav-link menu-link" href="@Url.Action("Index","Sim")"
+                           aria-expanded="false" aria-controls="sidebarDashboards">
+
+                            <i class="ri-sim-card-line"></i> eSIMs
+
+
+                        </a>
+                    </li>
+                }
 
 
             </ul>

@@ -28,8 +28,10 @@
                             <tr>
                                 <td> @item.Iccid </td>
                                 <td>@item.CustomerRef</td>
-                                <td>@item.AssignedDate</td>
-                                <td>@item.ActionDate</td>
+                                <td>@eSim.Common.StaticClasses.BusinessManager.ConvertDate(item.AssignedDate)</td>
+                                <td>@eSim.Common.StaticClasses.BusinessManager.ConvertDate(item.ActionDate)</td>
+                                @* <td>@item.AssignedDate</td> *@
+                                @* <td>@item.ActionDate</td> *@
                                 <td>@item.Physical</td>
                                 <td>
 
