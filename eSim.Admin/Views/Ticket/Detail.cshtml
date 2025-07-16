@@ -1,4 +1,5 @@
-﻿@model eSim.Infrastructure.DTOs.Ticket.TicketDTO
+﻿@using eSim.Common.StaticClasses
+@model eSim.Infrastructure.DTOs.Ticket.TicketDTO
 @{
     ViewBag.Title = "Ticket Details";
     Layout = null;
@@ -231,7 +232,8 @@
                                             {
                                                 var fileName = System.IO.Path.GetFileName(fileUrl);
                                                 var encodedFileName = Uri.EscapeDataString(fileName);
-                                                var fullUrl = $"https://localhost:7264/uploads/{encodedFileName}";
+                                                var baseUrl = BusinessManager.AttachmentUpload; 
+                                                var fullUrl = $"{baseUrl}{encodedFileName}";
                                                 var underscoreIndex = fileName.LastIndexOf('_');
                                                 var dotIndex = fileName.LastIndexOf('.');
 
