@@ -24,6 +24,7 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
         private readonly HttpClient _http;
         private readonly IHttpContextAccessor _httpContext;
         private readonly IMiddlewareConsumeApi _consumeApi;
+       
 
         public TicketService(HttpClient http, IHttpContextAccessor httpContext, IMiddlewareConsumeApi consumeApi)
         {
@@ -143,6 +144,9 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
             var fulUrl = $"{Url}?trn={Uri.EscapeDataString(trn)}";
 
             var request = await _consumeApi.Get<TicketDetailDTO>(fulUrl);
+ 
+    
+
             
             return request;
         }
