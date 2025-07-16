@@ -44,13 +44,13 @@ namespace eSim.Implementations.Services.Admin.Esims
         #endregion
 
         #region eSIM list for all subscribers
-        public async Task<List<EsimViewModel>> GetEsimListForAllSubscribersAsync()
+        public async Task<IQueryable<EsimsList>> GetEsimListForAllSubscribersAsync()
         {
 
             var esimListRequest = (from e in _db.Esims
-                                   join s in _db.Subscribers
-                                   on e.SubscriberId equals s.Id.ToString()
-                                   select new EsimViewModel
+                                   join s in _db.Subscribers on e.SubscriberId equals s.Id.ToString()
+                                   join c in _db.Client on s.ClientId equals c.Id
+                                   select new EsimsList
                                    {
                                        SubscriberId = e.SubscriberId,
                                        SubscriberName = s.FirstName + " " + s.LastName,
@@ -58,9 +58,11 @@ namespace eSim.Implementations.Services.Admin.Esims
                                        AssignedDate = e.AssignedDate,
                                        LastAction = e.LastAction,
                                        ActionDate = e.ActionDate,
-                                   }).ToList();
+                                       Physical = e.Physical,
+                                       Client = s.ClientId.ToString(),
+                                   });
 
-            return esimListRequest;
+            return await Task.FromResult(esimListRequest);
         }
         #endregion
 

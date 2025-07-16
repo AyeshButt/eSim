@@ -14,7 +14,7 @@ namespace eSim.Infrastructure.Interfaces.Admin.Esim
     public interface IEsims
     {
         Task<List<EsimsDTO>> GetAllAsync(string id);
-        Task<List<EsimViewModel>> GetEsimListForAllSubscribersAsync();
+        Task<IQueryable<EsimsList>> GetEsimListForAllSubscribersAsync();
         Task<Result<GetEsimDetailsResponse>> GetEsimDetailsAsync(string iccid);
         Task<Result<ListBundlesAppliedToEsimResponse>> GetListBundlesAppliedToEsimAsync(string iccid);
         Task<Result<GetEsimHistoryResponse>> GetEsimHistoryAsync(string iccid);
