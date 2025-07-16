@@ -1,7 +1,7 @@
 ﻿@using eSim.Common.StaticClasses
 @using eSim.Infrastructure.DTOs.Admin.Esim
 @using eSim.Infrastructure.DTOs.Esim
-@model List<EsimViewModel>
+@model EsimViewModel
 
 
 
@@ -13,7 +13,9 @@
 
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
 }
-
+@{
+    var Clients = ViewBag.Clients;
+}
 <div class="row">
     <div class="col-lg-12">
         <div class="card">
@@ -21,35 +23,35 @@
                 <h4 class="card-title mb-0">Filter</h4>
             </div>
             <div class="card-body">
-                <form asp-action="Index" asp-controller="Subscriber" method="get">
+                <form asp-action="Index" asp-controller="Sim" method="get">
                     <div class="row align-items-end">
                         <div class="col-xxl-3 col-sm-4">
                             <div class="mb-3">
                                 <label for="Client" class="form-label text-muted">Filter By Cients</label>
-                                @* <select asp-for="Client" class="form-control" data-choices
+                                <select asp-for="Client" class="form-control" data-choices
                                         id="client">
                                     <option value="">Select Client</option>
                                     @foreach (var item in Clients)
                                     {
                                         <option value="@item.Id">@item.Name</option>
                                     };
-                                </select> *@
+                                </select>
                             </div>
                         </div>
                         <div id="subscriberGroup" class="col-xxl-3 col-sm-4" style="display:none;">
-                            @* <div class="mb-3">
+                            <div class="mb-3">
                                 <label asp-for="Subscriber" class="form-label text-muted">Subscriber</label>
                                 <select id="subscriber" asp-for="Subscriber" class="form-control" data-selected="@Model.Subscriber">
                                     <option value="">Select Subscriber</option>
                                 </select>
-                            </div> *@
+                            </div>
                         </div>
                         <div class="col-xxl-3 col-sm-4">
-                            @* <div class="mb-3">
+                            <div class="mb-3">
                                 <label for="DateRange" class="form-label text-muted">Filter By Date</label>
                                 <input asp-for="DateRange" type="text" class="form-control" data-provider="flatpickr"
                                        data-date-format="d M, Y" data-range-date="true" />
-                            </div> *@
+                            </div>
                         </div>
 
                         <div class="col-xxl-3 col-sm-4  d-flex">
@@ -58,7 +60,7 @@
                                     <i class="ri-equalizer-fill me-1 align-bottom"></i>
                                     Search
                                 </button>
-                                <a asp-action="Index" asp-controller="Subscriber" class="btn btn-secondary px-4">Reset</a>
+                                <a asp-action="Index" asp-controller="Sim" class="btn btn-secondary px-4">Reset</a>
                             </div>
                         </div>
                     </div>
@@ -88,7 +90,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model)
+                        @foreach (var item in Model.EsimsResponseList)
                         {
                             <tr>
                                 <td>@item.SubscriberName</td>
@@ -129,7 +131,7 @@
 
                 if (!clientId) return;
 
-                fetch(`/Subscriber/GetClientSubscribers?clientId=${encodeURIComponent(clientId)}`)
+                fetch(`/Sim/GetClientSubscribers?clientId=${encodeURIComponent(clientId)}`)
                     .then(response => response.json())
                     .then(data => {
                         if (!data || data.length === 0) return;
