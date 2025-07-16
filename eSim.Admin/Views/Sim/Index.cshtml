@@ -1,12 +1,9 @@
-﻿
-@using eSim.Infrastructure.DTOs.Subscribers
-@model SubscribersResponseViewModel
+﻿@using eSim.Common.StaticClasses
+@using eSim.Infrastructure.DTOs.Admin.Esim
+@using eSim.Infrastructure.DTOs.Esim
+@model List<EsimViewModel>
 
-@{
-    var Clients = ViewBag.Clients;
-    var subScribersList = Model.SubscribersResponse;
-    
-}
+
 
 @section styles {
     <!--datatable css-->
@@ -16,107 +13,106 @@
 
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
 }
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title mb-0">Filter</h4>
-                </div>
-                <div class="card-body">
-                    <form asp-action="Index" asp-controller="Subscriber" method="get">
-                        <div class="row align-items-end">
-                            <div class="col-xxl-3 col-sm-4">
-                                <div class="mb-3">
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">Filter</h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="Index" asp-controller="Subscriber" method="get">
+                    <div class="row align-items-end">
+                        <div class="col-xxl-3 col-sm-4">
+                            <div class="mb-3">
                                 <label for="Client" class="form-label text-muted">Filter By Cients</label>
-                                    <select asp-for="Client" class="form-control" data-choices 
+                                @* <select asp-for="Client" class="form-control" data-choices
                                         id="client">
-                                        <option value="">Select Client</option>
-                                        @foreach (var item in Clients)
-                                        {
+                                    <option value="">Select Client</option>
+                                    @foreach (var item in Clients)
+                                    {
                                         <option value="@item.Id">@item.Name</option>
-                                        };
-                                    </select>
-                                </div>
+                                    };
+                                </select> *@
                             </div>
-                            <div id="subscriberGroup" class="col-xxl-3 col-sm-4" style="display:none;">
-                                <div class="mb-3">
-                                    <label asp-for="Subscriber" class="form-label text-muted">Subscriber</label>
-                                    <select id="subscriber" asp-for="Subscriber" class="form-control" data-selected="@Model.Subscriber">
-                                        <option value="">Select Subscriber</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-xxl-3 col-sm-4">
-                                <div class="mb-3">
+                        </div>
+                        <div id="subscriberGroup" class="col-xxl-3 col-sm-4" style="display:none;">
+                            @* <div class="mb-3">
+                                <label asp-for="Subscriber" class="form-label text-muted">Subscriber</label>
+                                <select id="subscriber" asp-for="Subscriber" class="form-control" data-selected="@Model.Subscriber">
+                                    <option value="">Select Subscriber</option>
+                                </select>
+                            </div> *@
+                        </div>
+                        <div class="col-xxl-3 col-sm-4">
+                            @* <div class="mb-3">
                                 <label for="DateRange" class="form-label text-muted">Filter By Date</label>
                                 <input asp-for="DateRange" type="text" class="form-control" data-provider="flatpickr"
                                        data-date-format="d M, Y" data-range-date="true" />
-                                </div>
-                            </div> 
+                            </div> *@
+                        </div>
 
-                            <div class="col-xxl-3 col-sm-4  d-flex">
-                                <div class="mb-3 d-flex align-items-center gap-2">
-                                    <button type="submit" class="btn btn-primary w-100">
-                                        <i class="ri-equalizer-fill me-1 align-bottom"></i>
-                                        Search
-                                    </button>
-                                    <a asp-action="Index" asp-controller="Subscriber" class="btn btn-secondary px-4">Reset</a>
-                                </div>    
+                        <div class="col-xxl-3 col-sm-4  d-flex">
+                            <div class="mb-3 d-flex align-items-center gap-2">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="ri-equalizer-fill me-1 align-bottom"></i>
+                                    Search
+                                </button>
+                                <a asp-action="Index" asp-controller="Subscriber" class="btn btn-secondary px-4">Reset</a>
                             </div>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-xl-12">
-            <div class="card">
-                <div class="card-header align-items-center d-flex">
-                    <h4 class="card-title mb-0 flex-grow-1">Subscriber List</h4>
+</div>
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header align-items-center d-flex">
+                <h4 class="card-title mb-0 flex-grow-1">eSIMs List</h4>
 
-                </div><!-- end card header -->
+            </div><!-- end card header -->
 
-                <div class="card-body">
+            <div class="card-body">
                 <table id="example" class="datatable-scroll table-hover table table-bordered dt-responsive nowrap align-middle mdl-data-table" style="width:100%">
 
-                        <thead>
+                    <thead>
+                        <tr>
+                            <th scope="col">Subscriber Id</th>
+                            <th scope="col">ICCID</th>
+                            <th scope="col">Assigned Date</th>
+                            <th scope="col">Last Action</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
                             <tr>
-                                <th scope="col">Client</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">CreatedAt</th>
-                                <th scope="col">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        @foreach (var item in subScribersList)
-                            {
-                                <tr>
-                                    <td>@item.ClientName</td>
-                                    <td>@(item.FirstName + " " + item.LastName)</td>
-                                    <td>@item.Email</td>
-                                    <td>@eSim.Common.StaticClasses.BusinessManager.ConvertDate(item.CreatedAt)</td>
-
-                                    <td>
-
-                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="edit" class="mx-2" asp-action="Detail" asp-controller="Subscriber" asp-route-id="@item.Id" asp-route-clientName = "@item.ClientName">
+                                <td>@item.SubscriberName</td>
+                                <td>@item.Iccid</td>
+                                <td>@BusinessManager.ConvertDate(item.AssignedDate)</td> 
+                                @* <td>@BusinessManager.ConvertDate(DateTime.Parse(item.LastAction))</td>  *@
+                                <td>@BusinessManager.ConvertDate(item.ActionDate)</td> 
+                                <td>
+                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="edit" class="mx-2" asp-action="Detail" asp-controller="Sim" asp-route-id="@item.Iccid">
                                         <i class="ri-eye-fill fs-5"></i>
                                     </a>
+                                </td>
 
-                                    </td>
+                            </tr>
+                        }
 
-                                </tr>
-                            }
-
-                        </tbody>
-                    </table>
-                </div><!-- end card-body -->
-            </div><!-- end card -->
-        </div>
-        <!-- end col -->
+                    </tbody>
+                </table>
+            </div><!-- end card-body -->
+        </div><!-- end card -->
     </div>
-    <!-- end row -->
+    <!-- end col -->
+</div>
+<!-- end row -->
 @section scripts {
 
     <script>

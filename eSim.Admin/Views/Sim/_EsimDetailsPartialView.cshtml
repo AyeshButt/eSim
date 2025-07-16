@@ -1,0 +1,51 @@
+﻿@model eSim.Infrastructure.DTOs.Esim.GetEsimDetailsResponse
+ 
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">SIM Data</h5>
+                </div>
+                <div class="card-body">
+                @if (Model is not null)
+                {
+                    <table id="scroll-horizontal" class="table nowrap align-middle" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Iccid</th>
+                                <th>PIN</th>
+                                <th>PUK</th>
+                                <th>Profile Status</th>
+                                <th>First Installed Date</th>
+                                <th>SMDP+ Address</th>
+                                <th>SMDP+ ID</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                <tr>
+                                    <td>@Model.Iccid</td>
+                                    <td>@Model.Pin</td>
+                                    <td>@Model.Puk</td>
+                                    <td>@Model.ProfileStatus</td>
+                                    <td>@Model.FirstInstalledDateTime</td>
+                                    <td>@Model.SmdpAddress</td>
+                                    <td>@Model.MatchingId</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    }
+                else
+                {
+                    <div class="alert alert-danger text-center">
+                        No details available
+                    </div>
+                }
+                </div>
+            </div>
+        </div>
+    </div>
+
+

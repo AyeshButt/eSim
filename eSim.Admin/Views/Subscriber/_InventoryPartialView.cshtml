@@ -29,11 +29,19 @@
                         {
                             <tr>
                                 <td> @item.Item </td>
-                                <td>@item.DataAmount</td>
-                                <td>@item.Duration</td>
+                                <td>
+                                    @if (item.DataAmount != 0)
+                                    {
+                                        <span>@eSim.Common.StaticClasses.BusinessManager.FormatDataAmount(item.DataAmount)</span>
+                                    }
+                                </td>
+                                <td>@item.Duration Days</td>
                                 <td>@item.Country</td>
-                                <td>@item.Quantity</td>
-                                <td>@item.CreatedDate</td>
+                                <td>
+                                    @item.Quantity
+                                </td>
+                                <td>@eSim.Common.StaticClasses.BusinessManager.ConvertDate(item.CreatedDate)</td>
+                                @* <td>@item.CreatedDate</td> *@
                                 <td>
 
                                     <a data-bs-toggle="tooltip" data-bs-placement="top" title="edit" class="mx-2" asp-action="Detail" asp-controller="Subscriber" asp-route-id="@item.Id">
