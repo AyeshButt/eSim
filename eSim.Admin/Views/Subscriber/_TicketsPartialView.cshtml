@@ -17,6 +17,7 @@
                             <tr>
                                 <th scope="col">TRN</th>
                                 <th scope="col">DataAmount</th>
+
                                 <th scope="col">Created At</th>
                                 <th scope="col">Modified At</th>
                                 <th scope="col">Status</th>
@@ -28,9 +29,14 @@
                             {
                                 <tr>
                                     <td> @item.TRN </td>
-                                    <td>@item.Subject</td>
-                                    <td>@item.CreatedAt</td>
-                                    <td>@item.ModifiedAt</td>
+                                    <td>
+                                        @(item.Subject.Length > 30 ? item.Subject.Substring(0, 30) + "..." : item.Subject)
+                                    </td>
+                                    @* <td>@item.Subject</td> *@
+                                    <td>@eSim.Common.StaticClasses.BusinessManager.ConvertDate(item.CreatedAt)</td>
+                                    <td>@eSim.Common.StaticClasses.BusinessManager.ConvertDate(item.ModifiedAt)</td>
+                                    @* <td>@item.CreatedAt</td> *@
+                                    @* <td>@item.ModifiedAt</td> *@
                                     <td>
                                         @if(item.status == 1)
                                         {
@@ -43,7 +49,7 @@
                                     </td>
                                     <td>
 
-                                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="edit" class="mx-2" asp-action="Detail" asp-controller="Subscriber" asp-route-id="@item.TRN">
+                                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="edit" class="mx-2" asp-action="Detail" asp-controller="Ticket" asp-route-id="@item.TRN">
                                             <i class="ri-eye-fill fs-5"></i>
                                         </a>
                                     </td>

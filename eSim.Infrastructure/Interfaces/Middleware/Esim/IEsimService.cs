@@ -21,5 +21,6 @@ namespace eSim.Infrastructure.Interfaces.Middleware.Esim
         Task<Result<ApplyBundleToEsimResponse>> ApplyBundleToExistingEsimAsync(ApplyBundleToExistingEsimRequest input, string loggedUser);
         Task<Result<ApplyBundleToEsimResponse>> ApplyBundleToEsimAsync(ApplyBundleToEsimRequest input, string loggedUser);
         Task<Result<GetEsimDetailsResponse>> GetEsimDetailsAsync(string iccid, string? additionalfields,string loggedUser);
+
     }
 }

@@ -1,0 +1,135 @@
+﻿
+
+@{
+    var iccid = ViewBag.Id;
+}
+
+<div class="container-fluid">
+    <div class="profile-foreground position-relative mx-n4 mt-n4">
+        <div class="profile-wid-bg">
+            <img src="~/assets/images/profile-bg.jpg" alt="" class="profile-wid-img" />
+        </div>
+    </div>
+    <div class="pt-4 mb-4 mb-lg-3 pb-lg-4">
+        <div class="row g-4">
+            <div class="col">
+                <div class="p-2">
+                    <h3 class="text-white mb-2">ICCID</h3>
+                    <p class="text-white mb-1 ps-2">@iccid</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="d-flex">
+                <!-- Nav tabs -->
+                <ul class="nav nav-pills animation-nav profile-nav gap-2 gap-lg-3 flex-grow-1 align-items-center"
+                    role="tablist">
+
+                    <li class="nav-item">
+                        <a class="nav-link fs-14 active" data-tab="Detail" id="ordersTabs" href="#"
+                           role="tab">
+                            <i class="ri-list-unordered d-inline-block d-md-none"></i> <span class="d-none d-md-inline-block">Detail</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fs-14" data-tab="AppliedBundles" href="#" role="tab">
+                            <i class="ri-price-tag-line d-inline-block d-md-none"></i> <span class="d-none d-md-inline-block">Applied Bundles</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fs-14" data-tab="History" href="#" role="tab">
+                            <i class="ri-folder-4-line d-inline-block d-md-none"></i> <span class="d-none d-md-inline-block">History</span>
+                        </a>
+                    </li>
+                   
+                </ul>
+            </div>
+            <!-- Tab panes -->
+            <div class="tab-content pt-4 text-muted" id="tabContent">
+                <div id="tabLoader" class="text-center my-5" style="display: none;">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <div class="mt-2">Loading...</div>
+                </div>
+                <div class="tab-pane fade show active" id="tabpane" role="tabpanel">
+                </div>
+                <!--end tab-pane-->
+            </div>
+            <!--end tab-content-->
+        </div>
+        <!--end col-->
+    </div>
+    <!--end row-->
+</div>
+
+@section scripts {
+
+
+    <script>
+        let currentTabRequest = null;
+        var Iccid = '@iccid'
+
+        function loadTab(tabName) {
+            $('#tabpane').empty().removeClass('show active');
+            $('#tabLoader').show();
+
+            // Abort previous request if still pending
+            if (currentTabRequest && currentTabRequest.readyState !== 4) {
+                currentTabRequest.abort();
+            }
+
+            currentTabRequest = $.ajax({
+                url: '@Url.Action("TabPartialViews", "Sim")',
+                type: 'POST',
+                data: { tab: tabName, Iccid: Iccid },
+
+                success: function (html) {
+                    $('#tabLoader').hide();
+                    $('#tabpane').html(html).addClass('show active');
+
+                },
+                error: function (xhr, status) {
+                    if (status !== 'abort') {
+                        $('#tabLoader').hide();
+                        $('#tabpane').html('<div class="text-danger text-center">Failed to load tab.</div>')
+                            .addClass('show active');
+                    }
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            // Initial load
+            loadTab('Detail');
+
+            // On tab click - using event delegation for dynamic tabs if needed
+            $(document).on('click', '[data-tab]', function(e) {
+                e.preventDefault();
+
+                // Update active state of nav links
+                $('.nav-link').removeClass('active');
+                $(this).addClass('active');
+
+                const tab = $(this).data('tab');
+                loadTab(tab);
+            });
+        });
+    </script>
+
+
+    <!-- END layout-wrapper -->
+    @Html.Partial("~/Views/Shared/_customizer.cshtml")
+
+    @Html.Partial("~/Views/Shared/_vendor_scripts.cshtml")
+
+    <!-- swiper js -->
+    <script src="~/assets/libs/swiper/swiper-bundle.min.js"></script>
+
+    <!-- profile init js -->
+    <script src="~/assets/js/pages/profile.init.js"></script>
+
+    <!-- App js -->
+    <script src="~/assets/js/app.js"></script>
+} 

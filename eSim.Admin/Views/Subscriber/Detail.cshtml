@@ -4,6 +4,8 @@
 @{
     var subId = Model.Id;
     // var selectedCountry = Model.CountryList.FirstOrDefault(c => c.Iso2 == Model.Country);
+    var clientName = ViewBag.clientName;
+
 }
 
 @section styles {
@@ -27,15 +29,15 @@
             <div class="col-auto">
                 <div class="avatar-lg">
                     <img src="~/assets/images/users/avatar-1.jpg" alt="user-img"
-                            class="img-thumbnail rounded-circle" />
+                         class="img-thumbnail rounded-circle" />
                 </div>
             </div>
            
             <div class="col">
                 <div class="p-2">
                     <h3 class="text-white mb-1">@Model.FirstName @Model.LastName</h3>
-                    <p class="text-white text-opacity-75">@Model.CreatedAt.ToString("dd/MM/yyyy")</p>
-                    <div class="hstack text-white-50 gap-1">
+                    <p class="text-white text-opacity-75"><b>SignUp Date: </b>@eSim.Common.StaticClasses.BusinessManager.ConvertDate(@Model.CreatedAt)</p>
+                    <div class="hstack text-white gap-1">
                         <div class="me-2">
                             <i class="ri-mail-line me-1 text-white text-opacity-75 fs-16 align-middle"></i>
                             @Model.Email
@@ -46,19 +48,41 @@
                     </div>
                 </div>
             </div>
+            <div class="col">
+                <div class="p-2 text-white">
+                    <h5 class="text-white">Client</h5>
+                    <p class="">@clientName</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="p-2">
+                    <h5 class="text-white">Status</h5><br />
+                    <div class=" text-white form-check form-switch">
+                        <label class="form-check-label" for="statusToggle">
+                            @(Model.Active ? "Active" : "Inactive")
+                        </label>
+                        <input class="form-check-input" type="checkbox"
+                               id="statusToggle"
+                                @(Model.Active ? "checked" : "")
+                               data-id="@Model.Id" /><br />
+                        
+                    </div>
+                    <span id="statusMessage" class="text-success"></span>
+                </div>
+            </div>
             <div class="col-12 col-lg-auto order-last order-lg-0">
                 <div class="row text text-white-50 text-center">
                     <div class="col-lg-6 col-4">
-                        <div class="p-2">
+                        @* <div class="p-2">
                             @if (Model.Active)
                             {
                                 <h4 class="text-white mb-1">Active</h4>
                             }
                             else
                             {
-                                <h4 class="text-white mb-1">Not Active</h4>
+                                <h4 class="text-white mb-1">Disabled</h4>
                             }
-                        </div> 
+                        </div>  *@
                     </div>
                    @*  <div class="col-lg-6 col-4">
                         <div class="p-2">
@@ -97,7 +121,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link fs-14" data-tab="ticket" href="#" role="tab">
-                        <i class="ri-folder-4-line d-inline-block d-md-none"></i> <span class="d-none d-md-inline-block">Tickets</span>
+                            <i class="ri-folder-4-line d-inline-block d-md-none"></i> <span class="d-none d-md-inline-block">Tickets</span>
                         </a>
                     </li>
                 </ul>

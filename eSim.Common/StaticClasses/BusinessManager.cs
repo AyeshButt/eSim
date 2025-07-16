@@ -289,6 +289,31 @@ namespace eSim.Common.StaticClasses
             return $"createdAt={startDate}&createdAt={endDate}";
         }
 
+
+        /// <summary>
+        /// convert datre time into date only for view purpose
+        /// </summary>
+        /// <param name="password"></param>
+        /// <param name="salt"></param>
+        /// <returns></returns>
+        /// 
+        public static string ConvertDate(DateTime? input)
+        {
+            return input?.ToString("dd-MM-yyyy") ?? string.Empty;
+        }
+
+
+
+        public static string FormatDataAmount(int? dataAmountInMB)
+        {
+            if (dataAmountInMB == 0 || dataAmountInMB == null)
+                return string.Empty;
+
+            double gb = Math.Round(dataAmountInMB.Value / 1000.0, 2); // Round to 2 decimal places
+            return $"{gb} GB";
+        }
+
+
     }
     public static class PasswordHasher
     {
@@ -342,7 +367,13 @@ namespace eSim.Common.StaticClasses
             }
             return true;
         }
+
+
         
+
+
+
+
         private static byte[] CreateHash(string password, byte[] salt)
         {
             using (var pbkdf2 = new Rfc2898DeriveBytes(

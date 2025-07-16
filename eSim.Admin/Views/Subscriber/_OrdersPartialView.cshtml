@@ -16,9 +16,8 @@
 
                     <thead>
                         <tr>
-                            <th scope="col">Order Refrence</th>
+                            <th scope="col">Order Refrence ID</th>
                             <th scope="col">Created Date</th>
-                            <th scope="col">Currency</th>
                             <th scope="col">Total</th>
                             <th scope="col">Status</th>
                             <th scope="col">Actions</th>
@@ -31,13 +30,19 @@
                                 <td>
                                     @item.OrderReferenceId
                                 </td>
-                                <td>@item.CreatedDate</td>
-                                <td>@item.Currency</td>
-                                <td>$@item.Total</td>
+                                <td>@eSim.Common.StaticClasses.BusinessManager.ConvertDate(item.CreatedDate)</td>
+                                @* <td>@item.CreatedDate</td> *@
+                                @if(item.Currency == "USD"){
+                                    <td>$@item.Total</td>
+                                }
+                                else{
+                                    <td>@item.Currency @item.Total</td>
+
+                                   }
                                 <td>@item.Status</td>
                                 <td>
 
-                                    <a data-bs-toggle="tooltip" data-bs-placement="top" title="edit" class="mx-2" asp-action="Detail" asp-controller="Subscriber" asp-route-id="@item.OrderReferenceId">
+                                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="edit" class="mx-2" asp-action="Detail" asp-controller="Order" asp-route-orderReferenceId="@item.OrderReferenceId">
                                         <i class="ri-eye-fill fs-5"></i>
                                     </a>
 

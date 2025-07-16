@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Security.Claims;
 
 namespace eSim.Admin.Controllers
@@ -49,7 +50,6 @@ namespace eSim.Admin.Controllers
 
             model.SubscribersResponse = FilterSubscribers(subScribers, input).ToList();
 
-
             ViewBag.Clients = clients.Select(u => new ClientDTO() { Name = u.Name, Id = u.Id }).ToList();
 
             return View(model);
@@ -80,9 +80,10 @@ namespace eSim.Admin.Controllers
 
                 if (dates.Length == 2 &&
                     DateTime.TryParse(dates[0], out var fromDate) &&
-                    DateTime.TryParse(dates[1], out var toDate))
+                    DateTime.TryParse(dates[1], out var toDate)) 
                 {
-                    inventory = inventory.Where(u => u.CreatedAt >= fromDate && u.CreatedAt <= toDate);
+                    var to = toDate.Date.AddDays(1).AddSeconds(-1);
+                    inventory = inventory.Where(u => u.CreatedAt >= fromDate && u.CreatedAt <= to);
                 }
             }
 
@@ -102,11 +103,13 @@ namespace eSim.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Detail(string Id)
+        public async Task<IActionResult> Detail(string Id, string clientName)
         {
             Guid.TryParse(Id, out Guid GuidID);
             var request = await _subscriber.GetSubscriberDetailAsync(GuidID);
             var subscriberDetail = request.Data;
+
+            ViewBag.ClientName = clientName;
             return View(subscriberDetail);
         }
 

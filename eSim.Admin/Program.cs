@@ -1,4 +1,5 @@
 using eSim.Admin.Models;
+using eSim.Common.StaticClasses;
 using eSim.EF.Context;
 using eSim.EF.Entities;
 using eSim.Implementations.Services.Account;
@@ -18,6 +19,7 @@ using eSim.Infrastructure.Interfaces.Admin.Esim;
 using eSim.Infrastructure.Interfaces.Admin.Inventory;
 using eSim.Infrastructure.Interfaces.Admin.Order;
 using eSim.Infrastructure.Interfaces.Admin.Ticket;
+using eSim.Infrastructure.Interfaces.ConsumeApi;
 using eSim.Infrastructure.Interfaces.Middleware;
 using eSim.Infrastructure.Interfaces.SystemClaimRepo;
 using Microsoft.AspNetCore.Authorization;
@@ -37,6 +39,7 @@ if (string.IsNullOrWhiteSpace(connectionstring))
 
 
 // Add services to the container.
+builder.Services.AddHttpClient();
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionstring));
 builder.Services.AddTransient<ISubscriberService, SubscriberService>();
@@ -50,6 +53,7 @@ builder.Services.AddTransient<ITicket, TicketService>();
 builder.Services.AddTransient<IInventory, InventoryService>();
 builder.Services.AddTransient<IAdminOrder, AdminOrderService>();
 builder.Services.AddTransient<IEsims, EsimService>();
+builder.Services.AddTransient<IConsumeApi, ConsumeAPI>();
 builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailConfiguration"));
 
 builder.Services.
