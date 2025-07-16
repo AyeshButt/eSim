@@ -5,6 +5,7 @@ using eSim.Infrastructure.DTOs.Ticket;
 using eSim.Infrastructure.DTOs.Selfcare.Ticket;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Web.Razor.Generator;
 
 namespace eSim.Selfcare.Controllers
 {
@@ -88,19 +89,30 @@ namespace eSim.Selfcare.Controllers
                 if (resp.Success)
                 {
                     TempData["ToastMessage"] = resp.Message + " " + "Ticket Has been genrated";
-                    TempData["ToastType"] = resp.Success;
+                    TempData["ToastType"] = "success";
                     return RedirectToAction("List");
                 }
                 else
                 {
+                    var data = await _ts.GetTicketType();
+                    if (data.Success)
+                    {
+                        model.Types = data.Data;
+                    }
                     TempData["ToastMessage"] = resp.Message;
                     TempData["ToastType"] = resp.Success;
-                    return View();
+                    return View(model);
                 }
             }
             else
             {
-                return View();
+                var data = await _ts.GetTicketType();
+                if (data.Success)
+                {
+                    model.Types = data.Data;
+                }
+
+                return View(model);
             }
         }
 

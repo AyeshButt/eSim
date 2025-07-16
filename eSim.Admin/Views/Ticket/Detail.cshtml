@@ -1,4 +1,5 @@
-﻿@model eSim.Infrastructure.DTOs.Ticket.TicketDTO
+﻿@using eSim.Common.StaticClasses
+@model eSim.Infrastructure.DTOs.Ticket.TicketDTO
 @{
     ViewBag.Title = "Ticket Details";
     Layout = null;
@@ -204,11 +205,11 @@
                                                 </tr>
                                                 <tr>
                                                     <th class="fw-semibold">Created</th>
-                                                    <td>@Model.CreatedAt.ToString("dd MMM yyyy - hh:mm tt")</td>
+                                                    <td>@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
                                                 </tr>
                                                 <tr>
                                                     <th class="fw-semibold">Last Updated</th>
-                                                    <td>@Model.CreatedAt.ToString("dd MMM yyyy - hh:mm tt")</td>
+                                                    <td>@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -231,8 +232,14 @@
                                             {
                                                 var fileName = System.IO.Path.GetFileName(fileUrl);
                                                 var encodedFileName = Uri.EscapeDataString(fileName);
-                                                var fullUrl = $"https://localhost:7264/uploads/{encodedFileName}";
-                                                var displayName = fileName.Contains("_") ? fileName.Split('_', 2)[1] : fileName;
+                                                var baseUrl = BusinessManager.AttachmentUpload; 
+                                                var fullUrl = $"{baseUrl}{encodedFileName}";
+                                                var underscoreIndex = fileName.LastIndexOf('_');
+                                                var dotIndex = fileName.LastIndexOf('.');
+
+                                                var displayName = (underscoreIndex > -1 && dotIndex > underscoreIndex)
+                                                ? fileName.Substring(0, underscoreIndex) + fileName.Substring(dotIndex)
+                                                : fileName;
                                                 var ext = System.IO.Path.GetExtension(fileUrl).ToLower();
                                                 var icon = ext switch
                                                 {

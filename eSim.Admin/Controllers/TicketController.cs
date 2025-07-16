@@ -93,7 +93,10 @@ namespace eSim.Admin.Controllers
                 TempData["Error"] = "Invalid comment data.";
                 return RedirectToAction("Detail", new { trn = request.TRN });
             }
-
+            if (!Request.Form.ContainsKey("IsVisibleToCustomer"))
+            {
+                request.IsVisibleToCustomer = false;
+            }
             var userName = User.Identity?.Name ?? "Admin";
 
             try

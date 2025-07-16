@@ -72,21 +72,43 @@ namespace eSim.Implementations.Services.Ticket
                     return result;
                 }
 
-                var comments = await _db.TicketActivities
+                var activities = await _db.TicketActivities
                     .Where(a => a.TicketId == ticket.Id.ToString())
                     .OrderByDescending(a => a.ActivityAt)
-                    .Select(a => new TicketActivityDTO
-                    {
-                        Comment = a.Comment,
-                        ActivityBy = a.ActivityBy,
-                        ActivityAt = a.ActivityAt
-                    }).ToListAsync();
+                    .ToListAsync();
+
+       
+                var subscriberIds = activities
+                    .Where(a => Guid.TryParse(a.ActivityBy, out _))
+                    .Select(a => Guid.Parse(a.ActivityBy))
+                    .Distinct()
+                    .ToList();
+
+  
+                var subscriberDict = await _db.Subscribers
+                    .Where(s => subscriberIds.Contains(s.Id))
+                    .ToDictionaryAsync(s => s.Id, s => s.FirstName + " " + s.LastName);
+
+
+
+        
+                var comments = activities.Select(a => new TicketActivityDTO
+                {
+                    Comment = a.Comment,
+                    ActivityAt = a.ActivityAt,
+                    ActivityBy = Guid.TryParse(a.ActivityBy, out var guid) && subscriberDict.ContainsKey(guid)
+                        ? subscriberDict[guid]   
+                        : a.ActivityBy,
+               
+                }).ToList();
+
 
                 var attachments = await _db.TicketAttachments
                     .Where(att => att.TicketId == ticket.Id.ToString())
                     .Select(att => att.Attachment)
                     .ToListAsync();
 
+           
                 result.Data = new TicketDTO
                 {
                     Id = ticket.Id,
@@ -109,7 +131,6 @@ namespace eSim.Implementations.Services.Ticket
             }
 
             return result;
-        
         }
 
         public async Task<IQueryable<TicketTypeDTO>> GetTypeListAsync()
@@ -135,7 +156,8 @@ namespace eSim.Implementations.Services.Ticket
                 CommentType = request.CommentType,
                 IsVisibleToCustomer = request.IsVisibleToCustomer,
                 ActivityBy = activityBy,
-                ActivityAt = BusinessManager.GetDateTimeNow()
+                ActivityAt = BusinessManager.GetDateTimeNow(),
+                
             };
 
             await _db.TicketActivities.AddAsync(activity);

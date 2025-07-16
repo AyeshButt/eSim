@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using eSim.Infrastructure.DTOs.Admin.Inventory;
 
 namespace eSim.Infrastructure.DTOs.Middleware.Order
 {
@@ -26,6 +27,7 @@ namespace eSim.Infrastructure.DTOs.Middleware.Order
 
     public class GetOrderDetailResponse
     {
+     
         public List<OrderInnerDetails> Order { get; set; } = new();
         public double Total { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -41,6 +43,11 @@ namespace eSim.Infrastructure.DTOs.Middleware.Order
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public bool? Assigned { get; set; }
         public string Message { get; set; } = null!;
+        public string SubscriberId { get; set; } = null!;
+        public List<AdminInventoryDTO> InventoryList { get; set; } = new();
+        public string SubscriberName { get; set; }
+
+
     }
 
     public class OrderInnerDetails
