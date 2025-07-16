@@ -23,7 +23,7 @@ namespace eSim.Infrastructure.DTOs.Selfcare.Ticket
         [Required(ErrorMessage = "Description is Required")]
         public string Description { get; set; } = null!;
 
-        [Required(ErrorMessage = "File is required.")]
-        public IFormFile File { get; set; } = null!;
+   
+        public IFormFile? File { get; set; } 
     }
 }

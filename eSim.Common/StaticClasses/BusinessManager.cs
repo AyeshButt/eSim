@@ -38,6 +38,8 @@ namespace eSim.Common.StaticClasses
 
         public static string MdwBaseURL = "https://localhost:7264/";
         public static string MiddlewareBaseURL = "https://localhost:7264";
+        public static string AttachmentUpload = "https://localhost:7264/uploads/";
+    
         public static string Countries = "Countries";
         public static string Regions = "regions";
         public static string MidlewareLogin = "auth/login";
@@ -152,6 +154,7 @@ namespace eSim.Common.StaticClasses
 
         public static string TicketCreated = "Ticket Created Successfully";
         public static string Ticketnotfound = "Ticket not found.";
+        public static string FilesSize = "File size exceeds 100 KB.";
         public static string Attachmentuploaded = "Attachment uploaded successfully.";
         public static string Commentadded = "Comment added successfully";
         public static string EsimInstallDetailNotFound = "No esim install detail data found.";
@@ -202,7 +205,10 @@ namespace eSim.Common.StaticClasses
         public static string PasswordConfirmationEmail = "Password changed but failed to send confirmation email.";
 
 
-
+       
+ 
+           
+      
 
         public static string GenerateUniqueAlphanumericId(int length)
         {

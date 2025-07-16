@@ -61,9 +61,10 @@
 							<table class="table table-striped table-nowrap align-middle mb-0">
 								<thead>
 									<tr>
+										<th>SubscriberName</th>
 										<th>Status</th>
 										<th>Total</th>
-										<th>Currency</th>
+										
 									
 										<th>Created Date</th>
 										<th>Action</th>
@@ -73,9 +74,13 @@
 									@foreach (var order in Model.Orders)
 									{
 										<tr>
+											<td>@order.SubscriberName</td>
 											<td>@order.Status</td>
-											<td>@order.Total</td>
-											<td>@order.Currency</td>
+											<td>@($"{order.Total:0.00}{GetCurrencySymbol(order.Currency)}")</td>
+
+
+
+
 										
 											<td>@order.CreatedDate.ToString("yyyy-MM-dd HH:mm")</td>
 
@@ -112,3 +117,47 @@ else
 		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 	</div>
 }
+
+@using System.Globalization
+
+@functions {
+	public string GetCurrencySymbol(string currencyCode)
+	{
+		// Most common mappings (fallbacks)
+		var symbols = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+		{
+			{ "USD", "$" },
+			{ "EUR", "€" },
+			{ "GBP", "£" },
+			{ "INR", "₹" },
+			{ "PKR", "₨" },
+			{ "JPY", "¥" },
+			{ "AUD", "A$" },
+			{ "CAD", "C$" },
+			{ "CNY", "¥" },
+			{ "SAR", "﷼" },
+			{ "AED", "د.إ" },
+		};
+
+		if (symbols.ContainsKey(currencyCode))
+			return symbols[currencyCode];
+
+		// Try to get from .NET if not in fallback list
+		try
+		{
+			foreach (var culture in CultureInfo.GetCultures(CultureTypes.SpecificCultures))
+			{
+				var region = new RegionInfo(culture.LCID);
+				if (region.ISOCurrencySymbol.Equals(currencyCode, StringComparison.OrdinalIgnoreCase))
+				{
+					return region.CurrencySymbol;
+				}
+			}
+		}
+		catch { }
+
+		return currencyCode; // Fallback: show code if nothing found
+	}
+}
+
+

@@ -275,16 +275,29 @@ namespace eSim.Implementations.Services.Middleware.Ticket
                 if (ticket == null)
 
                 { result.Success = false; result.Message = BusinessManager.Ticketnotfound; result.StatusCode = StatusCodes.Status400BadRequest; return result; }
-         
 
+                if (input.File.Length > 102400)
+                {
+                    result.Success = false;
+                    result.Message = BusinessManager.FilesSize;
+                    result.StatusCode = StatusCodes.Status400BadRequest;
+                    return result;
+                }
 
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
                 if (!Directory.Exists(uploadsFolder))
                     Directory.CreateDirectory(uploadsFolder);
 
-                var fileName = $"{Guid.NewGuid()}_{input.File.FileName}";
-                var filePath = Path.Combine(uploadsFolder, fileName);
+                //var fileName = $"{Guid.NewGuid()}_{input.File.FileName}";
+                //var filePath = Path.Combine(uploadsFolder, fileName);
+                 var originalFileName=Path.GetFileName(input.File.FileName);
+                var nameWithoutExt = Path.GetFileNameWithoutExtension(originalFileName);
+                var extension = Path.GetExtension(originalFileName);
+                var timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
 
+                
+                var fileName = $"{nameWithoutExt}_{timestamp}{extension}";
+                var filePath = Path.Combine(uploadsFolder, fileName);
 
 
 

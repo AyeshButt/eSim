@@ -18,6 +18,6 @@ namespace eSim.Infrastructure.DTOs.Ticket
         [Required(ErrorMessage = "Comment type is required.")]
         public int CommentType { get; set; }
 
-        public bool IsVisibleToCustomer { get; set; } = true;
+        public bool IsVisibleToCustomer { get; set; } =true;
     }
 }

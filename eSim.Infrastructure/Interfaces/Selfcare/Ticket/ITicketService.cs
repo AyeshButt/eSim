@@ -16,7 +16,10 @@ namespace eSim.Infrastructure.Interfaces.Selfcare.Ticket
         public Task<Result<string>> Create(TicketRequestViewModel dto);
 
         public Task<Result<TicketDetailDTO>> Detail(string trn);
+
         Task<Result<bool>> PostCommentAsync(TicketCommentRequest request);
+
+ 
 
     }
 }

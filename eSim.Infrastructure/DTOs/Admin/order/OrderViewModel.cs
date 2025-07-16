@@ -10,6 +10,7 @@ namespace eSim.Infrastructure.DTOs.Admin.order
     public class OrderViewModel
     {
         public List<GetOrderDetailResponse> Orders { get; set; } = new();
+
         public string? OrderReference { get; set; }
         public int PageCount { get; set; }
         public int PageSize { get; set; }
