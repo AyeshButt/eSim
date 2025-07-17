@@ -24,8 +24,8 @@
                 </div>
                 <div class="card-body">
                     <form asp-action="Index" asp-controller="Subscriber" method="get">
-                        <div class="row align-items-end">
-                            <div class="col-xxl-3 col-sm-4">
+                    <div class="row row-cols-xxl-4 row-cols-lg-2 row-cols-1 align-items-end">
+                            <div class="col">
                                 <div class="mb-3">
                                 <label for="Client" class="form-label text-muted">Filter By Cients</label>
                                     <select asp-for="Client" class="form-control" data-choices 
@@ -38,7 +38,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div id="subscriberGroup" class="col-xxl-3 col-sm-4" style="display:none;">
+                            <div id="subscriberGroup" class="col" style="display:none;">
                                 <div class="mb-3">
                                     <label asp-for="Subscriber" class="form-label text-muted">Subscriber</label>
                                     <select id="subscriber" asp-for="Subscriber" class="form-control" data-selected="@Model.Subscriber">
@@ -46,7 +46,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-3 col-sm-4">
+                            <div class="col">
                                 <div class="mb-3">
                                 <label for="DateRange" class="form-label text-muted">Filter By Date</label>
                                 <input asp-for="DateRange" type="text" class="form-control" data-provider="flatpickr"
@@ -54,10 +54,10 @@
                                 </div>
                             </div> 
 
-                            <div class="col-xxl-3 col-sm-4  d-flex">
+                            <div class="col d-flex">
                                 <div class="mb-3 d-flex align-items-center gap-2">
                                     <button type="submit" class="btn btn-primary w-100">
-                                        <i class="ri-equalizer-fill me-1 align-bottom"></i>
+                                    <i class="ri-search-line me-1 align-bottom"></i>
                                         Search
                                     </button>
                                     <a asp-action="Index" asp-controller="Subscriber" class="btn btn-secondary px-4">Reset</a>

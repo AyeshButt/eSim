@@ -305,7 +305,7 @@ namespace eSim.Common.StaticClasses
         /// 
         public static string ConvertDate(DateTime? input)
         {
-            return input?.ToString("dd-MM-yyyy") ?? string.Empty;
+            return input?.ToString("dd-MM-yyyy HH:mm") ?? string.Empty;
         }
 
 
