@@ -113,7 +113,7 @@ namespace eSim.Admin.Controllers
                 esims = esims.Where(u => u.Client == input.Client);
             }
 
-            // Client Filter
+            // iccid
             if (!string.IsNullOrWhiteSpace(input.Iccid))
             {
 
