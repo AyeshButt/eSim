@@ -1,4 +1,5 @@
-﻿@using eSim.Infrastructure.DTOs.Global
+﻿@using eSim.Common.StaticClasses
+@using eSim.Infrastructure.DTOs.Global
 @using eSim.Infrastructure.DTOs.Selfcare.Ticket
 @model Result<TicketDetailDTO>
 
@@ -28,7 +29,13 @@
 
             <div class="page-content">
                 <div class="container-fluid">
-
+                    <div class="row mt-1 mb-4">
+                        <div class="col-12">
+                            <a asp-controller="SupportTicket" asp-action="List" class="btn btn-light">
+                                <i class="ri-arrow-left-line align-middle me-1"></i> 
+                            </a>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="card mt-n4 mx-n4 mb-n5">
@@ -287,18 +294,27 @@
                             @* Attachments list from model *@
                             @if (Model.Data.Attachments != null && Model.Data.Attachments.Any())
                             {
+                                <div class="card mt-4">
+                                    <div class="card-header bg-light">
+                                        <h5 class="card-title mb-0">
+                                            <i class="ri-attachment-line align-middle me-2"></i> Attachments
+                                        </h5>
+                                    </div>
                                 <div class="card-body">
                                     @foreach (var fileUrl in Model.Data.Attachments)
                                     {
                                         var fileName = System.IO.Path.GetFileName(fileUrl);
                                         var fileExt = System.IO.Path.GetExtension(fileUrl).ToLower();
-                                        var baseUrl = "https://localhost:7264/uploads/";
+                                            var baseUrl = BusinessManager.AttachmentUpload;
 
 
-                                        var encodedFileName = Uri.EscapeDataString(fileName); // ✅ Important line
+                                        var encodedFileName = Uri.EscapeDataString(fileName); 
                                         var fullUrl = $"{baseUrl}{encodedFileName}";
-
-                                        var originalFileName = fileName.Contains("_") ? fileName.Split('_', 2)[1] : fileName;
+                                            var underscoreIndex = fileName.LastIndexOf('_');
+                                            var dotIndex = fileName.LastIndexOf('.');
+                                            var originalFileName = (underscoreIndex > -1 && dotIndex > underscoreIndex)
+                                            ? fileName.Substring(0, underscoreIndex) + fileName.Substring(dotIndex)
+                                            : fileName;
 
                                         string icon = fileExt switch
                                         {
@@ -322,12 +338,14 @@
                                                 </h6>
                                             </div>
                                             <div class="hstack gap-3 fs-16">
-                                                <a href="@fullUrl" class="text-muted" download="@originalFileName">
+                                                <a href="@fullUrl" download="@originalFileName" title="Download">
                                                     <i class="ri-download-2-line"></i>
                                                 </a>
                                             </div>
+
                                         </div>
                                     }
+                                    </div>
                                 </div>
                             }
 

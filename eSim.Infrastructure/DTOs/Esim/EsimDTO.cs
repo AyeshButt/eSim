@@ -18,7 +18,7 @@ namespace eSim.Infrastructure.DTOs.Esim
         public int Rows { get; set; }
     }
 
-    public class EsimDTO
+    public class    EsimDTO
     {
         public string Iccid { get; set; }
         public string CustomerRef { get; set; }

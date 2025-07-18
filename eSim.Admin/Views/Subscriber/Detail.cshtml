@@ -1,0 +1,236 @@
+﻿@using eSim.Infrastructure.DTOs.Subscribers
+@model SubscriberDTO
+
+@{
+    var subId = Model.Id;
+    // var selectedCountry = Model.CountryList.FirstOrDefault(c => c.Iso2 == Model.Country);
+    var clientName = ViewBag.clientName;
+
+}
+
+@section styles {
+
+    <!--datatable css-->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
+    <!--datatable responsive css-->
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+}
+
+<div class="container-fluid">
+    <div class="profile-foreground position-relative mx-n4 mt-n4">
+        <div class="profile-wid-bg">
+            <img src="~/assets/images/profile-bg.jpg" alt="" class="profile-wid-img" />
+        </div>
+    </div>
+    <div class="pt-4 mb-4 mb-lg-3 pb-lg-4">
+        <div class="row g-4">
+            <div class="col-auto">
+                <div class="avatar-lg">
+                    <img src="~/assets/images/users/avatar-1.jpg" alt="user-img"
+                         class="img-thumbnail rounded-circle" />
+                </div>
+            </div>
+           
+            <div class="col">
+                <div class="p-2">
+                    <h3 class="text-white mb-1">@Model.FirstName @Model.LastName</h3>
+                    <p class="text-white text-opacity-75"><b>SignUp Date: </b>@eSim.Common.StaticClasses.BusinessManager.ConvertDate(@Model.CreatedAt)</p>
+                    <div class="hstack text-white gap-1">
+                        <div class="me-2">
+                            <i class="ri-mail-line me-1 text-white text-opacity-75 fs-16 align-middle"></i>
+                            @Model.Email
+                        </div>
+                        <div>
+                            <i class="ri-map-pin-user-line me-1 text-white text-opacity-75 fs-16 align-middle"></i>@Model.Country
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="p-2 text-white">
+                    <h5 class="text-white">Client</h5>
+                    <p class="">@clientName</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="p-2">
+                    <h5 class="text-white">Status</h5><br />
+                    <div class=" text-white form-check form-switch">
+                        <label class="form-check-label" for="statusToggle">
+                            @(Model.Active ? "Active" : "Inactive")
+                        </label>
+                        <input class="form-check-input" type="checkbox"
+                               id="statusToggle"
+                                @(Model.Active ? "checked" : "")
+                               data-id="@Model.Id" /><br />
+                        
+                    </div>
+                    <span id="statusMessage" class="text-success"></span>
+                </div>
+            </div>
+            <div class="col-12 col-lg-auto order-last order-lg-0">
+                <div class="row text text-white-50 text-center">
+                    <div class="col-lg-6 col-4">
+                        @* <div class="p-2">
+                            @if (Model.Active)
+                            {
+                                <h4 class="text-white mb-1">Active</h4>
+                            }
+                            else
+                            {
+                                <h4 class="text-white mb-1">Disabled</h4>
+                            }
+                        </div>  *@
+                    </div>
+                   @*  <div class="col-lg-6 col-4">
+                        <div class="p-2">
+                            <h4 class="text-white mb-1">@Model.CreatedAt</h4>
+                        </div>
+                    </div> *@
+                </div>
+            </div>
+
+        </div>
+       
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="d-flex">
+                <!-- Nav tabs -->
+                <ul class="nav nav-pills animation-nav profile-nav gap-2 gap-lg-3 flex-grow-1 align-items-center"
+                    role="tablist">
+                    
+                    <li class="nav-item">
+                        <a class="nav-link fs-14 active" data-tab="order" id="ordersTabs" href="#"
+                            role="tab">
+                            <i class="ri-list-unordered d-inline-block d-md-none"></i> <span class="d-none d-md-inline-block">Orders</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fs-14" data-tab="inventory" href="#" role="tab">
+                            <i class="ri-price-tag-line d-inline-block d-md-none"></i> <span class="d-none d-md-inline-block">Inventory</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fs-14" data-tab="esim" href="#" role="tab">
+                            <i class="ri-folder-4-line d-inline-block d-md-none"></i> <span class="d-none d-md-inline-block">eSIMs</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fs-14" data-tab="ticket" href="#" role="tab">
+                            <i class="ri-folder-4-line d-inline-block d-md-none"></i> <span class="d-none d-md-inline-block">Tickets</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <!-- Tab panes -->
+            <div class="tab-content pt-4 text-muted" id="tabContent">
+                <div id="tabLoader" class="text-center my-5" style="display: none;">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <div class="mt-2">Loading...</div>
+                </div>
+                <div class="tab-pane fade show active" id="tabpane" role="tabpanel">
+                </div>
+                <!--end tab-pane-->
+            </div>
+            <!--end tab-content-->
+        </div>
+        <!--end col-->
+    </div>
+    <!--end row-->
+</div>
+
+@section scripts {
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+    <!--datatable js-->
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+
+    <script src="~/assets/js/pages/datatables.init.js"></script>
+
+
+    <script>
+        let currentTabRequest = null;
+        var subId = '@subId';
+
+        function loadTab(tabName) {
+            $('#tabpane').empty().removeClass('show active');
+            $('#tabLoader').show();
+
+            // Abort previous request if still pending
+            if (currentTabRequest && currentTabRequest.readyState !== 4) {
+                currentTabRequest.abort();
+            }
+
+            currentTabRequest = $.ajax({
+                url: '@Url.Action("TabPartialViews", "Subscriber")',
+                type: 'POST',
+                data: { tab: tabName, subId: subId },
+
+                success: function (html) {
+                    $('#tabLoader').hide();
+                    $('#tabpane').html(html).addClass('show active');
+
+                    if ($('#tabpane table').length) {
+                        $('#tabpane table').DataTable({
+                            destroy: true,  // Allows reinitialization
+                            responsive: true
+                            // Add other DataTable options as needed
+                        });
+                    }
+                },
+                error: function (xhr, status) {
+                    if (status !== 'abort') {
+                        $('#tabLoader').hide();
+                        $('#tabpane').html('<div class="text-danger text-center">Failed to load tab.</div>')
+                            .addClass('show active');
+                    }
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            // Initial load
+            loadTab('order');
+
+            // On tab click - using event delegation for dynamic tabs if needed
+            $(document).on('click', '[data-tab]', function(e) {
+                e.preventDefault();
+
+                // Update active state of nav links
+                $('.nav-link').removeClass('active');
+                $(this).addClass('active');
+
+                const tab = $(this).data('tab');
+                loadTab(tab);
+            });
+        });
+    </script>
+
+    
+    <!-- END layout-wrapper -->
+    @Html.Partial("~/Views/Shared/_customizer.cshtml")
+
+    @Html.Partial("~/Views/Shared/_vendor_scripts.cshtml")
+
+    <!-- swiper js -->
+    <script src="~/assets/libs/swiper/swiper-bundle.min.js"></script>
+
+    <!-- profile init js -->
+    <script src="~/assets/js/pages/profile.init.js"></script>
+
+    <!-- App js -->
+    <script src="~/assets/js/app.js"></script>
+} 

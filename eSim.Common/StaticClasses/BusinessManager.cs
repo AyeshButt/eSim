@@ -38,6 +38,8 @@ namespace eSim.Common.StaticClasses
 
         public static string MdwBaseURL = "https://localhost:7264/";
         public static string MiddlewareBaseURL = "https://localhost:7264";
+        public static string AttachmentUpload = "https://localhost:7264/uploads/";
+    
         public static string Countries = "Countries";
         public static string Regions = "regions";
         public static string MidlewareLogin = "auth/login";
@@ -152,6 +154,7 @@ namespace eSim.Common.StaticClasses
 
         public static string TicketCreated = "Ticket Created Successfully";
         public static string Ticketnotfound = "Ticket not found.";
+        public static string FilesSize = "File size exceeds 100 KB.";
         public static string Attachmentuploaded = "Attachment uploaded successfully.";
         public static string Commentadded = "Comment added successfully";
         public static string EsimInstallDetailNotFound = "No esim install detail data found.";
@@ -202,7 +205,10 @@ namespace eSim.Common.StaticClasses
         public static string PasswordConfirmationEmail = "Password changed but failed to send confirmation email.";
 
 
-
+       
+ 
+           
+      
 
         public static string GenerateUniqueAlphanumericId(int length)
         {
@@ -289,6 +295,31 @@ namespace eSim.Common.StaticClasses
             return $"createdAt={startDate}&createdAt={endDate}";
         }
 
+
+        /// <summary>
+        /// convert datre time into date only for view purpose
+        /// </summary>
+        /// <param name="password"></param>
+        /// <param name="salt"></param>
+        /// <returns></returns>
+        /// 
+        public static string ConvertDate(DateTime? input)
+        {
+            return input?.ToString("dd-MM-yyyy HH:mm") ?? string.Empty;
+        }
+
+
+
+        public static string FormatDataAmount(int? dataAmountInMB)
+        {
+            if (dataAmountInMB == 0 || dataAmountInMB == null)
+                return string.Empty;
+
+            double gb = Math.Round(dataAmountInMB.Value / 1000.0, 2); // Round to 2 decimal places
+            return $"{gb} GB";
+        }
+
+
     }
     public static class PasswordHasher
     {
@@ -342,7 +373,13 @@ namespace eSim.Common.StaticClasses
             }
             return true;
         }
+
+
         
+
+
+
+
         private static byte[] CreateHash(string password, byte[] salt)
         {
             using (var pbkdf2 = new Rfc2898DeriveBytes(

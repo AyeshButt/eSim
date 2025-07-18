@@ -271,6 +271,45 @@
                                         </li>
                 }
 
+                @if (User.HasClaim("Subscribers", "view"))
+                {
+                    <li class="nav-item">
+
+                        <a class="nav-link menu-link" href="@Url.Action("Index","Subscriber")"
+                           aria-expanded="false" aria-controls="sidebarDashboards">
+
+                            <i class="ri-group-line"></i>Subscribers
+
+                        </a>
+                        @*                         <div class="collapse menu-dropdown" id="sidebarDashboards">
+                            <ul class="nav nav-sm flex-column">
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Analytics", "Dashboard")" class="nav-link" data-key="t-analytics"> Analytics </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("CRM", "Dashboard")" class="nav-link" data-key="t-crm"> CRM </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index", "Dashboard")" class="nav-link" data-key="t-ecommerce"> Ecommerce </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Crypto", "Dashboard")" class="nav-link" data-key="t-crypto"> Crypto </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Projects", "Dashboard")" class="nav-link" data-key="t-projects"> Projects </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("NFT", "Dashboard")" class="nav-link" data-key="t-nft"> NFT</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Job", "Dashboard")" class="nav-link" data-key="t-job">Job</a>
+                                </li>
+                            </ul>
+                        </div>
+ *@                    
+                                    </li>
+                }
+
 
 
                 @*                 <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Pages</span></li>
@@ -480,6 +519,19 @@
                            aria-expanded="false" aria-controls="sidebarDashboards">
 
                             <i class="ri-dashboard-2-line"></i> Orders
+
+                        </a>
+                    </li>
+                }
+                @if (User.HasClaim("Orders", "view"))
+                {
+                    <li class="nav-item">
+
+                        <a class="nav-link menu-link" href="@Url.Action("Index","Sim")"
+                           aria-expanded="false" aria-controls="sidebarDashboards">
+
+                            <i class="ri-sim-card-line"></i> eSIMs
+
 
                         </a>
                     </li>

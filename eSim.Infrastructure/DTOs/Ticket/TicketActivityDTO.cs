@@ -11,5 +11,7 @@ namespace eSim.Infrastructure.DTOs.Ticket
         public string Comment { get; set; } = null!;
         public string ActivityBy { get; set; } = null!;
         public DateTime ActivityAt { get; set; }
+
+
     }
 }

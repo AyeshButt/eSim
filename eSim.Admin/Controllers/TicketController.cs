@@ -85,5 +85,31 @@ namespace eSim.Admin.Controllers
 
             return View(result.Data);
         }
+        [HttpPost]
+        public async Task<IActionResult> AddComment(TicketCommentRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["Error"] = "Invalid comment data.";
+                return RedirectToAction("Detail", new { trn = request.TRN });
+            }
+            if (!Request.Form.ContainsKey("IsVisibleToCustomer"))
+            {
+                request.IsVisibleToCustomer = false;
+            }
+            var userName = User.Identity?.Name ?? "Admin";
+
+            try
+            {
+                await _ticket.SaveTicketCommentAsync(request, userName);
+                TempData["Success"] = "Comment added successfully.";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
+
+            return RedirectToAction("Detail", new { trn = request.TRN });
+        }
     }
 }

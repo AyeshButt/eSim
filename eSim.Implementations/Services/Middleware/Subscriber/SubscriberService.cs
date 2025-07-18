@@ -318,14 +318,39 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
         }
 
 
-        public async Task<IQueryable<SubscriberDTO>> GetClient_SubscribersListAsync(string id)
+        public async Task<IQueryable<SubscribersResponseDTO>> GetClient_SubscribersListByID(string id)
         {
-            Guid parsedClientId = Guid.Parse(id);
+            IQueryable<SubscribersResponseDTO> result = null;
+            if(!string.IsNullOrWhiteSpace(id) && Guid.TryParse(id, out Guid parsedClientId))
+            {
+                var client_subscriber_list = (from s in _db.Subscribers
+                                              join c in _db.Client on s.ClientId equals c.Id
+                                              where s.ClientId == parsedClientId
+                                              select new SubscribersResponseDTO()
+                                              {
+                                                  Id = s.Id,
+                                                  FirstName = s.FirstName,
+                                                  LastName = s.LastName,
+                                                  Email = s.Email,
+                                                  Hash = s.Hash,
+                                                  Active = s.Active,
+                                                  ClientId = s.ClientId,
+                                                  CreatedAt = s.CreatedAt,
+                                                  ModifiedAt = s.ModifiedAt,
+                                                  ClientName  = c.Name
+                                              }
+                                 );
+                return await Task.FromResult(client_subscriber_list);
 
+            }
+
+            return await Task.FromResult(result);
+        }
+        public async Task<IQueryable<SubscribersResponseDTO>> GetClient_SubscribersListAsync()
+        {
             var client_subscriber_list = (from s in _db.Subscribers
                                           join c in _db.Client on s.ClientId equals c.Id
-                                          where s.ClientId == parsedClientId
-                                          select new SubscriberDTO()
+                                          select new SubscribersResponseDTO()
                                           {
                                               Id = s.Id,
                                               FirstName = s.FirstName,
@@ -336,12 +361,12 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                                               ClientId = s.ClientId,
                                               CreatedAt = s.CreatedAt,
                                               ModifiedAt = s.ModifiedAt,
+                                              ClientName = c.Name
                                           }
-                                  );
-
-
+                                 );
             return await Task.FromResult(client_subscriber_list);
         }
+
 
         public async Task<IQueryable<SubscriberDTO>> GetSubscribersListAsync()
         {
@@ -385,8 +410,8 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                     Country = subscriber.Country,
                     ProfileImage = subscriber.ProfileImage,
                     ClientId=loggedUser,
-                    CreatedAt=BusinessManager.GetDateTimeNow(),
-                    ModifiedAt=BusinessManager.GetDateTimeNow(),
+                    CreatedAt=subscriber.CreatedAt,
+                    ModifiedAt=subscriber.ModifiedAt,
                     IsEmailVerifired = subscriber.IsEmailVerifired,
                     TermsAndConditions = subscriber.TermsAndConditions
                 };
@@ -395,23 +420,17 @@ namespace eSim.Implementations.Services.Middleware.Subscriber
                 result.Message = BusinessManager.Subscriberdetail;
                 result.StatusCode = StatusCodes.Status200OK;
                 return result;
-
-
-
-
             }
             catch (Exception ex) { 
                 result.Success = false;
                 result.Message = ex.Message;
                 result.StatusCode = StatusCodes.Status500InternalServerError;
-                return result;
-            
-            
+                return result;  
             }
-            return result;
         }
 
-        
+       
+
     }
     }
     #endregion

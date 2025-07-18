@@ -14,6 +14,7 @@ using eSim.Infrastructure.DTOs.Ticket;
 using eSim.Infrastructure.Interfaces.ConsumeApi;
 using eSim.Infrastructure.Interfaces.Selfcare.Ticket;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 
@@ -24,6 +25,8 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
         private readonly HttpClient _http;
         private readonly IHttpContextAccessor _httpContext;
         private readonly IMiddlewareConsumeApi _consumeApi;
+ 
+
 
         public TicketService(HttpClient http, IHttpContextAccessor httpContext, IMiddlewareConsumeApi consumeApi)
         {
@@ -31,6 +34,7 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
             _http = http;
             _httpContext = httpContext;
             _consumeApi = consumeApi;
+   
         }
 
         #region GetTicket List 
@@ -69,7 +73,7 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
         public async Task<Result<string>> Create(TicketRequestViewModel model)
         {
             string URL = BusinessManager.MdwBaseURL + "Ticket";
-            string attachmentUrl = BusinessManager.MdwBaseURL+"ticket/attachment";
+            string attachmentUrl = BusinessManager.MdwBaseURL + "ticket/attachment";
             var token = _httpContext.HttpContext?.User?.FindFirst("Token")?.Value;
 
             try
@@ -96,32 +100,42 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
                     };
                 }
 
-                // Upload File
-                using var content = new MultipartFormDataContent();
-                content.Add(new StringContent(ticketResult.Data!), "TRN");
-                content.Add(new StreamContent(model.File.OpenReadStream()), "File", model.File.FileName);
-
-                var attachmentResponse = await _http.PostAsync(attachmentUrl, content);
-                var attachmentJson = await attachmentResponse.Content.ReadAsStringAsync();
-                var attachmentResult = JsonConvert.DeserializeObject<Result<string>>(attachmentJson);
-
-                if (attachmentResult != null && attachmentResult.Success)
+               
+                if (model.File != null)
                 {
-                    return new Result<string>
+                    if (model.File.Length > 102400)
                     {
-                        Success = true,
-                        Message = "Ticket and attachment uploaded successfully",
-                        Data = ticketResult.Data
-                    };
+                        return new Result<string>
+                        {
+                            Success = false,
+                            Message = "File size exceeds the allowed limit of 100 KB."
+                        };
+                    }
+
+                        using var content = new MultipartFormDataContent();
+                    content.Add(new StringContent(ticketResult.Data!), "TRN");
+                    content.Add(new StreamContent(model.File.OpenReadStream()), "File", model.File.FileName);
+
+                    var attachmentResponse = await _http.PostAsync(attachmentUrl, content);
+                    var attachmentJson = await attachmentResponse.Content.ReadAsStringAsync();
+                    var attachmentResult = JsonConvert.DeserializeObject<Result<string>>(attachmentJson);
+
+                    if (!attachmentResult.Success)
+                    {
+                        return new Result<string>
+                        {
+                            Success = false,
+                            Message = "Ticket created but attachment failed: " + (attachmentResult?.Message ?? "")
+                        };
+                    }
                 }
-                else
+
+                return new Result<string>
                 {
-                    return new Result<string>
-                    {
-                        Success = false,
-                        Message = "Ticket created but attachment failed: " + (attachmentResult?.Message ?? "")
-                    };
-                }
+                    Success = true,
+                    Message = "Ticket created successfully",
+                    Data = ticketResult.Data
+                };
             }
             catch
             {
@@ -131,8 +145,8 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
                     Message = "Failed to create ticket or upload attachment"
                 };
             }
-
         }
+
         #endregion
 
         #region Detail
@@ -143,6 +157,9 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
             var fulUrl = $"{Url}?trn={Uri.EscapeDataString(trn)}";
 
             var request = await _consumeApi.Get<TicketDetailDTO>(fulUrl);
+ 
+    
+
             
             return request;
         }
@@ -153,6 +170,10 @@ namespace eSim.Implementations.Services.Selfcare.Ticket
             var result = await _consumeApi.Post<bool,TicketCommentRequest>(url, request);
             return result;
         }
+
+   
+
+
 
         #endregion
 
