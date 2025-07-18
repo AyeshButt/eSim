@@ -52,9 +52,20 @@ namespace eSim.Admin.Controllers
         #region Users
         public async Task<IActionResult> ManageUsers([FromServices] IInventory inventory )
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            
+            var user = await _userManager.FindByIdAsync(userId ?? string.Empty);
+            
+            if (user == null)
+            {
+                return NotFound();
+            }
 
             var model = inventory.GetUsers();
             
+            model.UserType = user.UserType;
+            model.UserId = userId ?? string.Empty;
+
             return View(model: model);
         }
 

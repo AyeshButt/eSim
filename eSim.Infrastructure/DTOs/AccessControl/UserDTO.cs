@@ -19,6 +19,8 @@ namespace eSim.Infrastructure.DTOs.AccessControl
         }
         public List<string> ParentKeys { get; set; }
         public IQueryable<ApplicationUserDTOTemporay> Users { get; set; }
+        public int UserType { get; set; }
+        public string UserId { get; set; }
     }
 
     public class ApplicationUserDTOTemporay

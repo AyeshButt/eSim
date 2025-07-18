@@ -1,156 +1,54 @@
 ﻿@using eSim.Infrastructure.DTOs.AccessControl;
-
+@using eSim.Common.Enums
 @model UserTempDTO
+@{
+    ViewBag.Title = "Manage Users";
 
 
+    var notifications = new List<(string Key, string Type)>
+    {
+        ("ValidationError", "error"),
+        ("EmailNotSent", "error"),
+        ("EmailNotReceived", "error"),
+        ("EmailReceived", "success"),
+        ("UserCreated", "success")
+    };
+}
 
-@foreach (var group in Model.ParentKeys)
+<h4>Manage Users</h4>
+
+<hr />
+
+@if (User.HasClaim("Users", "create"))
 {
-    <ul>
-
-        <li>
-
-            @Model.Users.FirstOrDefault(a => a.UserId == group)?.Email
-            - @group
-
-        </li>
-
-
-        <!-- admin -->
-
-        <table>
-            <tbody>
-                <tr>
-                    <td>Admins</td>
-                </tr>
-
-
-
-
-                @foreach (var item in Model.Users.Where(a => a.ParentId == group && a.UserType == 2))
-                {
-
-                    <tr>
-                        <td>
-
-                            @item.UserId - @item.Username - @item.UserType - @item.ParentId
-                        </td>
-
-                    </tr>
-
-                }
-
-
-            </tbody>
-        </table>
-
-
-
-
-
-
-
-    </ul>
-    <ul>
-
-        <!-- sub admin -->
-
-        <table>
-            <tbody>
-                <tr>
-                    <td>Sub Admins</td>
-                </tr>
-
-
-
-
-                @foreach (var item in Model.Users.Where(a => a.ParentId == group && a.UserType == 3))
-                {
-
-                    <tr>
-                        <td>
-
-                            @item.UserId - @item.Username - @item.UserType - @item.ParentId
-                        </td>
-
-                    </tr>
-
-                }
-
-
-            </tbody>
-        </table>
-
-    </ul>
-
-    <ul>
-
-        <!-- clients -->
-
-        <table>
-            <tbody>
-                <tr>
-                    <td>clients</td>
-                </tr>
-
-
-
-
-                @foreach (var item in Model.Users.Where(a => a.ParentId == group && a.UserType == 4))
-                {
-
-                    <tr>
-                        <td>
-
-                            @item.UserId - @item.Username - @item.UserType - @item.ParentId
-                        </td>
-
-                    </tr>
-
-                }
-
-
-            </tbody>
-        </table>
-
-    </ul>
-
-
-    <ul>
-
-        <!-- sub clint -->
-
-        <table>
-            <tbody>
-                <tr>
-                    <td>Sub clients</td>
-                </tr>
-
-
-
-
-                @foreach (var item in Model.Users.Where(a => a.ParentId == group && a.UserType == 5))
-                {
-
-                    <tr>
-                        <td>
-
-                            @item.UserId - @item.Username - @item.UserType - @item.ParentId
-                        </td>
-
-                    </tr>
-
-                }
-
-
-            </tbody>
-        </table>
-
-    </ul>
-
-
-      
-
-
-
+    <div class="row my-2">
+        <div class="col-xl-12">
+            <a asp-action="AddUser" class="float-end mb-2  btn rounded-pill btn-secondary waves-effect waves-light">Add User</a>
+        </div>
+    </div>
+}
+
+
+@if((int)AspNetUsersTypeEnum.Developer == Model.UserType || (int)AspNetUsersTypeEnum.Superadmin == Model.UserType)
+{
+    <partial name="_AdminUserListPartial" model="Model" />
+}
+else
+{
+
+    <partial name="_ClientUserListPartial" model="Model" />
+}
+
+@section scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        @foreach (var (key, type) in notifications)
+        {
+            if (TempData[key] != null)
+            {
+                <text>ToastNotification("@TempData[key]", "@type");</text>
+            }
+        }
+        });
+    </script>
 }

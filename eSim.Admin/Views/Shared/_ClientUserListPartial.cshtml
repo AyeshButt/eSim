@@ -1,0 +1,65 @@
+﻿@using eSim.Infrastructure.DTOs.AccessControl;
+@model UserTempDTO
+
+@{
+    var clientGroups = Model.Users.Where(a=> a.ParentId == Model.UserId);
+}
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header align-items-center d-flex">
+                <h4 class="card-title mb-0 flex-grow-1">Sub Clients</h4>
+            </div><!-- end card header -->
+
+            <div class="card-body">
+                <div class="live-preview">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-nowrap align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Username</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in clientGroups)
+                                {
+                                    <tr>
+                                        <td>@user.Username</td>
+                                        <td>@user.Email</td>
+                                        <td>
+                                            @if (User.HasClaim("Users", "edit"))
+                                            {
+
+                                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="edit" asp-action="EditUser" class="mx-1" asp-route-id="@user.UserId"><i class="ri-pencil-fill fs-5"></i></a>
+                                            }
+                                            @if (User.HasClaim("Users", "disable"))
+                                            {
+                                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="disable" asp-action="DisableUser" class="mx-1" asp-route-id="@user.UserId"><i class="ri-close-line fs-5"></i></a>
+
+                                            }
+                                            @if (User.HasClaim("Users", "delete"))
+                                            {
+                                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="delete" asp-action="DeleteUser" class="mx-1" asp-route-id="@user.UserId"><i class="ri-delete-bin-fill fs-5"></i></a>
+
+                                            }
+
+                                        </td>
+                                    </tr>
+                                }
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div><!-- end card-body -->
+        </div><!-- end card -->
+    </div>
+    <!-- end col -->
+</div>
+
+
