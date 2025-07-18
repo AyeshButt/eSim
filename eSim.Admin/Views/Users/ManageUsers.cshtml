@@ -1,130 +1,156 @@
-﻿@using eSim.Infrastructure.DTOs.AccessControl
-@model List<UserDTO>
-@{
-    ViewBag.Title = "Manage Users";
+﻿@using eSim.Infrastructure.DTOs.AccessControl;
+
+@model UserTempDTO
 
 
-    var notifications = new List<(string Key, string Type)>
-    {
-        ("ValidationError", "error"),
-        ("EmailNotSent", "error"),
-        ("EmailNotReceived", "error"),
-        ("EmailReceived", "success"),
-        ("UserCreated", "success")
-    };
-}
-<h4>Manage Users</h4>
 
-<hr />
-@if (User.HasClaim("Users", "create"))
+@foreach (var group in Model.ParentKeys)
 {
-        <div class="row my-2">
-        <div class="col-xl-12">
-    <a asp-action="AddUser" class="float-end mb-2  btn rounded-pill btn-secondary waves-effect waves-light">Add User</a>
-    </div>
-    </div>
-}
-@* <table class="table table-bordered table-striped">
-    <tr>
-        <th>Username</th>
-        <th>Email</th>
-        <th>Action</th>
-    </tr>
+    <ul>
 
-    @foreach (var user in Model.OrderBy(u => u.Username).ThenBy(u => u.Email))
-    {
-        <tr>
-            <td>@user.Username</td>
-            <td>@user.Email</td>
-            <td>
-                @if (User.HasClaim("Users", "edit"))
+        <li>
+
+            @Model.Users.FirstOrDefault(a => a.UserId == group)?.Email
+            - @group
+
+        </li>
+
+
+        <!-- admin -->
+
+        <table>
+            <tbody>
+                <tr>
+                    <td>Admins</td>
+                </tr>
+
+
+
+
+                @foreach (var item in Model.Users.Where(a => a.ParentId == group && a.UserType == 2))
                 {
 
-                    <a asp-action="EditUser" class="mx-1" asp-route-id="@user.Id">Edit</a>
+                    <tr>
+                        <td>
+
+                            @item.UserId - @item.Username - @item.UserType - @item.ParentId
+                        </td>
+
+                    </tr>
+
                 }
-                @if (User.HasClaim("Users", "disable"))
+
+
+            </tbody>
+        </table>
+
+
+
+
+
+
+
+    </ul>
+    <ul>
+
+        <!-- sub admin -->
+
+        <table>
+            <tbody>
+                <tr>
+                    <td>Sub Admins</td>
+                </tr>
+
+
+
+
+                @foreach (var item in Model.Users.Where(a => a.ParentId == group && a.UserType == 3))
                 {
-                    <a asp-action="DisableUser" class="mx-1" asp-route-id="@user.Id">Disable</a>
+
+                    <tr>
+                        <td>
+
+                            @item.UserId - @item.Username - @item.UserType - @item.ParentId
+                        </td>
+
+                    </tr>
 
                 }
-                @if (User.HasClaim("Users", "delete"))
+
+
+            </tbody>
+        </table>
+
+    </ul>
+
+    <ul>
+
+        <!-- clients -->
+
+        <table>
+            <tbody>
+                <tr>
+                    <td>clients</td>
+                </tr>
+
+
+
+
+                @foreach (var item in Model.Users.Where(a => a.ParentId == group && a.UserType == 4))
                 {
-                    <a asp-action="DeleteUser" class="mx-1" asp-route-id="@user.Id">Delete</a>
+
+                    <tr>
+                        <td>
+
+                            @item.UserId - @item.Username - @item.UserType - @item.ParentId
+                        </td>
+
+                    </tr>
 
                 }
 
-            </td>
-        </tr>
-    }
 
-</table> *@
-<div class="row">
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-header align-items-center d-flex">
-                <h4 class="card-title mb-0 flex-grow-1">Users</h4>
-            </div><!-- end card header -->
+            </tbody>
+        </table>
 
-            <div class="card-body">
-                <div class="live-preview">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-nowrap align-middle mb-0">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Username</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var user in Model.OrderBy(u => u.Username).ThenBy(u => u.Email))
-                                {
-                                    <tr>
-                                        <td>@user.Username</td>
-                                        <td>@user.Email</td>
-                                        <td>
-                                            @if (User.HasClaim("Users", "edit"))
-                                            {
-
-                                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="edit" asp-action="EditUser" class="mx-1" asp-route-id="@user.Id"><i class="ri-pencil-fill fs-5"></i></a>
-                                            }
-                                            @if (User.HasClaim("Users", "disable"))
-                                            {
-                                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="disable" asp-action="DisableUser" class="mx-1" asp-route-id="@user.Id"><i class="ri-close-line fs-5"></i></a>
-
-                                            }
-                                            @if (User.HasClaim("Users", "delete"))
-                                            {
-                                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="delete" asp-action="DeleteUser" class="mx-1" asp-route-id="@user.Id"><i class="ri-delete-bin-fill fs-5"></i></a>
-
-                                            }
-
-                                        </td>
-                                    </tr>
-                                }
+    </ul>
 
 
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+    <ul>
 
-            </div><!-- end card-body -->
-        </div><!-- end card -->
-    </div>
-    <!-- end col -->
-</div>
-<!-- end row -->
-@section scripts {
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-        @foreach (var (key, type) in notifications)
-        {
-            if (TempData[key] != null)
-            {
-                <text>ToastNotification("@TempData[key]", "@type");</text>
-            }
-        }
-        });
-    </script>
+        <!-- sub clint -->
+
+        <table>
+            <tbody>
+                <tr>
+                    <td>Sub clients</td>
+                </tr>
+
+
+
+
+                @foreach (var item in Model.Users.Where(a => a.ParentId == group && a.UserType == 5))
+                {
+
+                    <tr>
+                        <td>
+
+                            @item.UserId - @item.Username - @item.UserType - @item.ParentId
+                        </td>
+
+                    </tr>
+
+                }
+
+
+            </tbody>
+        </table>
+
+    </ul>
+
+
+      
+
+
+
 }

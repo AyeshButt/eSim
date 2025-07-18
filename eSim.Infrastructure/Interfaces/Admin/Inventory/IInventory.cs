@@ -1,4 +1,5 @@
-﻿using eSim.Infrastructure.DTOs.Admin.Inventory;
+﻿using eSim.Infrastructure.DTOs.AccessControl;
+using eSim.Infrastructure.DTOs.Admin.Inventory;
 using eSim.Infrastructure.DTOs.Subscribers;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
@@ -11,6 +12,7 @@ namespace eSim.Infrastructure.Interfaces.Admin.Inventory
 {
     public interface IInventory
     {
+        UserTempDTO GetUsers();
         public Task<IQueryable<AdminInventoryDTO>> GetInventoryAsync();
         public Task<IQueryable<SubscriberDTO>> GetClientSubscribersAsync(string clientId);
     }

@@ -1,4 +1,6 @@
 ﻿using eSim.EF.Context;
+using eSim.EF.Entities;
+using eSim.Infrastructure.DTOs.AccessControl;
 using eSim.Infrastructure.DTOs.Admin.Inventory;
 using eSim.Infrastructure.DTOs.Subscribers;
 using eSim.Infrastructure.Interfaces.Admin.Inventory;
@@ -18,8 +20,39 @@ namespace eSim.Implementations.Services.Admin.Inventory
         {
             _db = db;
         }
+        public UserTempDTO GetUsers()
+        {
+            var groups = _db.ApplicationUser.Where(u => u.UserType > 1).Select(a=> new ApplicationUserDTOTemporay { 
+            
+                UserId = a.Id,
+                Email =   a.Email,
+                ParentId = a.ParentId,
+                Username   = a.UserName,
+                UserRoleId = a.UserRoleId,
+                UserType = a.UserType
+            
+            }).GroupBy(u => u.ParentId);
+            //return groups;
+
+            var listOfParents = _db.ApplicationUser.GroupBy(u => u.ParentId).Select(a => a.Key).ToList();
+            var uses = _db.ApplicationUser.Select(a => new ApplicationUserDTOTemporay
+            {
+
+                UserId = a.Id,
+                Email = a.Email,
+                ParentId = a.ParentId,
+                Username = a.UserName,
+                UserRoleId = a.UserRoleId,
+                UserType = a.UserType
+
+            });
+
+            return new UserTempDTO { ParentKeys = listOfParents, Users = uses }; 
+             
+        }
         public async Task<IQueryable<SubscriberDTO>> GetClientSubscribersAsync(string clientId)
         {
+            GetUsers();
             Guid parsedClientId = Guid.Parse(clientId);
 
             var client_subscriber_list = (from s in _db.Subscribers

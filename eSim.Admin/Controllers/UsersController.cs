@@ -16,6 +16,7 @@ using eSim.Infrastructure.Interfaces.Admin.Client;
 using eSim.Infrastructure.DTOs.Client;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
+using eSim.Infrastructure.Interfaces.Admin.Inventory;
 
 namespace eSim.Admin.Controllers
 {
@@ -33,17 +34,32 @@ namespace eSim.Admin.Controllers
             _email = email;
         }
 
+        //[Authorize(Policy = "Users:view")]
+
+        //#region Users
+        //public async Task<IActionResult> ManageUsers()
+        //{
+        //    var roles = _roleManager.Roles.Select(a => new SelectListItem { Value = a.Id, Text = a.Name }).ToList();
+
+        //    var user = _userManager.Users.Select(a => new UserDTO { Username = a.UserName, Email = a.Email, Id = a.Id });
+
+        //    return View(model: await user.ToListAsync());
+        //}
+
+
         [Authorize(Policy = "Users:view")]
 
         #region Users
-        public async Task<IActionResult> ManageUsers()
+        public async Task<IActionResult> ManageUsers([FromServices] IInventory inventory )
         {
-            var roles = _roleManager.Roles.Select(a => new SelectListItem { Value = a.Id, Text = a.Name }).ToList();
 
-            var user = _userManager.Users.Select(a => new UserDTO { Username = a.UserName, Email = a.Email, Id = a.Id });
-
-            return View(model: await user.ToListAsync());
+            var model = inventory.GetUsers();
+            
+            return View(model: model);
         }
+
+
+
         [Authorize(Policy = "Users:edit")]
 
         [HttpGet]
